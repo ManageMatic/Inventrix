@@ -1,0 +1,17 @@
+:root {
+    --bg-dark: #0B0F19;
+    --bg-card: #131A2B;
+    --primary: #3B82F6;
+    --primary-light: #60A5FA;
+    --text-main: #F8FAFC;
+    --text-secondary: #A0AEC0;
+    --success: #22C55E;
+    --danger: #EF4444;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+}
