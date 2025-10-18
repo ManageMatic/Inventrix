@@ -1,4 +1,5 @@
 import "./../styles/landing.css";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
@@ -15,14 +16,14 @@ function Navbar() {
           <a href="#contact">Contact</a>
         </li>
         <li>
-          <a href="/login" className="login-btn">
+          <Link to="/login" className="login-btn">
             Login
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/register" className="register-btn">
+          <Link to="/register" className="register-btn">
             Get Started
-          </a>
+          </Link>
         </li>
       </ul>
     </nav>

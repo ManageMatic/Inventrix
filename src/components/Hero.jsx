@@ -1,4 +1,5 @@
 import "./../styles/landing.css";
+import { Link } from "react-router-dom";
 
 function Hero() {
   return (
@@ -10,9 +11,9 @@ function Hero() {
           data-driven decisions.
         </p>
         <div className="hero-buttons">
-          <a href="/register" className="cta-btn">
+          <Link to="/register" className="cta-btn">
             Get Started
-          </a>
+          </Link>
           <a href="#features" className="outline-btn">
             Learn More
           </a>

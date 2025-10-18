@@ -23,7 +23,6 @@ const generateRefreshToken = (userId) => {
 
 // -------------------- Authentication Middleware --------------------
 
-// General Authentication Middleware
 const authenticate = async (req, res, next) => {
     try {
         let token;
@@ -56,11 +55,14 @@ const authenticate = async (req, res, next) => {
                     .populate('role')
                     .select('-password');
                 break;
-            case 'storeOwner':
+            case 'store_owner':
                 user = await Models.StoreOwner.findById(decoded.id).select('-password');
                 break;
             case 'customer':
                 user = await Models.Customer.findById(decoded.id).select('-password');
+                break;
+            case 'supplier':
+                user = await Models.Supplier.findById(decoded.id).select('-password');
                 break;
             default:
                 return res.status(401).json({
@@ -100,7 +102,6 @@ const authenticate = async (req, res, next) => {
 
 // -------------------- Restriction Middleware --------------------
 
-// Utility for restricting specific user types
 const restrictTo = (allowedTypes) => {
     return (req, res, next) => {
         if (!allowedTypes.includes(req.userType)) {
@@ -115,9 +116,10 @@ const restrictTo = (allowedTypes) => {
 
 // -------------------- Predefined UserType Middlewares --------------------
 
-const authenticateStoreOwner = [authenticate, restrictTo(['storeOwner'])];
+const authenticateStoreOwner = [authenticate, restrictTo(['store_owner'])];
 const authenticateEmployee = [authenticate, restrictTo(['employee'])];
 const authenticateCustomer = [authenticate, restrictTo(['customer'])];
+const authenticateSupplier = [authenticate, restrictTo(['supplier'])];
 
 // -------------------- Export --------------------
 
@@ -128,5 +130,6 @@ module.exports = {
     restrictTo,
     authenticateStoreOwner,
     authenticateEmployee,
-    authenticateCustomer
+    authenticateCustomer,
+    authenticateSupplier
 };

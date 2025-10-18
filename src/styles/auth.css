@@ -1,0 +1,126 @@
+/* Centered Container */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-dark);
+    padding: 20px;
+}
+
+/* Form Box */
+.auth-form {
+    background: var(--bg-card);
+    padding: 40px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.auth-form h2 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.auth-subtitle {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+/* Inputs */
+.auth-form input,
+.auth-form select {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--bg-dark);
+    background: #0f1522;
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+.auth-form input:focus,
+.auth-form select:focus {
+    outline: none;
+    border: 1px solid var(--primary);
+    background: #131a2b;
+}
+
+/* Password Wrapper */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+}
+
+/* Button */
+.auth-form button {
+    background: var(--primary);
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.auth-form button:hover {
+    background: var(--primary-light);
+    transform: scale(1.05);
+}
+
+.auth-message {
+    text-align: center;
+    margin-top: 10px;
+    color: var(--text-secondary);
+}
+
+.auth-extra {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.auth-extra a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-extra a:hover {
+    text-decoration: underline;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -11,15 +11,17 @@ connectToMongo();
 const app = express();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
+
+// CORS configuration
+app.use(cors({
+  origin: "http://localhost:3000", // frontend URL
+  credentials: true,              // allow cookies, tokens, etc.
+}));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/stores', storeRoutes);
-
-// Test route
-app.get("/", (req, res) => res.send("Inventrix Backend API Running"));
 
 // Start server
 const PORT = process.env.PORT;

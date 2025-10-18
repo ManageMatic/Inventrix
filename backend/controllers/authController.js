@@ -19,7 +19,7 @@ exports.register = async (req, res) => {
 
         let Model;
         if (userType === 'employee') Model = Employee;
-        else if (userType === 'storeOwner') Model = StoreOwner;
+        else if (userType === 'store_owner') Model = StoreOwner;
         else if (userType === 'supplier') Model = Supplier;
         else return res.status(400).json({ success: false, message: 'Invalid user type' });
 
@@ -29,10 +29,9 @@ exports.register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Auto-generate employee_id/store_owner_id if applicable
+        // Auto-generate IDs and extra fields
         let extraFields = {};
         if (userType === 'employee') {
-            // Fetch default employee role
             const defaultRole = await Role.findOne({ name: 'employee' });
             extraFields = {
                 employee_id: `EMP${Date.now()}`,
@@ -40,8 +39,7 @@ exports.register = async (req, res) => {
             };
         }
 
-        if (userType === 'storeOwner') {
-            // Auto-generate owner_id
+        if (userType === 'store_owner') {
             extraFields = {
                 owner_id: `OWNER${Date.now()}`
             };
@@ -50,7 +48,7 @@ exports.register = async (req, res) => {
         if (userType === 'supplier') {
             extraFields = {
                 supplier_id: `SUP${Date.now()}`,
-                contact: phone // you can use the same phone as contact
+                contact: phone
             };
         }
 
@@ -71,7 +69,13 @@ exports.register = async (req, res) => {
             message: `${userType} registered successfully`,
             token,
             refreshToken,
-            user: { id: user._id, name: user.name, email: user.email, phone: user.phone, userType }
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                userType
+            }
         });
 
     } catch (error) {
@@ -82,23 +86,22 @@ exports.register = async (req, res) => {
 // ---------------- Login ----------------
 exports.login = async (req, res) => {
     try {
-        const { userType, email, password } = req.body;
+        const { email, password } = req.body;
 
-        if (userType === 'customer') {
-            return res.status(403).json({
-                success: false,
-                message: 'Customers cannot login.'
-            });
+        let user = await Employee.findOne({ email }).select('+password');
+        let userType = 'employee';
+
+        if (!user) {
+            user = await StoreOwner.findOne({ email }).select('+password');
+            userType = 'store_owner';
         }
-
-        let Model;
-        if (userType === 'employee') Model = Employee;
-        else if (userType === 'storeOwner') Model = StoreOwner;
-        else if (userType === 'supplier') Model = Supplier;
-        else return res.status(400).json({ success: false, message: 'Invalid user type' });
-
-        const user = await Model.findOne({ email }).select('+password');
-        if (!user) return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        if (!user) {
+            user = await Supplier.findOne({ email }).select('+password');
+            userType = 'supplier';
+        }
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -111,7 +114,13 @@ exports.login = async (req, res) => {
             message: 'Login successful',
             token,
             refreshToken,
-            user: { id: user._id, name: user.name, email: user.email, phone: user.phone, userType }
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                userType
+            }
         });
 
     } catch (error) {
@@ -119,15 +128,29 @@ exports.login = async (req, res) => {
     }
 };
 
+// ---------------- Get Current User ----------------
+exports.getCurrentUser = async (req, res) => {
+    try {
+        const user = req.user; // populated by authenticateStoreOwner middleware
+        res.json({
+            success: true,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                userType: user.userType,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Failed to fetch user", error: error.message });
+    }
+};
+
 // ---------------- Logout ----------------
 exports.logout = async (req, res) => {
     try {
-        // If you store refresh token in cookie:
         res.clearCookie('refreshToken', { path: '/' });
-
-        // Otherwise, just let client delete tokens
         res.status(200).json({ success: true, message: 'Logout successful' });
-
     } catch (error) {
         res.status(500).json({ success: false, message: 'Logout failed', error: error.message });
     }

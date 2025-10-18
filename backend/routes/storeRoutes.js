@@ -1,12 +1,10 @@
 const express = require('express');
-const router = express.Router();
-const { authenticateStoreOwner } = require('../middleware/auth');
 const { createStore, getMyStores } = require('../controllers/storeController');
+const { authenticateStoreOwner } = require('../middleware/auth');
 
-// Create a new store
-router.post('/create', authenticateStoreOwner, createStore);
+const router = express.Router();
 
-// Get stores of logged-in store owner
-router.get('/my-stores', authenticateStoreOwner, getMyStores);
+router.get('/getMyStores', authenticateStoreOwner, getMyStores); // Fetch owner stores
+router.post('/createStore', authenticateStoreOwner, createStore); // Create a store
 
 module.exports = router;
