@@ -11,41 +11,69 @@
   flex: 1;
   padding: 20px;
   transition: margin-left 0.3s ease;
+  margin-left: 240px;
+  padding: 20px;
 }
 
 .main-expanded {
-  margin-left: 80px;
+  margin-left: 10px;
 }
 
 /* ========== Sidebar ========== */
 .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
   width: 240px;
   background: #1e293b;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   transition: all 0.3s ease;
   overflow-y: auto;
+  z-index: 1000;
 }
 
 .sidebar-closed {
+  transform: translateX(-100%);
   width: 0;
   overflow: hidden;
 }
 
+/* Sidebar Header with logo */
 .sidebar-header {
   padding: 20px;
-  text-align: center;
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #38bdf8;
   border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px; /* space between logo and text */
 }
 
+.sidebar-header .logo-icon img {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin: 0;
+  letter-spacing: 0.6px;
+}
+
+/* Navigation */
 .nav {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 15px;
+  overflow-y: auto;
 }
 
 .nav-link {
@@ -59,6 +87,8 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s;
+  text-align: left;
+  width: 100%;
 }
 
 .nav-link:hover,
@@ -67,10 +97,13 @@
   color: #38bdf8;
 }
 
-/* ========== User Section ========== */
+/* User Section Fixed at Bottom */
 .user-section {
   padding: 20px;
   border-top: 1px solid #334155;
+  background: #1e293b;
+  position: sticky;
+  bottom: 0;
 }
 
 .user-profile {
@@ -81,12 +114,13 @@
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   background: #38bdf8;
   color: #fff;
   border-radius: 50%;
   font-weight: bold;
+  font-size: 1.1rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -95,6 +129,7 @@
 .user-details h4 {
   margin: 0;
   font-size: 1rem;
+  color: #f8fafc;
 }
 
 .user-details p {

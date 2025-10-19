@@ -29,7 +29,7 @@ function Login() {
       );
       localStorage.setItem("token", res.data.token);
       setMessage("Login successful!");
-      navigate("/dashboard");
+      navigate("/OwnerDashboard");
     } catch (err) {
       setMessage(err.response?.data?.message || "Invalid credentials");
     }

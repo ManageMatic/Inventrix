@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Store } from "lucide-react";
+import "../../components/Toast.jsx";
 
 function CreateStoreModal({ onClose, setStores, stores }) {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ function CreateStoreModal({ onClose, setStores, stores }) {
     zipCode: "",
   });
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -46,14 +48,14 @@ function CreateStoreModal({ onClose, setStores, stores }) {
       const data = await res.json();
       if (data.success) {
         setStores([...stores, data.data]);
-        alert("✅ Store created successfully!");
+        setToast({ message: "Store created successfully!", type: "success" });
         onClose();
       } else {
-        alert(data.message || "Failed to create store");
+        setToast({ message: data.message || "Failed to create store", type: "error" });
       }
     } catch (err) {
       console.error("Error creating store:", err);
-      alert("Error creating store");
+      setToast({ message: "Error creating store", type: "error" });
     } finally {
       setLoading(false);
     }

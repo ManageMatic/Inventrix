@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
-import DashboardHeader from "../components/DashboardHeader";
-import StatsGrid from "../components/StatsGrid";
-import StoreList from "../components/StoreList";
-import CreateStoreModal from "../components/CreateStoreModal";
-import AnalyticsChart from "../components/AnalyticsChart";
-import "../styles/OwnerDashboard.css";
+import Sidebar from "./Sidebar";
+import DashboardHeader from "./DashboardHeader";
+import StatsGrid from "./StatsGrid";
+import StoreList from "./StoreList";
+import CreateStoreModal from "./CreateStoreModal";
+import AnalyticsChart from "./AnalyticsChart";
+import "../../styles/OwnerDashboard.css";
 
 const OwnerDashboard = () => {
   const [user, setUser] = useState({ name: "", role: "Store Owner" });

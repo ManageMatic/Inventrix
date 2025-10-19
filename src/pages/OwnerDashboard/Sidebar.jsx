@@ -6,7 +6,9 @@ import {
   BarChart2,
   Settings,
   LogOut,
+  QrCode,
 } from "lucide-react";
+import logo from "../../assets/logo.png";
 
 function Sidebar({ sidebarOpen, setSidebarOpen, user, onLogout }) {
   const menuItems = [
@@ -16,17 +18,19 @@ function Sidebar({ sidebarOpen, setSidebarOpen, user, onLogout }) {
     { name: "Employees", icon: <Users size={20} /> },
     { name: "Reports", icon: <TrendingUp size={20} /> },
     { name: "Analytics", icon: <BarChart2 size={20} /> },
+    { name: "Generate QR", icon: <QrCode size={20} /> },
     { name: "Settings", icon: <Settings size={20} /> },
   ];
 
   return (
     <aside className={`sidebar ${!sidebarOpen ? "sidebar-closed" : ""}`}>
-      {/* Sidebar Header */}
       <div className="sidebar-header">
+        <div className="logo-icon">
+          <img src={logo} alt="Invintrix Logo" />
+        </div>
         <h2 className="logo">Invintrix</h2>
       </div>
 
-      {/* Navigation */}
       <nav className="nav">
         {menuItems.map((item, index) => (
           <button
@@ -39,7 +43,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen, user, onLogout }) {
         ))}
       </nav>
 
-      {/* User Section */}
       <div className="user-section">
         <div className="user-profile">
           <div className="avatar">{user.name?.charAt(0).toUpperCase()}</div>

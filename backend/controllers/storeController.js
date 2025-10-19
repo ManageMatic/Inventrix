@@ -1,7 +1,7 @@
-const Store = require('../models/Store');
+import Store from '../models/Store.js';
 
 // ---------------- Create Store ----------------
-exports.createStore = async (req, res) => {
+export const createStore = async (req, res) => {
     try {
         const { name, location, contact, address } = req.body;
 
@@ -36,7 +36,7 @@ exports.createStore = async (req, res) => {
 };
 
 // ---------------- Get Stores of Owner ----------------
-exports.getMyStores = async (req, res) => {
+export const getMyStores = async (req, res) => {
     try {
         const owner_id = req.user._id;
         const stores = await Store.find({ owner_id });
@@ -44,4 +44,21 @@ exports.getMyStores = async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, message: 'Failed to fetch stores', error: error.message });
     }
+};
+
+// ---------------- Get Store by ID ----------------
+export const getStoreById = async (req, res) => {
+  try {
+    // Fetch using MongoDB _id
+    const store = await Store.findById(req.params.id);
+
+    if (!store) {
+      return res.status(404).json({ success: false, message: "Store not found" });
+    }
+
+    res.status(200).json({ success: true, data: store });
+  } catch (err) {
+    console.error("Error fetching store:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 };

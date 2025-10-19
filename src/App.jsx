@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import OwnerDashboard from "./pages/OwnerDashboard";
+import OwnerDashboard from "./pages/OwnerDashboard/OwnerDashboard";
+import StoreDashboard from "./pages/StoreDashboard/StoreDashboard";
 
 function App() {
   return (
@@ -11,7 +12,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<OwnerDashboard />} />
+        <Route path="/OwnerDashboard" element={<OwnerDashboard />} />
+        <Route path="/store/:storeId" element={<StoreDashboard />} />
       </Routes>
     </BrowserRouter>
   );
