@@ -22,10 +22,12 @@ const ProductModal = ({ storeId, product, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const url = product
         ? `http://localhost:5000/api/products/${product._id}`
         : `http://localhost:5000/api/products/add/${storeId}`;
+
       const method = product ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -34,14 +36,18 @@ const ProductModal = ({ storeId, product, onClose }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ ...form, store_id: storeId }),
+        body: JSON.stringify(form), // ✅ FIXED
       });
 
       const data = await res.json();
+
       if (data.success) {
         onClose();
       } else {
-        setToast({ message: data.message || "Error saving product", type: "error" });
+        setToast({
+          message: data.message || "Error saving product",
+          type: "error",
+        });
       }
     } catch (err) {
       console.error("product save error:", err);

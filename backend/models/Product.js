@@ -6,23 +6,35 @@ const productSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    store: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: "Store", required: true 
+    store: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Store", required: true
     },
-    name: { 
-        type: String, 
-        required: true 
+    name: {
+        type: String,
+        required: true
     },
     category: String,
-    price: { 
-        type: Number, 
-        required: true 
+    price: {
+        type: Number,
+        required: true
     },
-    quantity: { 
-        type: Number, 
-        default: 0 
+    quantity: {
+        type: Number,
+        default: 0
     },
+
+    qr_code: {
+        type: String,
+        default: undefined,
+        sparse: true,
+    },
+
+    reorderLevel: {
+        type: Number,
+        default: 0
+    },
+
     imageUrl: String,
     description: String,
 }, { timestamps: true });

@@ -1,28 +1,32 @@
 // backend/controllers/productController.js
 const Product = require("../models/Product");
 const Store = require("../models/Store");
+const crypto = require("crypto");
 
 /**
  * Add product to a store
  * POST /api/products/add/:storeId
  */
+
 exports.addProduct = async (req, res) => {
     try {
         const { storeId } = req.params;
         const { name, category, price, quantity, imageUrl, description } = req.body;
 
         // ✅ Validation
-        if (!name || !price || !storeId) {
+        if (!name || !price) {
             return res.status(400).json({
                 success: false,
-                message: "Please provide name, price, and storeId",
+                message: "Product name and price are required",
             });
         }
 
         // Auto-generate product_id
         const product_id = `PROD-${Math.floor(Math.random() * 1000)}`;
 
-        // ✅ Create product
+        // ✅ Generate unique QR code value
+        const qr_code = `QR-${crypto.randomBytes(6).toString("hex")}`;
+
         const product = new Product({
             product_id,
             store: storeId,
@@ -32,6 +36,7 @@ exports.addProduct = async (req, res) => {
             quantity: quantity || 0,
             imageUrl,
             description,
+            qr_code,
         });
 
         await product.save();
