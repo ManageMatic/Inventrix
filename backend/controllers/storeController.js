@@ -48,17 +48,17 @@ export const getMyStores = async (req, res) => {
 
 // ---------------- Get Store by ID ----------------
 export const getStoreById = async (req, res) => {
-  try {
-    // Fetch using MongoDB _id
-    const store = await Store.findById(req.params.id);
+    try {
+        // Fetch using MongoDB _id
+        const store = await Store.findById(req.params.id);
 
-    if (!store) {
-      return res.status(404).json({ success: false, message: "Store not found" });
+        if (!store) {
+            return res.status(404).json({ success: false, message: "Store not found" });
+        }
+
+        res.status(200).json({ success: true, data: store });
+    } catch (err) {
+        console.error("Error fetching store:", err);
+        res.status(500).json({ success: false, message: "Server error" });
     }
-
-    res.status(200).json({ success: true, data: store });
-  } catch (err) {
-    console.error("Error fetching store:", err);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
 };
