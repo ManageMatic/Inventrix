@@ -22,16 +22,37 @@ p {
     line-height: 1.6;
 }
 
+/* ==================== TOP GLOW ==================== */
+.top-glow {
+    position: absolute;
+    top: -140px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 420px;
+    background: radial-gradient(ellipse at 50% 0%,
+            rgba(56, 140, 255, 0.40) 0%,
+            rgba(30, 80, 200, 0.20) 45%,
+            transparent 75%);
+    pointer-events: none;
+    z-index: 0;
+}
+
 /* ==================== NAVBAR ==================== */
 .navbar {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(11, 15, 25, 0.9);
-    padding: 15px 10%;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 0.5px solid rgba(255, 255, 255, 0.10);
+    padding: 14px 32px;
+    margin: 20px 114px 0;
+    border-radius: 16px;
     position: fixed;
     top: 0;
-    width: 100%;
+    width: 85%;
     z-index: 100;
 }
 
@@ -40,6 +61,14 @@ p {
     font-weight: bold;
     color: var(--primary);
     margin: 0 40px;
+    display: flex;
+    align-items: center;
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
 }
 
 .nav-links {
@@ -119,7 +148,7 @@ p {
     color: white;
 }
 
-.hero-image {
+.hero-video {
     flex: 1;
     height: 400px;
     background: var(--bg-card);

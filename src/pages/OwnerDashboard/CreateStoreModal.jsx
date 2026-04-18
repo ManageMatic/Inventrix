@@ -26,7 +26,7 @@ function CreateStoreModal({ onClose, setStores, stores }) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/stores/createStore", {
+      const res = await fetch("/api/stores/createStore", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

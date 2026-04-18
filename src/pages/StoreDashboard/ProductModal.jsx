@@ -6,12 +6,13 @@ const ProductModal = ({ storeId, product, onClose }) => {
   const [form, setForm] = useState({
     name: product?.name || "",
     category: product?.category || "",
-    price: product?.price || 0,
+    purchasePrice: product?.purchasePrice || 0,
+    sellingPrice: product?.sellingPrice || 0,
     quantity: product?.quantity || 0,
     description: product?.description || "",
-    imageUrl: product?.imageUrl || "",
     reorderLevel: product?.reorderLevel || 10,
   });
+
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
   const [toast, setToast] = useState(null);
@@ -36,7 +37,7 @@ const ProductModal = ({ storeId, product, onClose }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form), // ✅ FIXED
+        body: JSON.stringify(form),
       });
 
       const data = await res.json();
@@ -87,13 +88,27 @@ const ProductModal = ({ storeId, product, onClose }) => {
                 onChange={handleChange}
               />
             </div>
+          </div>
+          <div className="form-row">
             <div className="form-group">
-              <label>Price</label>
+              <label>Purchase Price *</label>
               <input
-                name="price"
+                name="purchasePrice"
                 type="number"
-                value={form.price}
+                value={form.purchasePrice}
                 onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Selling Price *</label>
+              <input
+                name="sellingPrice"
+                type="number"
+                value={form.sellingPrice}
+                onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -117,15 +132,6 @@ const ProductModal = ({ storeId, product, onClose }) => {
                 onChange={handleChange}
               />
             </div>
-          </div>
-
-          <div className="form-group">
-            <label>Image URL</label>
-            <input
-              name="imageUrl"
-              value={form.imageUrl}
-              onChange={handleChange}
-            />
           </div>
 
           <div className="form-group">

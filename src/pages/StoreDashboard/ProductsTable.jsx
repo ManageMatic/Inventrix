@@ -94,7 +94,7 @@ const ProductsTable = ({ storeId }) => {
                   <td>{p.product_id}</td>
                   <td>{p.name}</td>
                   <td>{p.category || "—"}</td>
-                  <td>₹{p.price?.toFixed?.(2) ?? p.price}</td>
+                  <td>₹{p.sellingPrice.toFixed(2)}</td>
                   <td>{p.quantity}</td>
                   <td>
                     <button

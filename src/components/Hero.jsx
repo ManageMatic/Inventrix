@@ -1,5 +1,6 @@
 import "./../styles/landing.css";
 import { Link } from "react-router-dom";
+import bgm from "../assets/bgm.mp4";
 
 function Hero() {
   return (
@@ -19,8 +20,10 @@ function Hero() {
           </a>
         </div>
       </div>
-      <div className="hero-image">
-        <img className="hero-image" src="/src/assets/hero.png" alt="Hero" />
+      <div className="hero-video">
+        <video className="hero-video" autoPlay loop muted>
+          <source src={bgm} type="video/mp4" />
+        </video>
       </div>
     </section>
   );

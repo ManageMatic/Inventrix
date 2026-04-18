@@ -2,6 +2,24 @@
 const Product = require("../models/Product");
 const Store = require("../models/Store");
 const crypto = require("crypto");
+const QRCode = require("qrcode");
+const path = require("path");
+const os = require("os");
+
+// Utility to get local IP address (for testing on LAN)
+function getLocalIP() {
+    const interfaces = os.networkInterfaces();
+    for (let name of Object.keys(interfaces)) {
+        for (let net of interfaces[name]) {
+            if (net.family === "IPv4" && !net.internal) {
+                return net.address;
+            }
+        }
+    }
+    return "localhost";
+}
+
+const LOCAL_IP = getLocalIP();
 
 /**
  * Add product to a store
@@ -11,47 +29,75 @@ const crypto = require("crypto");
 exports.addProduct = async (req, res) => {
     try {
         const { storeId } = req.params;
-        const { name, category, price, quantity, imageUrl, description } = req.body;
 
-        // ✅ Validation
-        if (!name || !price) {
+        const {
+            name,
+            category,
+            purchasePrice,
+            sellingPrice,
+            quantity,
+            description,
+            reorderLevel
+        } = req.body;
+
+        if (!name || !purchasePrice || !sellingPrice) {
             return res.status(400).json({
                 success: false,
-                message: "Product name and price are required",
+                message: "Name, purchase price and selling price are required"
             });
         }
 
         // Auto-generate product_id
         const product_id = `PROD-${Math.floor(Math.random() * 1000)}`;
 
-        // ✅ Generate unique QR code value
-        const qr_code = `QR-${crypto.randomBytes(6).toString("hex")}`;
+        const qr_code = `INV-${product_id}`;
 
         const product = new Product({
             product_id,
             store: storeId,
             name,
             category,
-            price,
+            purchasePrice,
+            sellingPrice,
             quantity: quantity || 0,
-            imageUrl,
+            reorderLevel: reorderLevel || 0,
             description,
-            qr_code,
+            qr_code
         });
 
         await product.save();
 
+        // Generate QR code image
+        const qrData = `http://${LOCAL_IP}:3000/scan-product/${qr_code}?storeId=${storeId}`;  // 🔥 FIXED
+
+        const filePath = path.join(
+            __dirname,
+            "../qr_codes",
+            `QR_${name}.png`
+        );
+
+        await QRCode.toFile(filePath, qrData);
+
         res.status(201).json({
             success: true,
             message: "Product added successfully",
-            data: product,
+            data: product
         });
+
     } catch (error) {
+
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: "Duplicate QR code detected. Try again."
+            });
+        }
+
         console.error("Error adding product:", error);
+
         res.status(500).json({
             success: false,
-            message: "Failed to add product",
-            error: error.message,
+            message: "Failed to add product"
         });
     }
 };
@@ -115,5 +161,35 @@ exports.deleteProduct = async (req, res) => {
     } catch (err) {
         console.error("deleteProduct error:", err);
         return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+/**
+ * Get product by QR code
+ * GET /api/products/qr/:qrcode
+ */
+exports.getProductByQR = async (req, res) => {
+    try {
+        const { qrCode } = req.params;
+        const { storeId } = req.query;
+
+        // ✅ DEBUG LOGS
+        console.log("📦 QR scanned:", qrCode);
+        console.log("🏪 Store ID:", storeId);
+
+        const product = await Product.findOne({ qr_code: qrCode });
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        // ✅ DEBUG EMIT
+        console.log("📡 Emitting to room:", storeId);
+
+        req.app.get("io").to(storeId).emit("product-scanned", product);
+
+        res.json({ success: true, data: product });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
