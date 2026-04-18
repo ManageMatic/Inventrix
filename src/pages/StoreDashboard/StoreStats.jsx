@@ -17,32 +17,65 @@ const StoreStats = ({ storeId }) => {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/products/${storeId}`, {
+      // Fetch products
+      const productsRes = await fetch(`http://localhost:5000/api/products/${storeId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
+      const productsData = await productsRes.json();
 
-      if (data.success && Array.isArray(data.data)) {
-        const products = data.data;
-        const totalProducts = products.length;
+      let totalProducts = 0;
+      let lowStockItems = [];
 
-        // filter products where quantity < 5
-        const lowStockItems = products
+      if (productsData.success && Array.isArray(productsData.data)) {
+        const products = productsData.data;
+        totalProducts = products.length;
+        lowStockItems = products
           .filter((p) => p.quantity < 5)
           .map((p) => ({
             name: p.name || "Unnamed Product",
             quantity: p.quantity || 0,
           }));
-
-        setStats((prev) => ({
-          ...prev,
-          totalProducts,
-          stockAlerts: lowStockItems.length,
-          lowStockItems,
-        }));
-      } else {
-        console.warn("⚠️ Unexpected response:", data);
       }
+
+      // Fetch sales for total sales amount
+      const salesRes = await fetch(
+        `http://localhost:5000/api/sales/store/${storeId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const salesData = await salesRes.json();
+
+      let totalSales = 0;
+      if (salesData.success && Array.isArray(salesData.data)) {
+        totalSales = salesData.data.reduce(
+          (sum, sale) => sum + (sale.totalAmount || 0),
+          0
+        );
+      }
+
+      // Fetch employees count from employee table
+      const employeesRes = await fetch(
+        `http://localhost:5000/api/employees/count/${storeId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const employeesData = await employeesRes.json();
+
+      let employees = 0;
+      if (employeesData.success && employeesData.data && typeof employeesData.data.count === 'number') {
+        employees = employeesData.data.count;
+      }
+
+      setStats((prev) => ({
+        ...prev,
+        totalProducts,
+        totalSales,
+        employees,
+        stockAlerts: lowStockItems.length,
+        lowStockItems,
+      }));
     } catch (err) {
       console.error("❌ Error fetching store stats:", err);
     }

@@ -20,7 +20,7 @@ const StoreOverview = ({ storeId }) => {
       <SalesChart storeId={storeId} />
 
       {/* 🧾 Recent Sales */}
-      <RecentSales storeId={storeId} />
+      <RecentSales />
     </div>
   );
 };

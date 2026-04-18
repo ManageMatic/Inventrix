@@ -43,17 +43,61 @@ const GenerateQR = ({ storeId }) => {
     link.click();
   };
 
-  // ── Print single QR ─────────────────────────────────────────
-  const handlePrint = (productName, name) => {
+  // ── Print single QR (DMart style - Multiple QR on single page) ────────
+  const handlePrint = (productName, productFullName) => {
     const url = `${API_URL}/qr_codes/QR_${productName}.png`;
+    const qrPerRow = 4;
+    const qrPerCol = 6;
+    const totalQRs = qrPerRow * qrPerCol; // 24 QR codes per page
+
+    // Generate QR grid HTML
+    let qrGrid = "";
+    for (let i = 0; i < totalQRs; i++) {
+      qrGrid += `
+        <div style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid #ddd;
+          padding: 12px;
+          width: 22%;
+          text-align: center;
+          break-inside: avoid;
+        ">
+          <img src="${url}" width="120" height="120" style="margin-bottom: 8px;" />
+          <p style="margin: 4px 0; font-size: 11px; font-weight: 600;">${productFullName}</p>
+          <small style="margin: 0; font-size: 9px; color: #666;">${productName}</small>
+        </div>
+      `;
+    }
+
     const printWindow = window.open("", "_blank");
     printWindow.document.write(`
       <html>
-        <body style="display:flex;flex-direction:column;align-items:center;
-                     justify-content:center;height:100vh;font-family:sans-serif;">
-          <img src="${url}" width="200" />
-          <p style="font-size:18px;font-weight:600;margin-top:12px;">${name}</p>
-          <script>window.onload = () => { window.print(); window.close(); }</script>
+        <head>
+          <title>Print ${productFullName}</title>
+        </head>
+        <body style="
+          margin: 10px;
+          padding: 0;
+          font-family: Arial, sans-serif;
+          background: white;
+        ">
+          <div style="
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0;
+            justify-content: flex-start;
+            width: 100%;
+          ">
+            ${qrGrid}
+          </div>
+          <script>
+            window.onload = () => { 
+              setTimeout(() => { window.print(); }, 500);
+            };
+          </script>
         </body>
       </html>
     `);
@@ -63,9 +107,9 @@ const GenerateQR = ({ storeId }) => {
   // ── Loading state ───────────────────────────────────────────
   if (loading) {
     return (
-      <div style={styles.centerBox}>
-        <div style={styles.spinner} />
-        <p style={styles.loadingText}>Loading QR codes...</p>
+      <div className="generate-qr-center-box">
+        <div className="generate-qr-spinner" />
+        <p className="generate-qr-loading-text">Loading QR codes...</p>
       </div>
     );
   }
@@ -73,9 +117,9 @@ const GenerateQR = ({ storeId }) => {
   // ── Error state ─────────────────────────────────────────────
   if (error) {
     return (
-      <div style={styles.centerBox}>
-        <p style={styles.errorText}>⚠️ {error}</p>
-        <button style={styles.retryBtn} onClick={fetchProducts}>
+      <div className="generate-qr-center-box">
+        <p className="generate-qr-error-text">⚠️ {error}</p>
+        <button className="generate-qr-retry-btn" onClick={fetchProducts}>
           Retry
         </button>
       </div>
@@ -85,33 +129,36 @@ const GenerateQR = ({ storeId }) => {
   // ── Empty state ─────────────────────────────────────────────
   if (products.length === 0) {
     return (
-      <div style={styles.centerBox}>
-        <p style={styles.emptyText}>No products found for this store.</p>
+      <div className="generate-qr-center-box">
+        <p className="generate-qr-empty-text">No products found for this store.</p>
       </div>
     );
   }
 
   // ── Main render ─────────────────────────────────────────────
   return (
-    <div style={styles.wrapper}>
+    <div className="generate-qr-wrapper">
       {/* Header row */}
-      <div style={styles.header}>
-        <h2 style={styles.title}>QR Codes</h2>
-        <span style={styles.badge}>{products.length} products</span>
+      <div className="generate-qr-header">
+        <h2 className="generate-qr-title">QR Codes</h2>
+        <span className="generate-qr-badge">{products.length} products</span>
       </div>
 
       {/* QR grid */}
-      <div style={styles.grid}>
+      <div className="generate-qr-grid">
         {products.map((p) => (
-          <div key={p._id} style={styles.card}>
+          <div 
+            key={p._id} 
+            className="generate-qr-card"
+          >
             {/* QR Image */}
-            <div style={styles.qrBox}>
+            <div className="generate-qr-box">
               <img
                 src={`${API_URL}/qr_codes/QR_${p.name}.png`}
                 alt={p.name}
                 width="140"
                 height="140"
-                style={styles.qrImg}
+                className="generate-qr-img"
                 onError={(e) => {
                   // Show placeholder if QR image not found
                   e.target.style.display = "none";
@@ -119,36 +166,29 @@ const GenerateQR = ({ storeId }) => {
                 }}
               />
               {/* Fallback placeholder */}
-              <div style={{ ...styles.qrPlaceholder, display: "none" }}>
-                <span style={{ fontSize: 36 }}>🔲</span>
-                <small style={{ color: "#94a3b8", fontSize: 11, marginTop: 4 }}>
-                  QR not generated
-                </small>
+              <div className="generate-qr-placeholder" style={{ display: "none" }}>
+                <span>🔲</span>
+                <small>QR not generated</small>
               </div>
             </div>
 
             {/* Product info */}
-            <div style={styles.info}>
-              <p style={styles.productName}>{p.name}</p>
-              <small style={styles.productId}>{p.product_id}</small>
-
-              {/* ── What this QR encodes (debug helper) ── */}
-              <small style={styles.qrUrl}>
-                🔗 /scan-product/{p.qr_code}?storeId={storeId}
-              </small>
+            <div className="generate-qr-info">
+              <p className="generate-qr-product-name">{p.name}</p>
+              <small className="generate-qr-product-id">{p.product_id}</small>
             </div>
 
             {/* Action buttons */}
-            <div style={styles.actions}>
+            <div className="generate-qr-actions">
               <button
-                style={styles.downloadBtn}
+                className="generate-qr-download-btn"
                 onClick={() => handleDownload(p.name)}
                 title="Download QR"
               >
                 ⬇ Download
               </button>
               <button
-                style={styles.printBtn}
+                className="generate-qr-print-btn"
                 onClick={() => handlePrint(p.name, p.name)}
                 title="Print QR"
               >
@@ -160,162 +200,6 @@ const GenerateQR = ({ storeId }) => {
       </div>
     </div>
   );
-};
-
-// ── Styles ────────────────────────────────────────────────────
-const styles = {
-  wrapper: {
-    padding: "24px",
-  },
-  header: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#1e293b",
-    margin: 0,
-  },
-  badge: {
-    background: "#e0e7ff",
-    color: "#4f46e5",
-    borderRadius: 20,
-    padding: "2px 12px",
-    fontSize: 13,
-    fontWeight: 600,
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-    gap: 20,
-  },
-  card: {
-    background: "#fff",
-    borderRadius: 14,
-    border: "1px solid #e2e8f0",
-    padding: 16,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 10,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-    transition: "transform 0.2s, box-shadow 0.2s",
-  },
-  qrBox: {
-    background: "#f8fafc",
-    borderRadius: 10,
-    padding: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  qrImg: {
-    display: "block",
-    borderRadius: 6,
-  },
-  qrPlaceholder: {
-    width: 140,
-    height: 140,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "#f1f5f9",
-    borderRadius: 6,
-  },
-  info: {
-    textAlign: "center",
-    width: "100%",
-  },
-  productName: {
-    fontWeight: 600,
-    fontSize: 15,
-    color: "#1e293b",
-    margin: "0 0 2px 0",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  },
-  productId: {
-    color: "#94a3b8",
-    fontSize: 12,
-    display: "block",
-  },
-  qrUrl: {
-    display: "block",
-    color: "#cbd5e1",
-    fontSize: 10,
-    marginTop: 4,
-    wordBreak: "break-all",
-    textAlign: "center",
-  },
-  actions: {
-    display: "flex",
-    gap: 8,
-    width: "100%",
-  },
-  downloadBtn: {
-    flex: 1,
-    padding: "7px 0",
-    border: "none",
-    borderRadius: 8,
-    background: "#4f46e5",
-    color: "#fff",
-    fontWeight: 600,
-    fontSize: 12,
-    cursor: "pointer",
-  },
-  printBtn: {
-    flex: 1,
-    padding: "7px 0",
-    border: "1px solid #e2e8f0",
-    borderRadius: 8,
-    background: "#fff",
-    color: "#475569",
-    fontWeight: 600,
-    fontSize: 12,
-    cursor: "pointer",
-  },
-  centerBox: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "60px 20px",
-    gap: 12,
-  },
-  spinner: {
-    width: 40,
-    height: 40,
-    border: "4px solid #e2e8f0",
-    borderTop: "4px solid #4f46e5",
-    borderRadius: "50%",
-    animation: "spin 0.8s linear infinite",
-  },
-  loadingText: {
-    color: "#94a3b8",
-    fontSize: 15,
-  },
-  errorText: {
-    color: "#ef4444",
-    fontSize: 15,
-    fontWeight: 600,
-  },
-  retryBtn: {
-    padding: "8px 20px",
-    background: "#4f46e5",
-    color: "#fff",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer",
-    fontWeight: 600,
-  },
-  emptyText: {
-    color: "#94a3b8",
-    fontSize: 15,
-  },
 };
 
 export default GenerateQR;

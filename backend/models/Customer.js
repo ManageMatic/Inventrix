@@ -4,7 +4,8 @@ const customerSchema = new mongoose.Schema({
     customer_id: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        default: () => `CUST-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`
     },
     name: {
         type: String,

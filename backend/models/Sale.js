@@ -18,12 +18,14 @@ const saleSchema = new mongoose.Schema({
   },
   employee_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Employee',
-    required: true
+    ref: 'Employee'
   },
-  customer_id: {
+  store_owner_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Customer'
+    ref: 'StoreOwner'
+  },
+  customer_mobile: {
+    type: String
   },
   items: [{
     product_id: {
@@ -63,5 +65,15 @@ const saleSchema = new mongoose.Schema({
   },
   createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
+
+// Validation to ensure either employee_id or store_owner_id is provided
+saleSchema.pre('validate', function(next) {
+  if (!this.employee_id && !this.store_owner_id) {
+    const error = new Error('Either employee_id or store_owner_id must be provided');
+    next(error);
+  } else {
+    next();
+  }
+});
 
 module.exports = mongoose.model('Sale', saleSchema);

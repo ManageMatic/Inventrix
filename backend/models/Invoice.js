@@ -22,8 +22,11 @@ const invoiceSchema = new mongoose.Schema({
     },
     employee_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Employee',
-        required: true
+        ref: 'Employee'
+    },
+    store_owner_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'StoreOwner'
     },
     date: {
         type: Date,

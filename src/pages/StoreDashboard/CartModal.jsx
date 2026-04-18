@@ -1,6 +1,12 @@
 import { X, Trash2, Plus, Minus } from "lucide-react";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const CartModal = ({ cart, setCart, onClose }) => {
+  const location = useLocation();
+  // Extract storeId from URL path /store/:storeId
+  const storeId = location.pathname.split("/store/")[1];
+  const [customerMobile, setCustomerMobile] = useState("");
   const increase = (id) => {
     setCart(cart.map((p) => (p._id === id ? { ...p, qty: p.qty + 1 } : p)));
   };
@@ -24,26 +30,76 @@ const CartModal = ({ cart, setCart, onClose }) => {
 
   const handleCheckout = async () => {
     try {
-      const res = await fetch(
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        alert("You are not authenticated. Please log in again.");
+        return;
+      }
+
+      if (!storeId) {
+        alert("Store information not found. Please try again.");
+        return;
+      }
+
+      // Step 1: Create Sale
+      const saleRes = await fetch(
         `${import.meta.env.VITE_API_URL}/api/sales/create`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({
             items: cart,
-            storeId: localStorage.getItem("storeId"),
+            store_id: storeId,
+            subtotal: total,
+            totalAmount: total,
+            customer_mobile: customerMobile || null,
           }),
         },
       );
 
-      const data = await res.json();
+      const saleData = await saleRes.json();
 
-      if (data.success) {
+      if (!saleData.success) {
+        alert(saleData.message || "Failed to create sale");
+        return;
+      }
+
+      // Step 2: Generate Invoice from Sale
+      const saleId = saleData.data._id;
+      const invoiceRes = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/invoices/generate/${saleId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const invoiceData = await invoiceRes.json();
+
+      if (invoiceData.success) {
+        // Clear cart and close modal
         setCart([]);
         onClose();
+        
+        // Show success with download link
+        const downloadUrl = `${import.meta.env.VITE_API_URL}/api/invoices/download/${invoiceData.data.invoiceId}`;
+        alert("Invoice generated successfully! Check your downloads.");
+        
+        // Optional: Open invoice in new tab
+        window.open(downloadUrl, '_blank');
+      } else {
+        alert(invoiceData.message || "Failed to generate invoice");
       }
     } catch (err) {
       console.error(err);
+      alert("Error completing checkout: " + err.message);
     }
   };
 
@@ -58,39 +114,77 @@ const CartModal = ({ cart, setCart, onClose }) => {
         </div>
 
         <div className="cart-items">
-          {cart.map((item) => (
-            <div key={item._id} className="cart-row">
-              <div className="cart-left">
-                <h4>{item.name}</h4>
-                <span>₹{item.sellingPrice}</span>
-              </div>
-
-              <div className="cart-center">
-                <button onClick={() => decrease(item._id)}>
-                  <Minus size={14} />
-                </button>
-                <span>{item.qty}</span>
-                <button onClick={() => increase(item._id)}>
-                  <Plus size={14} />
-                </button>
-              </div>
-
-              <div className="cart-right">
-                <span>₹{item.qty * item.sellingPrice}</span>
-                <button onClick={() => remove(item._id)}>
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
+          <table className="cart-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cart.map((item) => (
+                <tr key={item._id}>
+                  <td>
+                    <div className="product-name">{item.name}</div>
+                    {item.description && (
+                      <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '2px' }}>
+                        {item.description}
+                      </div>
+                    )}
+                  </td>
+                  <td className="product-price">₹{item.sellingPrice}</td>
+                  <td>
+                    <div className="cart-quantity-controls">
+                      <button onClick={() => decrease(item._id)}>
+                        <Minus size={14} />
+                      </button>
+                      <span>{item.qty}</span>
+                      <button onClick={() => increase(item._id)}>
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  </td>
+                  <td>₹{item.qty * item.sellingPrice}</td>
+                  <td>
+                    <button
+                      className="cart-remove-btn"
+                      onClick={() => remove(item._id)}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         <div className="cart-footer">
-          <h3>Total: ₹{total}</h3>
+          <div className="customer-mobile">
+            <label>Customer Mobile (Optional):</label>
+            <input
+              type="tel"
+              value={customerMobile}
+              onChange={(e) => setCustomerMobile(e.target.value)}
+              placeholder="Enter mobile number"
+            />
+          </div>
 
-          <button className="checkout-btn" onClick={handleCheckout}>
-            Generate Invoice
-          </button>
+          <div className="cart-total">
+            <h3>Total: ₹{total}</h3>
+          </div>
+
+          <div className="cart-actions">
+            <button className="cancel-btn1" onClick={onClose}>
+              Cancel
+            </button>
+            <button className="checkout-btn" onClick={handleCheckout}>
+              Generate Invoice
+            </button>
+          </div>
         </div>
       </div>
     </div>

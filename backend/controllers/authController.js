@@ -8,7 +8,7 @@ const { generateToken, generateRefreshToken } = require('../middleware/auth');
 // ---------------- Register ----------------
 exports.register = async (req, res) => {
     try {
-        const { userType, name, email, password, phone } = req.body;
+        const { userType, name, email, password, phone, store_id } = req.body;
 
         if (userType === 'customer') {
             return res.status(403).json({
@@ -32,10 +32,19 @@ exports.register = async (req, res) => {
         // Auto-generate IDs and extra fields
         let extraFields = {};
         if (userType === 'employee') {
+            // Validate store_id for employees
+            if (!store_id) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Employees must select a store'
+                });
+            }
+
             const defaultRole = await Role.findOne({ name: 'employee' });
             extraFields = {
                 employee_id: `EMP${Date.now()}`,
-                role: defaultRole ? defaultRole._id : undefined
+                role: defaultRole ? defaultRole._id : undefined,
+                store_id: store_id // Add store_id for employee
             };
         }
 
@@ -74,7 +83,8 @@ exports.register = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                userType
+                userType,
+                store_id: user.store_id || null
             }
         });
 

@@ -19,6 +19,8 @@ const StoreDashboard = ({ cart, setCart, setCartOpen }) => {
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const token = localStorage.getItem("token");
 
   // ── Fetch store details on mount ─────────────────────────────
@@ -81,6 +83,18 @@ const StoreDashboard = ({ cart, setCart, setCartOpen }) => {
     }
   };
 
+  // ── Handle refresh for all dashboard data ──────────────────
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    // Trigger re-fetch by changing the key
+    setRefreshKey((prev) => prev + 1);
+
+    // Simulate refresh delay
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 500);
+  };
+
   return (
     <div className="store-dashboard">
       <StoreHeader
@@ -90,9 +104,14 @@ const StoreDashboard = ({ cart, setCart, setCartOpen }) => {
         onBack={() => navigate("/OwnerDashboard")}
       />
 
-      <StoreNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      <StoreNav 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab}
+        onRefresh={handleRefresh}
+        isRefreshing={isRefreshing}
+      />
 
-      {activeTab === "overview" && <StoreOverview storeId={storeId} />}
+      {activeTab === "overview" && <StoreOverview key={refreshKey} storeId={storeId} />}
 
       {/* ── Guard: only render when store is loaded (prevents store._id crash) ── */}
       {activeTab === "products" && store && (

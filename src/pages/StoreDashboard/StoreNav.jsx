@@ -6,6 +6,7 @@ import {
   Users,
   Settings,
   QrCode,
+  RefreshCw,
 } from "lucide-react";
 
 const tabs = [
@@ -18,7 +19,7 @@ const tabs = [
   { id: "settings", label: "Settings", icon: <Settings size={18} /> },
 ];
 
-const StoreNav = ({ activeTab, setActiveTab }) => {
+const StoreNav = ({ activeTab, setActiveTab, onRefresh, isRefreshing }) => {
   return (
     <div className="store-nav">
       {tabs.map((tab) => (
@@ -31,6 +32,27 @@ const StoreNav = ({ activeTab, setActiveTab }) => {
           <span>{tab.label}</span>
         </button>
       ))}
+
+      {/* Refresh Button */}
+      <button
+        onClick={onRefresh}
+        disabled={isRefreshing}
+        className="nav-tab refresh-btn"
+        title="Refresh dashboard"
+        style={{
+          marginLeft: "auto",
+          opacity: isRefreshing ? 0.6 : 1,
+          cursor: isRefreshing ? "not-allowed" : "pointer",
+        }}
+      >
+        <RefreshCw
+          size={18}
+          style={{
+            animation: isRefreshing ? "spin 0.6s linear infinite" : "none",
+          }}
+        />
+        <span>{isRefreshing ? "Refreshing" : "Refresh"}</span>
+      </button>
     </div>
   );
 };

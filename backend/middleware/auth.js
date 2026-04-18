@@ -120,6 +120,7 @@ const authenticateStoreOwner = [authenticate, restrictTo(['store_owner'])];
 const authenticateEmployee = [authenticate, restrictTo(['employee'])];
 const authenticateCustomer = [authenticate, restrictTo(['customer'])];
 const authenticateSupplier = [authenticate, restrictTo(['supplier'])];
+const authenticateStoreStaff = [authenticate, restrictTo(['store_owner', 'employee'])];
 
 // -------------------- Export --------------------
 
@@ -131,5 +132,6 @@ module.exports = {
     authenticateStoreOwner,
     authenticateEmployee,
     authenticateCustomer,
-    authenticateSupplier
+    authenticateSupplier,
+    authenticateStoreStaff
 };

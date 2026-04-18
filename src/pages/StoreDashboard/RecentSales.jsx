@@ -1,32 +1,75 @@
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+
 const RecentSales = () => {
-  const data = [
-    { product: "Milk 1L", date: "19 Oct 2025", qty: 10, amt: "₹500" },
-    { product: "Bread", date: "18 Oct 2025", qty: 5, amt: "₹150" },
-  ];
+  const { storeId } = useParams();
+  const [recentSales, setRecentSales] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!storeId) return;
+    fetchRecentSales();
+  }, [storeId]);
+
+  const fetchRecentSales = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/sales/recent/${storeId}?limit=5`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        setRecentSales(data.data);
+        setError(null);
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error("Fetch recent sales error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div className="recent-sales"><p>Loading...</p></div>;
+
+  if (error) return <div className="recent-sales"><p style={{ color: 'red' }}>Error: {error}</p></div>;
 
   return (
     <div className="recent-sales">
       <h2>Recent Sales</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Date</th>
-            <th>Quantity</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((s, i) => (
-            <tr key={i}>
-              <td>{s.product}</td>
-              <td>{s.date}</td>
-              <td>{s.qty}</td>
-              <td>{s.amt}</td>
+      {recentSales.length === 0 ? (
+        <p>No recent sales found.</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Date</th>
+              <th>Quantity</th>
+              <th>Amount</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {recentSales.map((sale, i) => (
+              <tr key={i}>
+                <td>{sale.product}</td>
+                <td>{sale.date}</td>
+                <td>{sale.quantity}</td>
+                <td>{sale.amount}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

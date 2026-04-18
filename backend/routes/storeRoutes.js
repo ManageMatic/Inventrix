@@ -1,9 +1,10 @@
 const express = require('express');
-const { createStore, getMyStores, getStoreById } = require('../controllers/storeController');
+const { createStore, getMyStores, getStoreById, getAllStores } = require('../controllers/storeController');
 const { authenticateStoreOwner } = require('../middleware/auth');
 
 const router = express.Router();
 
+router.get('/all', getAllStores); // Fetch all stores (public - for employee registration)
 router.get('/getMyStores', authenticateStoreOwner, getMyStores); // Fetch owner stores
 router.post('/createStore', authenticateStoreOwner, createStore); // Create a store
 router.get("/:id", authenticateStoreOwner, getStoreById);

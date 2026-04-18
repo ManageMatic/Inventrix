@@ -1,5 +1,27 @@
 import Store from '../models/Store.js';
 
+// ── Public endpoint to fetch all stores (for employee registration)
+export const getAllStores = async (req, res) => {
+    try {
+        const stores = await Store.find()
+            .select('_id name location address')
+            .lean();
+
+        res.json({
+            success: true,
+            data: stores
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch stores',
+            error: error.message
+        });
+    }
+};
+
+// ────────────────────────────────────────────────────────────
+
 // ---------------- Create Store ----------------
 export const createStore = async (req, res) => {
     try {
