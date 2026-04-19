@@ -7,12 +7,13 @@ import StoreOverview from "./StoreOverview";
 import ProductsTable from "./ProductsTable";
 import SalesTable from "./SalesTable";
 import GenerateQR from "./GenerateQR";
+import StoreDetails from "./StoreDetails";
 import "../../styles/StoreDashboard.css";
 
 // ── Create socket ONCE outside component (prevents reconnecting on re-renders) ──
 const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000");
 
-const StoreDashboard = ({ cart, setCart, setCartOpen }) => {
+const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
   const { storeId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
@@ -95,6 +96,12 @@ const StoreDashboard = ({ cart, setCart, setCartOpen }) => {
     }, 500);
   };
 
+  useEffect(() => {
+    if (dashboardRefresh > 0) {
+      handleRefresh();
+    }
+  }, [dashboardRefresh]);
+
   return (
     <div className="store-dashboard">
       <StoreHeader
@@ -115,13 +122,17 @@ const StoreDashboard = ({ cart, setCart, setCartOpen }) => {
 
       {/* ── Guard: only render when store is loaded (prevents store._id crash) ── */}
       {activeTab === "products" && store && (
-        <ProductsTable storeId={store._id} />
+        <ProductsTable storeId={store._id} refreshSignal={dashboardRefresh} />
       )}
 
       {activeTab === "sales" && <SalesTable cart={cart} setCart={setCart} />}
 
       {activeTab === "generateQR" && store && (
         <GenerateQR storeId={store._id} />
+      )}
+
+      {activeTab === "settings" && store && (
+        <StoreDetails storeId={store._id} />
       )}
     </div>
   );

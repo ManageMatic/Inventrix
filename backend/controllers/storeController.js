@@ -71,8 +71,8 @@ export const getMyStores = async (req, res) => {
 // ---------------- Get Store by ID ----------------
 export const getStoreById = async (req, res) => {
     try {
-        // Fetch using MongoDB _id
-        const store = await Store.findById(req.params.id);
+        const store = await Store.findById(req.params.id)
+            .populate('owner_id', 'name email phone');
 
         if (!store) {
             return res.status(404).json({ success: false, message: "Store not found" });
@@ -84,3 +84,40 @@ export const getStoreById = async (req, res) => {
         res.status(500).json({ success: false, message: "Server error" });
     }
 };
+
+// ---------------- Update Store ----------------
+export const updateStore = async (req, res) => {
+    try {
+        const store = await Store.findById(req.params.id);
+
+        if (!store) {
+            return res.status(404).json({ success: false, message: "Store not found" });
+        }
+
+        // Check if user owns this store
+        if (store.owner_id.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ success: false, message: "Access denied" });
+        }
+
+        const { name, address, contact, settings } = req.body;
+
+        // Update main store fields
+        if (name !== undefined) store.name = name;
+        if (address !== undefined) store.address = address;
+        if (contact !== undefined) store.contact = contact;
+        if (settings !== undefined) store.settings = { ...store.settings, ...settings };
+
+        await store.save();
+
+        res.json({
+            success: true,
+            message: "Store updated successfully",
+            data: store
+        });
+    } catch (error) {
+        console.error("Error updating store:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+

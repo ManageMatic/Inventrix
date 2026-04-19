@@ -12,6 +12,7 @@ import { useState } from "react";
 function App() {
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [dashboardRefresh, setDashboardRefresh] = useState(0);
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -48,6 +49,7 @@ function App() {
               cart={cart}
               setCart={setCart}
               setCartOpen={setCartOpen}
+              dashboardRefresh={dashboardRefresh}
             />
           }
         />
@@ -69,6 +71,7 @@ function App() {
           cart={cart}
           setCart={setCart}
           onClose={() => setCartOpen(false)}
+          refreshDashboard={() => setDashboardRefresh((prev) => prev + 1)}
         />
       )}
     </BrowserRouter>

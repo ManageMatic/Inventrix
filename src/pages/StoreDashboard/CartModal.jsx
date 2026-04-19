@@ -1,13 +1,22 @@
 import { X, Trash2, Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import Toast from "../../components/Toast";
 
-const CartModal = ({ cart, setCart, onClose }) => {
+const CartModal = ({ cart, setCart, onClose, refreshDashboard }) => {
   const location = useLocation();
   // Extract storeId from URL path /store/:storeId
   const storeId = location.pathname.split("/store/")[1];
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerMobile, setCustomerMobile] = useState("");
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "info") => {
+    setToast({ message, type });
+  };
+
+  const closeToast = () => setToast(null);
+
   const increase = (id) => {
     setCart(cart.map((p) => (p._id === id ? { ...p, qty: p.qty + 1 } : p)));
   };
@@ -32,20 +41,20 @@ const CartModal = ({ cart, setCart, onClose }) => {
   const handleCheckout = async () => {
     try {
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
-        alert("You are not authenticated. Please log in again.");
+        showToast("You are not authenticated. Please log in again.", "error");
         return;
       }
 
       if (!storeId) {
-        alert("Store information not found. Please try again.");
+        showToast("Store information not found. Please try again.", "error");
         return;
       }
 
       // Step 1: Create Sale
       if (!customerEmail) {
-        alert("Customer email is required to send the invoice.");
+        showToast("Customer email is required to send the invoice.", "error");
         return;
       }
 
@@ -70,7 +79,7 @@ const CartModal = ({ cart, setCart, onClose }) => {
       const saleData = await saleRes.json();
 
       if (!saleData.success) {
-        alert(saleData.message || "Failed to create sale");
+        showToast(saleData.message || "Failed to create sale", "error");
         return;
       }
 
@@ -88,21 +97,29 @@ const CartModal = ({ cart, setCart, onClose }) => {
             customer_email: customerEmail,
             customer_mobile: customerMobile || null,
           }),
-        }
+        },
       );
 
       const invoiceData = await invoiceRes.json();
 
       if (invoiceData.success) {
-        setCart([]);
-        onClose();
-        alert("Invoice emailed successfully to the customer.");
+        showToast("Invoice emailed successfully to the customer.", "success");
+        if (refreshDashboard) {
+          refreshDashboard();
+        }
+        setTimeout(() => {
+          setCart([]);
+          onClose();
+        }, 1200);
       } else {
-        alert(invoiceData.message || "Failed to send invoice email.");
+        showToast(
+          invoiceData.message || "Failed to send invoice email.",
+          "error",
+        );
       }
     } catch (err) {
       console.error(err);
-      alert("Error completing checkout: " + err.message);
+      showToast("Error completing checkout: " + err.message, "error");
     }
   };
 
@@ -133,7 +150,13 @@ const CartModal = ({ cart, setCart, onClose }) => {
                   <td>
                     <div className="product-name">{item.name}</div>
                     {item.description && (
-                      <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '2px' }}>
+                      <div
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "#94a3b8",
+                          marginTop: "2px",
+                        }}
+                      >
                         {item.description}
                       </div>
                     )}
@@ -165,6 +188,13 @@ const CartModal = ({ cart, setCart, onClose }) => {
           </table>
         </div>
 
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={closeToast}
+          />
+        )}
         <div className="cart-footer">
           <div className="customer-email">
             <label>Customer Email (Required):</label>

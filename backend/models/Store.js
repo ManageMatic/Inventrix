@@ -34,6 +34,10 @@ const storeSchema = new mongoose.Schema({
     state: String,
     zipCode: String
   },
+  settings: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 }, { timestamps: true });

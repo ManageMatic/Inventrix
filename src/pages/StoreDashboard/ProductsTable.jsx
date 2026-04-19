@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
 import ProductModal from "./ProductModal";
-import { Trash2, Edit, QrCode } from "lucide-react";
+import { Trash2, Edit, QrCode, ChevronUp, ChevronDown } from "lucide-react";
 import "../../components/Toast.jsx";
 
-const ProductsTable = ({ storeId }) => {
+const ProductsTable = ({ storeId, refreshSignal }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [sortField, setSortField] = useState('name');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
   const token = localStorage.getItem("token");
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
     if (storeId) fetchProducts();
-  }, [storeId]);
+  }, [storeId, refreshSignal]);
 
   const fetchProducts = async () => {
     try {
@@ -41,23 +45,46 @@ const ProductsTable = ({ storeId }) => {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this product?")) return;
-    try {
-      const res = await fetch(`http://localhost:5000/api/products/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data.success) {
-        setProducts(products.filter((p) => p._id !== id));
-      } else {
-        
-      }
-    } catch (err) {
-      console.error("Error deleting product:", err);
-      setToast({ message: "Error deleting product", type: "error" });
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
     }
+    setCurrentPage(1); // Reset to first page when sorting
+  };
+
+  const sortedProducts = [...products].sort((a, b) => {
+    let aValue = a[sortField];
+    let bValue = b[sortField];
+
+    // Handle different data types
+    if (sortField === 'sellingPrice' || sortField === 'quantity') {
+      aValue = Number(aValue);
+      bValue = Number(bValue);
+    } else if (sortField === 'product_id') {
+      aValue = parseInt(aValue);
+      bValue = parseInt(bValue);
+    } else {
+      aValue = String(aValue || '').toLowerCase();
+      bValue = String(bValue || '').toLowerCase();
+    }
+
+    if (sortDirection === 'asc') {
+      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+    } else {
+      return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+    }
+  });
+
+  // Pagination logic
+  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = sortedProducts.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -80,16 +107,26 @@ const ProductsTable = ({ storeId }) => {
           <table className="products-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Stock</th>
+                <th onClick={() => handleSort('product_id')} className="sortable-header">
+                  ID {sortField === 'product_id' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                </th>
+                <th onClick={() => handleSort('name')} className="sortable-header">
+                  Name {sortField === 'name' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                </th>
+                <th onClick={() => handleSort('category')} className="sortable-header">
+                  Category {sortField === 'category' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                </th>
+                <th onClick={() => handleSort('sellingPrice')} className="sortable-header">
+                  Price {sortField === 'sellingPrice' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                </th>
+                <th onClick={() => handleSort('quantity')} className="sortable-header">
+                  Stock {sortField === 'quantity' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                </th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((p) => (
+              {paginatedProducts.map((p) => (
                 <tr key={p._id}>
                   <td>{p.product_id}</td>
                   <td>{p.name}</td>
@@ -119,6 +156,39 @@ const ProductsTable = ({ storeId }) => {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="pagination-btn"
+              >
+                Previous
+              </button>
+              
+              <div className="pagination-numbers">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+              
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="pagination-btn"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       )}
 

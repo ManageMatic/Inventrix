@@ -4,7 +4,7 @@ import {
   ShoppingBag,
   TrendingUp,
   Users,
-  Settings,
+  Store,
   QrCode,
   RefreshCw,
 } from "lucide-react";
@@ -16,7 +16,7 @@ const tabs = [
   { id: "generateQR", label: "Generate QR", icon: <QrCode size={18} /> },
   { id: "insights", label: "Insights", icon: <TrendingUp size={18} /> },
   { id: "employees", label: "Employees", icon: <Users size={18} /> },
-  { id: "settings", label: "Settings", icon: <Settings size={18} /> },
+  { id: "settings", label: "Store Details", icon: <Store size={18} /> },
 ];
 
 const StoreNav = ({ activeTab, setActiveTab, onRefresh, isRefreshing }) => {

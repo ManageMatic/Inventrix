@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Trash2, Edit2 } from "lucide-react";
+import { Trash2, Edit2, ChevronUp, ChevronDown } from "lucide-react";
 
 const SalesTable = () => {
   const { storeId } = useParams();
@@ -8,6 +8,10 @@ const SalesTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingSale, setEditingSale] = useState(null);
+  const [sortField, setSortField] = useState("date");
+  const [sortDirection, setSortDirection] = useState("desc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
   const token = localStorage.getItem("token");
 
   // Fetch sales data
@@ -22,8 +26,8 @@ const SalesTable = () => {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/sales/store/${storeId}`,
         {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
 
       const data = await res.json();
@@ -42,6 +46,54 @@ const SalesTable = () => {
     }
   };
 
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+    setCurrentPage(1); // Reset to first page when sorting
+  };
+
+  const sortedSales = [...sales].sort((a, b) => {
+    let aValue = a[sortField];
+    let bValue = b[sortField];
+
+    // Handle different data types
+    if (sortField === "date") {
+      aValue = new Date(aValue);
+      bValue = new Date(bValue);
+    } else if (sortField === "subtotal" || sortField === "totalAmount") {
+      aValue = Number(aValue);
+      bValue = Number(bValue);
+    } else if (sortField === "sale_id") {
+      aValue = parseInt(aValue);
+      bValue = parseInt(bValue);
+    } else {
+      aValue = String(aValue || "").toLowerCase();
+      bValue = String(bValue || "").toLowerCase();
+    }
+
+    if (sortDirection === "asc") {
+      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+    } else {
+      return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+    }
+  });
+
+  // Pagination logic
+  const totalPages = Math.ceil(sortedSales.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedSales = sortedSales.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleDelete = async (saleId) => {
     if (!window.confirm("Are you sure you want to delete this sale?")) return;
 
@@ -50,14 +102,14 @@ const SalesTable = () => {
         `${import.meta.env.VITE_API_URL}/api/sales/${saleId}`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` }
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
 
       const data = await res.json();
 
       if (data.success) {
-        setSales(sales.filter(s => s._id !== saleId));
+        setSales(sales.filter((s) => s._id !== saleId));
         alert("Sale deleted successfully");
       } else {
         alert(data.message || "Failed to delete sale");
@@ -75,16 +127,16 @@ const SalesTable = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ status: newStatus })
-        }
+          body: JSON.stringify({ status: newStatus }),
+        },
       );
 
       const data = await res.json();
 
       if (data.success) {
-        setSales(sales.map(s => s._id === saleId ? data.data : s));
+        setSales(sales.map((s) => (s._id === saleId ? data.data : s)));
         setEditingSale(null);
         alert("Sale updated successfully");
       } else {
@@ -95,15 +147,24 @@ const SalesTable = () => {
     }
   };
 
-  if (loading) return <div className="sales-section"><p>Loading sales...</p></div>;
+  if (loading)
+    return (
+      <div className="sales-section">
+        <p>Loading sales...</p>
+      </div>
+    );
 
-  if (error) return <div className="sales-section"><p style={{ color: 'red' }}>Error: {error}</p></div>;
+  if (error)
+    return (
+      <div className="sales-section">
+        <p style={{ color: "red" }}>Error: {error}</p>
+      </div>
+    );
 
   return (
     <div className="sales-section">
       <div className="sales-header">
         <h2>Sales Records</h2>
-        <button onClick={fetchSales} className="refresh-btn">Refresh</button>
       </div>
 
       {sales.length === 0 ? (
@@ -113,31 +174,90 @@ const SalesTable = () => {
           <table className="sales-table">
             <thead>
               <tr>
-                <th>Sale ID</th>
-                <th>Date</th>
+                <th
+                  onClick={() => handleSort("sale_id")}
+                  className="sortable-header"
+                >
+                  Sale ID{" "}
+                  {sortField === "sale_id" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
+                </th>
+                <th
+                  onClick={() => handleSort("date")}
+                  className="sortable-header"
+                >
+                  Date{" "}
+                  {sortField === "date" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
+                </th>
                 <th>Items</th>
-                <th>Subtotal</th>
-                <th>Total</th>
+                <th
+                  onClick={() => handleSort("subtotal")}
+                  className="sortable-header"
+                >
+                  Subtotal{" "}
+                  {sortField === "subtotal" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
+                </th>
+                <th
+                  onClick={() => handleSort("totalAmount")}
+                  className="sortable-header"
+                >
+                  Total{" "}
+                  {sortField === "totalAmount" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
+                </th>
                 <th>Payment</th>
-                <th>Status</th>
+                <th
+                  onClick={() => handleSort("status")}
+                  className="sortable-header"
+                >
+                  Status{" "}
+                  {sortField === "status" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
+                </th>
                 <th>Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {sales.map((sale) => (
+              {paginatedSales.map((sale) => (
                 <tr key={sale._id}>
                   <td>{sale.sale_id}</td>
                   <td>{new Date(sale.date).toLocaleDateString()}</td>
                   <td>{sale.items.length} items</td>
                   <td>₹{sale.subtotal}</td>
-                  <td><strong>₹{sale.totalAmount}</strong></td>
+                  <td>
+                    <strong>₹{sale.totalAmount}</strong>
+                  </td>
                   <td>{sale.paymentMethod.toUpperCase()}</td>
                   <td>
                     {editingSale === sale._id ? (
                       <select
                         value={sale.status}
-                        onChange={(e) => handleUpdateStatus(sale._id, e.target.value)}
+                        onChange={(e) =>
+                          handleUpdateStatus(sale._id, e.target.value)
+                        }
                       >
                         <option value="completed">Completed</option>
                         <option value="cancelled">Cancelled</option>
@@ -152,7 +272,11 @@ const SalesTable = () => {
                   <td>
                     <button
                       className="edit-btn"
-                      onClick={() => setEditingSale(editingSale === sale._id ? null : sale._id)}
+                      onClick={() =>
+                        setEditingSale(
+                          editingSale === sale._id ? null : sale._id,
+                        )
+                      }
                       title="Edit Status"
                     >
                       <Edit2 size={16} />
@@ -169,6 +293,41 @@ const SalesTable = () => {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="pagination-btn"
+              >
+                Previous
+              </button>
+
+              <div className="pagination-numbers">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`pagination-btn ${currentPage === page ? "active" : ""}`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="pagination-btn"
+              >
+                Next
+              </button>
+            </div>
+          )}
 
           <div className="sales-total">
             <h3>
