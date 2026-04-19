@@ -17,6 +17,7 @@
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.3",
+    "nodemailer": "^6.9.4",
     "pdfkit": "^0.18.0",
     "socket.io": "^4.8.3"
   },

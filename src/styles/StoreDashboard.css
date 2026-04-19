@@ -1066,6 +1066,7 @@
     margin-bottom: 5px;
 }
 
+.customer-email input,
 .customer-mobile input {
     width: 100%;
     padding: 8px 12px;

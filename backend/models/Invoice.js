@@ -64,6 +64,12 @@ const invoiceSchema = new mongoose.Schema({
         enum: ['cash', 'upi'],
         required: true
     },
+    customer_mobile: {
+        type: String
+    },
+    customer_email: {
+        type: String
+    },
     invoiceUrl: String,
     createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });

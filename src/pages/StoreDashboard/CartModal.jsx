@@ -6,6 +6,7 @@ const CartModal = ({ cart, setCart, onClose }) => {
   const location = useLocation();
   // Extract storeId from URL path /store/:storeId
   const storeId = location.pathname.split("/store/")[1];
+  const [customerEmail, setCustomerEmail] = useState("");
   const [customerMobile, setCustomerMobile] = useState("");
   const increase = (id) => {
     setCart(cart.map((p) => (p._id === id ? { ...p, qty: p.qty + 1 } : p)));
@@ -43,6 +44,11 @@ const CartModal = ({ cart, setCart, onClose }) => {
       }
 
       // Step 1: Create Sale
+      if (!customerEmail) {
+        alert("Customer email is required to send the invoice.");
+        return;
+      }
+
       const saleRes = await fetch(
         `${import.meta.env.VITE_API_URL}/api/sales/create`,
         {
@@ -78,24 +84,21 @@ const CartModal = ({ cart, setCart, onClose }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({
+            customer_email: customerEmail,
+            customer_mobile: customerMobile || null,
+          }),
         }
       );
 
       const invoiceData = await invoiceRes.json();
 
       if (invoiceData.success) {
-        // Clear cart and close modal
         setCart([]);
         onClose();
-        
-        // Show success with download link
-        const downloadUrl = `${import.meta.env.VITE_API_URL}/api/invoices/download/${invoiceData.data.invoiceId}`;
-        alert("Invoice generated successfully! Check your downloads.");
-        
-        // Optional: Open invoice in new tab
-        window.open(downloadUrl, '_blank');
+        alert("Invoice emailed successfully to the customer.");
       } else {
-        alert(invoiceData.message || "Failed to generate invoice");
+        alert(invoiceData.message || "Failed to send invoice email.");
       }
     } catch (err) {
       console.error(err);
@@ -163,6 +166,17 @@ const CartModal = ({ cart, setCart, onClose }) => {
         </div>
 
         <div className="cart-footer">
+          <div className="customer-email">
+            <label>Customer Email (Required):</label>
+            <input
+              type="email"
+              value={customerEmail}
+              onChange={(e) => setCustomerEmail(e.target.value)}
+              placeholder="Enter email address"
+              required
+            />
+          </div>
+
           <div className="customer-mobile">
             <label>Customer Mobile (Optional):</label>
             <input
