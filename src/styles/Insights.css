@@ -1,0 +1,337 @@
+/* ================== INSIGHTS SECTION ================== */
+.insights-section {
+    background: #0f172a;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    margin-bottom: 25px;
+}
+
+.insights-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #334155;
+}
+
+.insights-header h2 {
+    color: #38bdf8;
+    font-size: 1.4rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.time-range-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.time-btn {
+    background: #1e293b;
+    color: #94a3b8;
+    border: 1px solid #334155;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.time-btn:hover {
+    background: #334155;
+    color: #e2e8f0;
+}
+
+.time-btn.active {
+    background: #38bdf8;
+    color: #fff;
+    border-color: #38bdf8;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.metric-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+    border-color: #38bdf8;
+    transform: translateY(-2px);
+}
+
+.metric-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.metric-icon.revenue {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.metric-icon.orders {
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+}
+
+.metric-icon.average {
+    background: rgba(168, 85, 247, 0.2);
+    color: #a855f7;
+}
+
+.metric-icon.products {
+    background: rgba(251, 146, 60, 0.2);
+    color: #fb923c;
+}
+
+.metric-content h4 {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.metric-value {
+    color: #f8fafc;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Charts Container */
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart-section {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.chart-section h3 {
+    color: #38bdf8;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #334155;
+}
+
+.no-data {
+    color: #94a3b8;
+    text-align: center;
+    padding: 40px 20px;
+    font-style: italic;
+}
+
+/* Performance Container */
+.performance-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.performance-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.performance-card h3 {
+    color: #38bdf8;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.performance-card.alert h3 {
+    color: #f59e0b;
+}
+
+.performance-card.alert {
+    border-color: #f59e0b;
+    border-left: 4px solid #f59e0b;
+}
+
+/* Product List */
+.product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #0f172a;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    transition: all 0.3s ease;
+}
+
+.product-item:hover {
+    border-color: #38bdf8;
+    background: #1e293b;
+}
+
+.product-item.warning {
+    border-color: #f59e0b;
+}
+
+.product-item.warning:hover {
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #38bdf8;
+    color: #fff;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.stock-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.product-info h5 {
+    color: #f8fafc;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-meta {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.product-value {
+    color: #10b981;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.warning-icon {
+    font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .charts-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .insights-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .time-range-selector {
+        width: 100%;
+    }
+
+    .time-btn {
+        flex: 1;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .metric-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .metric-content h4 {
+        font-size: 0.85rem;
+    }
+
+    .metric-value {
+        font-size: 1.2rem;
+    }
+
+    .performance-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-item {
+        flex-wrap: wrap;
+    }
+
+    .product-value {
+        width: 100%;
+        text-align: right;
+        margin-top: 8px;
+    }
+}

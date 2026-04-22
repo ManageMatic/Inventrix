@@ -8,6 +8,7 @@ import ProductsTable from "./ProductsTable";
 import SalesTable from "./SalesTable";
 import GenerateQR from "./GenerateQR";
 import StoreDetails from "./StoreDetails";
+import Insights from "./Insights";
 import "../../styles/StoreDashboard.css";
 
 // ── Create socket ONCE outside component (prevents reconnecting on re-renders) ──
@@ -129,6 +130,10 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
 
       {activeTab === "generateQR" && store && (
         <GenerateQR storeId={store._id} />
+      )}
+
+      {activeTab === "insights" && store && (
+        <Insights storeId={store._id} />
       )}
 
       {activeTab === "settings" && store && (
