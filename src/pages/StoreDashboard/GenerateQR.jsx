@@ -1,11 +1,50 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 const API_URL = import.meta.env.VITE_API_URL;
+
+// ── Helper: Extract IP from API URL ──────────────────────
+const getIPFromURL = (url) => {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  } catch {
+    return null;
+  }
+};
 
 const GenerateQR = ({ storeId }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0); // For cache-busting QR images
+  const [currentIP, setCurrentIP] = useState(getIPFromURL(API_URL));
+  const [showRefreshNotification, setShowRefreshNotification] = useState(false);
+  const ipCheckIntervalRef = useRef(null);
   const token = localStorage.getItem("token");
+
+  // ── IP Change Detection ──────────────────────────────────
+  useEffect(() => {
+    const checkIPChange = () => {
+      const newIP = getIPFromURL(API_URL);
+      if (newIP && newIP !== currentIP) {
+        console.log(`🔄 IP changed from ${currentIP} to ${newIP}. Refreshing QR codes...`);
+        setCurrentIP(newIP);
+        setRefreshKey((prev) => prev + 1); // Trigger re-render with new cache-buster
+        setShowRefreshNotification(true);
+        
+        // Auto-hide notification after 3 seconds
+        setTimeout(() => setShowRefreshNotification(false), 3000);
+      }
+    };
+
+    // Check for IP change every 10 seconds
+    ipCheckIntervalRef.current = setInterval(checkIPChange, 10000);
+
+    return () => {
+      if (ipCheckIntervalRef.current) {
+        clearInterval(ipCheckIntervalRef.current);
+      }
+    };
+  }, [currentIP]);
 
   useEffect(() => {
     if (storeId) fetchProducts();
@@ -137,7 +176,23 @@ const GenerateQR = ({ storeId }) => {
 
   // ── Main render ─────────────────────────────────────────────
   return (
-    <div className="generate-qr-wrapper">
+    <div className="generate-qr-wrapper">      {/* IP Change Notification */}
+      {showRefreshNotification && (
+        <div style={{
+          position: "fixed",
+          top: "20px",
+          right: "20px",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          padding: "16px 24px",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          zIndex: 1000,
+          animation: "slideIn 0.3s ease-in-out"
+        }}>
+          ✅ QR codes refreshed - IP updated
+        </div>
+      )}
       {/* Header row */}
       <div className="generate-qr-header">
         <h2 className="generate-qr-title">QR Codes</h2>
@@ -154,7 +209,8 @@ const GenerateQR = ({ storeId }) => {
             {/* QR Image */}
             <div className="generate-qr-box">
               <img
-                src={`${API_URL}/qr_codes/QR_${p.name}.png`}
+                key={refreshKey}
+                src={`${API_URL}/qr_codes/QR_${p.name}.png?t=${refreshKey}`}
                 alt={p.name}
                 width="140"
                 height="140"
