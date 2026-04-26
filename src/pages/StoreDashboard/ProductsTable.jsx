@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ProductModal from "./ProductModal";
+import ConfirmDialog from "./ConfirmDialog";
 import { Trash2, Edit, QrCode, ChevronUp, ChevronDown } from "lucide-react";
 import "../../components/Toast.jsx";
 
@@ -8,12 +9,14 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [sortField, setSortField] = useState('name');
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortField, setSortField] = useState("name");
+  const [sortDirection, setSortDirection] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const token = localStorage.getItem("token");
   const [toast, setToast] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   useEffect(() => {
     if (storeId) fetchProducts();
@@ -45,12 +48,43 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
     setShowModal(true);
   };
 
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/products/${deleteId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        setProducts(products.filter((p) => p._id !== deleteId));
+      } else {
+        setToast({ message: "Error deleting product", type: "error" });
+      }
+    } catch (err) {
+      console.error("Error deleting product:", err);
+      setToast({ message: "Error deleting product", type: "error" });
+    } finally {
+      setConfirmOpen(false);
+      setDeleteId(null);
+    }
+  };
+
   const handleSort = (field) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortDirection('asc');
+      setSortDirection("asc");
     }
     setCurrentPage(1); // Reset to first page when sorting
   };
@@ -60,18 +94,18 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
     let bValue = b[sortField];
 
     // Handle different data types
-    if (sortField === 'sellingPrice' || sortField === 'quantity') {
+    if (sortField === "sellingPrice" || sortField === "quantity") {
       aValue = Number(aValue);
       bValue = Number(bValue);
-    } else if (sortField === 'product_id') {
+    } else if (sortField === "product_id") {
       aValue = parseInt(aValue);
       bValue = parseInt(bValue);
     } else {
-      aValue = String(aValue || '').toLowerCase();
-      bValue = String(bValue || '').toLowerCase();
+      aValue = String(aValue || "").toLowerCase();
+      bValue = String(bValue || "").toLowerCase();
     }
 
-    if (sortDirection === 'asc') {
+    if (sortDirection === "asc") {
       return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
     } else {
       return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
@@ -81,7 +115,10 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
   // Pagination logic
   const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = sortedProducts.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedProducts = sortedProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -107,20 +144,65 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
           <table className="products-table">
             <thead>
               <tr>
-                <th onClick={() => handleSort('product_id')} className="sortable-header">
-                  ID {sortField === 'product_id' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                <th
+                  onClick={() => handleSort("product_id")}
+                  className="sortable-header"
+                >
+                  ID{" "}
+                  {sortField === "product_id" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
                 </th>
-                <th onClick={() => handleSort('name')} className="sortable-header">
-                  Name {sortField === 'name' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                <th
+                  onClick={() => handleSort("name")}
+                  className="sortable-header"
+                >
+                  Name{" "}
+                  {sortField === "name" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
                 </th>
-                <th onClick={() => handleSort('category')} className="sortable-header">
-                  Category {sortField === 'category' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                <th
+                  onClick={() => handleSort("category")}
+                  className="sortable-header"
+                >
+                  Category{" "}
+                  {sortField === "category" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
                 </th>
-                <th onClick={() => handleSort('sellingPrice')} className="sortable-header">
-                  Price {sortField === 'sellingPrice' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                <th
+                  onClick={() => handleSort("sellingPrice")}
+                  className="sortable-header"
+                >
+                  Price{" "}
+                  {sortField === "sellingPrice" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
                 </th>
-                <th onClick={() => handleSort('quantity')} className="sortable-header">
-                  Stock {sortField === 'quantity' && (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                <th
+                  onClick={() => handleSort("quantity")}
+                  className="sortable-header"
+                >
+                  Stock{" "}
+                  {sortField === "quantity" &&
+                    (sortDirection === "asc" ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <ChevronDown size={14} />
+                    ))}
                 </th>
                 <th>Actions</th>
               </tr>
@@ -143,7 +225,7 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
                     </button>
                     <button
                       className="icon-btn"
-                      onClick={() => handleDelete(p._id)}
+                      onClick={() => handleDeleteClick(p._id)}
                       title="Delete"
                     >
                       <Trash2 size={16} />
@@ -167,19 +249,21 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
               >
                 Previous
               </button>
-              
+
               <div className="pagination-numbers">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`pagination-btn ${currentPage === page ? "active" : ""}`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
               </div>
-              
+
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
@@ -192,6 +276,7 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
         </div>
       )}
 
+      {/* Product Modal for Add/Edit */}
       {showModal && (
         <ProductModal
           storeId={storeId}
@@ -201,6 +286,16 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
             setEditing(null);
             fetchProducts();
           }}
+        />
+      )}
+
+      {/* Confirm Delete Dialog */}
+      {confirmOpen && (
+        <ConfirmDialog
+          title="Delete Product"
+          message="Are you sure you want to delete this product?"
+          onConfirm={confirmDelete}
+          onCancel={() => setConfirmOpen(false)}
         />
       )}
     </div>

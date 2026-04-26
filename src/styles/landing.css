@@ -24,7 +24,7 @@ p {
 
 /* ==================== TOP GLOW ==================== */
 .top-glow {
-    position: absolute;
+    position: fixed;
     top: -140px;
     left: 50%;
     transform: translateX(-50%);
@@ -161,9 +161,6 @@ p {
 }
 
 /* ==================== FEATURES ==================== */
-.features {
-    background: var(--bg-dark);
-}
 
 .feature-grid {
     display: grid;

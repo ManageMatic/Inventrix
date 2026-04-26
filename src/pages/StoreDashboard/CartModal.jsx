@@ -197,7 +197,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard }) => {
         )}
         <div className="cart-footer">
           <div className="customer-email">
-            <label>Customer Email (Required):</label>
+            <label>Customer Email:</label>
             <input
               type="email"
               value={customerEmail}
@@ -208,7 +208,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard }) => {
           </div>
 
           <div className="customer-mobile">
-            <label>Customer Mobile (Optional):</label>
+            <label>Customer Mobile:</label>
             <input
               type="tel"
               value={customerMobile}

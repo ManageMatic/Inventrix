@@ -25,7 +25,7 @@ function Login() {
         formData,
         {
           withCredentials: true,
-        }
+        },
       );
       localStorage.setItem("token", res.data.token);
       setMessage("Login successful!");

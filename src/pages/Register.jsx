@@ -29,9 +29,7 @@ function Register() {
   const fetchStores = async () => {
     setLoadingStores(true);
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/stores/all"
-      );
+      const res = await axios.get("http://localhost:5000/api/stores/all");
       if (res.data.success) {
         setStores(res.data.data);
         // Clear store_id if no stores available
@@ -63,7 +61,7 @@ function Register() {
     try {
       const res = await axios.post(
         "http://localhost:5000/api/auth/register",
-        formData
+        formData,
       );
       setMessage(res.data.message || "Registered successfully!");
       navigate("/login");
@@ -118,7 +116,11 @@ function Register() {
           </span>
         </div>
 
-        <select name="userType" onChange={handleChange} value={formData.userType}>
+        <select
+          name="userType"
+          onChange={handleChange}
+          value={formData.userType}
+        >
           <option value="store_owner">Store Owner</option>
           <option value="employee">Employee</option>
           <option value="supplier">Supplier</option>
@@ -137,8 +139,8 @@ function Register() {
               {loadingStores
                 ? "Loading stores..."
                 : stores.length === 0
-                ? "No stores available"
-                : "Select your store"}
+                  ? "No stores available"
+                  : "Select your store"}
             </option>
             {stores.map((store) => (
               <option key={store._id} value={store._id}>
