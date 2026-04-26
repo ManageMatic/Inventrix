@@ -28,7 +28,8 @@
     margin-bottom: 5px;
 }
 
-.auth-subtitle {
+.auth-subtitle,
+.auth-description {
     text-align: center;
     font-size: 0.9rem;
     color: var(--text-secondary);
@@ -123,4 +124,67 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* OTP BOXES */
+/* OTP WRAPPER */
+.otp-wrapper {
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* OTP BOXES ALIGNMENT */
+.otp-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* OTP INPUT */
+.otp-container input {
+    width: 45px;
+    height: 50px;
+    text-align: center;
+    font-size: 1.4rem;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: #fff;
+    transition: all 0.2s ease;
+}
+
+/* FOCUS EFFECT */
+.otp-container input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 480px) {
+    .otp-container input {
+        width: 38px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+}
+
+.otp-resend {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.otp-resend .disabled {
+    color: #64748b;
+}
+
+.otp-resend .active {
+    color: #38bdf8;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.otp-resend .active:hover {
+    text-decoration: underline;
 }

@@ -7,6 +7,7 @@ import StoreDashboard from "./pages/StoreDashboard/StoreDashboard";
 import ScanProduct from "./pages/ScanProduct";
 import SalesTable from "./pages/StoreDashboard/SalesTable";
 import CartModal from "./pages/StoreDashboard/CartModal";
+import ResetPassword from "./pages/ResetPassword";
 import { useState } from "react";
 
 function App() {
@@ -39,6 +40,8 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
+
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route path="/OwnerDashboard" element={<OwnerDashboard />} />
 

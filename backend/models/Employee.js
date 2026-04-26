@@ -32,7 +32,9 @@ const employeeSchema = new mongoose.Schema({
     store_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Store'
-    }
+    },
+    resetOTP: String,
+    otpExpiry: Date,
 }, { timestamps: true });
 
 module.exports = mongoose.model('Employee', employeeSchema);

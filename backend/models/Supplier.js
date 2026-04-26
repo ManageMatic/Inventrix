@@ -31,7 +31,9 @@ const supplierSchema = new mongoose.Schema({
         type: String,
         required: true,
         select: false
-    }
+    },
+    resetOTP: String,
+    otpExpiry: Date,
 }, { timestamps: true });
 
 module.exports = mongoose.model('Supplier', supplierSchema);

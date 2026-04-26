@@ -22,7 +22,9 @@ const storeOwnerSchema = new mongoose.Schema({
     stores: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Store'
-    }]
+    }],
+    resetOTP: String,
+    otpExpiry: Date,
 }, { timestamps: true });
 
 module.exports = mongoose.model('StoreOwner', storeOwnerSchema);
