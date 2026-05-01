@@ -1,0 +1,37 @@
+/* ================= Stats Grid ================= */
+.store-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card h3 {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+.stat-card p {
+    color: #38bdf8;
+    font-size: 1.4rem;
+    font-weight: bold;
+}

@@ -1,0 +1,75 @@
+/* ================= Store Overview ================= */
+.store-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* ================= Low Stock Products ================= */
+.low-stock-section {
+    background: #1e293b;
+    border-radius: 10px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    border-left: 4px solid #facc15;
+}
+
+.low-stock-section h4 {
+    color: #facc15;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.low-stock-section ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.low-stock-section li {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+}
+
+.low-stock-section li:last-child {
+    border-bottom: none;
+}
+
+.low-stock-section strong {
+    color: #38bdf8;
+}
+
+.low-stock-section span {
+    color: #f87171;
+    font-weight: bold;
+}
+
+/* Charts Section */
+.charts-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.chart-box {
+    background: #1e293b;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+}

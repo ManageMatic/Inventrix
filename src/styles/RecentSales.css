@@ -1,0 +1,27 @@
+/* Recent Sales */
+.recent-sales {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.recent-sales h2 {
+    margin-bottom: 15px;
+    color: #38bdf8;
+}
+
+.recent-sales table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.recent-sales th,
+.recent-sales td {
+    padding: 12px;
+    border-bottom: 1px solid #334155;
+    text-align: left;
+}
+
+.recent-sales th {
+    color: #94a3b8;
+}

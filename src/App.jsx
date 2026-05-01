@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import OwnerDashboard from "./pages/OwnerDashboard/OwnerDashboard";
-import StoreDashboard from "./pages/StoreDashboard/StoreDashboard";
+import LandingPage from "./pages/landing/LandingPage";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import OwnerDashboard from "./pages/dashboard/OwnerDashboard";
+import StoreDashboard from "./pages/dashboard/StoreDashboard";
 import ScanProduct from "./pages/ScanProduct";
-import SalesTable from "./pages/StoreDashboard/SalesTable";
-import CartModal from "./pages/StoreDashboard/CartModal";
-import ResetPassword from "./pages/ResetPassword";
+import SalesTable from "./components/dashboard/store/SalesTable";
+import CartModal from "./components/dashboard/store/CartModal";
+import ResetPassword from "./pages/auth/ResetPassword";
 import { useState } from "react";
 
 function App() {
