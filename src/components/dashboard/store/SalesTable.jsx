@@ -2,6 +2,7 @@ import "../../../styles/SalesTable.css";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Trash2, Edit2, ChevronUp, ChevronDown } from "lucide-react";
+import { API_URL } from "../../../config";
 
 const SalesTable = () => {
   const { storeId } = useParams();
@@ -25,7 +26,7 @@ const SalesTable = () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/sales/store/${storeId}`,
+        `${API_URL}/api/sales/store/${storeId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -100,7 +101,7 @@ const SalesTable = () => {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/sales/${saleId}`,
+        `${API_URL}/api/sales/${saleId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -123,7 +124,7 @@ const SalesTable = () => {
   const handleUpdateStatus = async (saleId, newStatus) => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/sales/${saleId}`,
+        `${API_URL}/api/sales/${saleId}`,
         {
           method: "PUT",
           headers: {

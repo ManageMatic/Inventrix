@@ -10,9 +10,10 @@ import GenerateQR from "../../components/dashboard/store/GenerateQR";
 import StoreDetails from "./StoreDetails";
 import Insights from "../../components/dashboard/store/Insights";
 import "../../styles/StoreDashboard.css";
+import { API_URL, SOCKET_URL } from "../../config";
 
 // ── Create socket ONCE outside component (prevents reconnecting on re-renders) ──
-const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000");
+const socket = io(SOCKET_URL);
 
 const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
   const { storeId } = useParams();
@@ -30,8 +31,15 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
     if (!storeId) return;
     fetchStoreDetails();
 
-    // Join store room
-    socket.emit("join-store", storeId);
+    const joinRoom = () => {
+      socket.emit("join-store", storeId);
+    };
+
+    // Join room if already connected, or when it connects/reconnects
+    if (socket.connected) {
+      joinRoom();
+    }
+    socket.on("connect", joinRoom);
 
     const handleScan = (product) => {
       setCart((prev) => {
@@ -52,6 +60,7 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
     socket.on("product-scanned", handleScan);
 
     return () => {
+      socket.off("connect", joinRoom);
       socket.off("product-scanned", handleScan);
     };
   }, [storeId]);
@@ -62,7 +71,7 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
     setError(null);
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/stores/${storeId}`,
+        `${API_URL}/api/stores/${storeId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },

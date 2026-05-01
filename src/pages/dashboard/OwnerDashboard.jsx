@@ -7,6 +7,7 @@ import StoreList from "../../components/dashboard/owner/StoreList";
 import CreateStoreModal from "../../components/dashboard/owner/CreateStoreModal";
 import AnalyticsChart from "../../components/dashboard/owner/AnalyticsChart";
 import "../../styles/OwnerDashboard.css";
+import { API_URL } from "../../config";
 
 const OwnerDashboard = () => {
   const [user, setUser] = useState({ name: "", role: "Store Owner" });
@@ -24,7 +25,7 @@ const OwnerDashboard = () => {
 
   const fetchOwnerData = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/me", {
+      const res = await fetch(`${API_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -36,7 +37,7 @@ const OwnerDashboard = () => {
 
   const fetchStores = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/stores/getMyStores", {
+      const res = await fetch(`${API_URL}/api/stores/getMyStores`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

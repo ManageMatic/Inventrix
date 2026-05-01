@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import { TrendingUp, Package, DollarSign, ShoppingCart, AlertTriangle } from "lucide-react";
 import "../../../styles/Insights.css";
+import { API_URL } from "../../../config";
 
 const Insights = ({ storeId }) => {
   const [salesData, setSalesData] = useState([]);
@@ -46,14 +47,14 @@ const Insights = ({ storeId }) => {
 
       // Fetch sales data
       const salesRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/sales/store/${storeId}`,
+        `${API_URL}/api/sales/store/${storeId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const salesData = await salesRes.json();
 
       // Fetch products data
       const productsRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/products/${storeId}`,
+        `${API_URL}/api/products/${storeId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const productsData = await productsRes.json();

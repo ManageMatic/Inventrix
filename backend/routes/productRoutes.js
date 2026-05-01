@@ -6,6 +6,9 @@ const { authenticateStoreOwner, authenticate } = require("../middleware/auth"); 
 // Add product to store (storeId)
 router.post("/add/:storeId", authenticateStoreOwner, productController.addProduct);
 
+// Get product by QR code
+router.get("/qr/:qrCode", productController.getProductByQR);
+
 // Get products for a store
 router.get("/:storeId", authenticateStoreOwner, productController.getProductsByStore);
 
@@ -14,8 +17,6 @@ router.put("/:id", authenticateStoreOwner, productController.updateProduct);
 
 // Delete product
 router.delete("/:id", authenticateStoreOwner, productController.deleteProduct);
-
-router.get("/qr/:qrCode", productController.getProductByQR);
 
 /*
 // Temporarily add in productRoutes.js to debug

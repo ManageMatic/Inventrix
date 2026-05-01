@@ -1,6 +1,7 @@
 import "../../styles/StoreDetails.css";
 import { useState, useEffect } from "react";
 import { Store as StoreIcon, MapPin, Phone, Mail, User, Home } from "lucide-react";
+import { API_URL } from "../../config";
 
 const StoreDetails = ({ storeId }) => {
   const [store, setStore] = useState(null);
@@ -14,7 +15,7 @@ const StoreDetails = ({ storeId }) => {
   const fetchStoreDetails = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/stores/${storeId}`, {
+      const res = await fetch(`${API_URL}/api/stores/${storeId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

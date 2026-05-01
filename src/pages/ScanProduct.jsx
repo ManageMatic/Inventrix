@@ -1,7 +1,7 @@
 // src/pages/ScanProduct.jsx
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../config";
 
 const ScanProduct = () => {
   const { qrCode } = useParams();

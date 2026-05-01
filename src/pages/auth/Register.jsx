@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/auth.css";
+import { API_URL } from "../../config";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -29,7 +30,7 @@ function Register() {
   const fetchStores = async () => {
     setLoadingStores(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/stores/all");
+      const res = await axios.get(`${API_URL}/api/stores/all`);
       if (res.data.success) {
         setStores(res.data.data);
         // Clear store_id if no stores available
@@ -60,7 +61,7 @@ function Register() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        `${API_URL}/api/auth/register`,
         formData,
       );
       setMessage(res.data.message || "Registered successfully!");

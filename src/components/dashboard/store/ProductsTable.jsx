@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import ProductModal from "./ProductModal";
 import ConfirmDialog from "../../common/ConfirmDialog";
 import { Trash2, Edit, QrCode, ChevronUp, ChevronDown } from "lucide-react";
-import Toast from "../../common/Toast";
+import { API_URL } from "../../../config";
 
 const ProductsTable = ({ storeId, refreshSignal }) => {
   const [products, setProducts] = useState([]);
@@ -26,7 +26,7 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api/products/${storeId}`, {
+      const res = await fetch(`${API_URL}/api/products/${storeId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error(`Status ${res.status}`);
@@ -57,7 +57,7 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
   const confirmDelete = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/products/${deleteId}`,
+        `${API_URL}/api/products/${deleteId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

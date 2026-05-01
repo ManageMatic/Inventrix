@@ -3,8 +3,9 @@ import axios from "axios";
 import "../../styles/auth.css";
 import Toast from "../../components/common/Toast";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../config";
 
-const API = "http://localhost:5000/api/auth";
+const API = `${API_URL}/api/auth`;
 
 function ResetPassword() {
   const [step, setStep] = useState(1);

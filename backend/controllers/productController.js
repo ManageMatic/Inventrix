@@ -67,17 +67,6 @@ exports.addProduct = async (req, res) => {
 
         await product.save();
 
-        // Generate QR code image
-        const qrData = `http://${LOCAL_IP}:3000/scan-product/${qr_code}?storeId=${storeId}`;  // 🔥 FIXED
-
-        const filePath = path.join(
-            __dirname,
-            "../qr_codes",
-            `QR_${name}.png`
-        );
-
-        await QRCode.toFile(filePath, qrData);
-
         res.status(201).json({
             success: true,
             message: "Product added successfully",

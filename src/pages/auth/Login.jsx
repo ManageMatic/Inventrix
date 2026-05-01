@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/auth.css";
 import Toast from "../../components/common/Toast";
+import { API_URL } from "../../config";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ function Login() {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/api/auth/login`,
         formData,
         { withCredentials: true },
       );

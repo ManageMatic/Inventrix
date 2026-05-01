@@ -7,6 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { API_URL } from "../../../config";
 
 const SalesChart = ({ storeId }) => {
   const [chartData, setChartData] = useState([]);
@@ -24,7 +25,7 @@ const SalesChart = ({ storeId }) => {
     try {
       setLoading(true);
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/sales/store/${storeId}`,
+        `${API_URL}/api/sales/store/${storeId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

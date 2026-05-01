@@ -2,6 +2,7 @@ import "../../../styles/ProductModal.css";
 import { useState } from "react";
 import { X } from "lucide-react";
 import Toast from "../../common/Toast";
+import { API_URL } from "../../../config";
 
 const ProductModal = ({ storeId, product, onClose }) => {
   const [form, setForm] = useState({
@@ -27,8 +28,8 @@ const ProductModal = ({ storeId, product, onClose }) => {
 
     try {
       const url = product
-        ? `http://localhost:5000/api/products/${product._id}`
-        : `http://localhost:5000/api/products/add/${storeId}`;
+        ? `${API_URL}/api/products/${product._id}`
+        : `${API_URL}/api/products/add/${storeId}`;
 
       const method = product ? "PUT" : "POST";
 

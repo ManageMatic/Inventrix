@@ -3,6 +3,7 @@ import { X, Trash2, Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Toast from "../../common/Toast";
+import { API_URL } from "../../../config";
 
 const CartModal = ({ cart, setCart, onClose, refreshDashboard }) => {
   const location = useLocation();
@@ -60,7 +61,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard }) => {
       }
 
       const saleRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/sales/create`,
+        `${API_URL}/api/sales/create`,
         {
           method: "POST",
           headers: {
@@ -87,7 +88,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard }) => {
       // Step 2: Generate Invoice from Sale
       const saleId = saleData.data._id;
       const invoiceRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/invoices/generate/${saleId}`,
+        `${API_URL}/api/invoices/generate/${saleId}`,
         {
           method: "POST",
           headers: {

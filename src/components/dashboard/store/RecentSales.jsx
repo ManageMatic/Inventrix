@@ -1,6 +1,7 @@
 import "../../../styles/RecentSales.css";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { API_URL } from "../../../config";
 
 const RecentSales = () => {
   const { storeId } = useParams();
@@ -18,7 +19,7 @@ const RecentSales = () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/sales/recent/${storeId}?limit=5`,
+        `${API_URL}/api/sales/recent/${storeId}?limit=5`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }

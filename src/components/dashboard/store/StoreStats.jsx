@@ -1,5 +1,6 @@
 import "../../../styles/StoreStats.css";
 import { useEffect, useState } from "react";
+import { API_URL } from "../../../config";
 
 const StoreStats = ({ storeId }) => {
   const [stats, setStats] = useState({
@@ -19,7 +20,7 @@ const StoreStats = ({ storeId }) => {
   const fetchStats = async () => {
     try {
       // Fetch products
-      const productsRes = await fetch(`http://localhost:5000/api/products/${storeId}`, {
+      const productsRes = await fetch(`${API_URL}/api/products/${storeId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const productsData = await productsRes.json();
@@ -40,7 +41,7 @@ const StoreStats = ({ storeId }) => {
 
       // Fetch sales for total sales amount
       const salesRes = await fetch(
-        `http://localhost:5000/api/sales/store/${storeId}`,
+        `${API_URL}/api/sales/store/${storeId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -57,7 +58,7 @@ const StoreStats = ({ storeId }) => {
 
       // Fetch employees count from employee table
       const employeesRes = await fetch(
-        `http://localhost:5000/api/employees/count/${storeId}`,
+        `${API_URL}/api/employees/count/${storeId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
