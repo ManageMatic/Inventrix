@@ -9,6 +9,7 @@ import SalesTable from "../../components/dashboard/store/SalesTable";
 import GenerateQR from "../../components/dashboard/store/GenerateQR";
 import StoreDetails from "./StoreDetails";
 import Insights from "../../components/dashboard/store/Insights";
+import Employees from "../../components/dashboard/store/Employees";
 import "../../styles/StoreDashboard.css";
 import { API_URL, SOCKET_URL } from "../../config";
 
@@ -119,6 +120,7 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
         loading={loading}
         error={error}
         onBack={() => navigate("/OwnerDashboard")}
+        onUpdate={fetchStoreDetails}
       />
 
       <StoreNav 
@@ -143,6 +145,10 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
 
       {activeTab === "insights" && store && (
         <Insights storeId={store._id} />
+      )}
+
+      {activeTab === "employees" && store && (
+        <Employees storeId={store._id} />
       )}
 
       {activeTab === "settings" && store && (

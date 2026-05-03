@@ -120,4 +120,27 @@ export const updateStore = async (req, res) => {
     }
 };
 
+// ---------------- Delete Store ----------------
+export const deleteStore = async (req, res) => {
+    try {
+        const store = await Store.findById(req.params.id);
 
+        if (!store) {
+            return res.status(404).json({ success: false, message: "Store not found" });
+        }
+
+        if (store.owner_id.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ success: false, message: "Access denied" });
+        }
+
+        await Store.findByIdAndDelete(req.params.id);
+
+        res.json({
+            success: true,
+            message: "Store deleted successfully"
+        });
+    } catch (error) {
+        console.error("Error deleting store:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};

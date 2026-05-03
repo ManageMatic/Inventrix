@@ -2,8 +2,9 @@ import "../../../styles/ProductsTable.css";
 import { useEffect, useState } from "react";
 import ProductModal from "./ProductModal";
 import ConfirmDialog from "../../common/ConfirmDialog";
-import { Trash2, Edit, QrCode, ChevronUp, ChevronDown } from "lucide-react";
-import { API_URL } from "../../../config";
+import { Trash2, Edit, QrCode, ChevronUp, ChevronDown, X } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
+import { API_URL, CLIENT_URL } from "../../../config";
 
 const ProductsTable = ({ storeId, refreshSignal }) => {
   const [products, setProducts] = useState([]);
@@ -18,6 +19,8 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
   const [toast, setToast] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [selectedQRProduct, setSelectedQRProduct] = useState(null);
 
   useEffect(() => {
     if (storeId) fetchProducts();
@@ -52,6 +55,11 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
   const handleDeleteClick = (id) => {
     setDeleteId(id);
     setConfirmOpen(true);
+  };
+
+  const handleShowQR = (product) => {
+    setSelectedQRProduct(product);
+    setShowQRModal(true);
   };
 
   const confirmDelete = async () => {
@@ -231,7 +239,7 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
                     >
                       <Trash2 size={16} />
                     </button>
-                    <button className="icon-btn" title="QR">
+                    <button className="icon-btn" title="QR" onClick={() => handleShowQR(p)}>
                       <QrCode size={16} />
                     </button>
                   </td>
@@ -298,6 +306,33 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
           onConfirm={confirmDelete}
           onCancel={() => setConfirmOpen(false)}
         />
+      )}
+
+      {/* QR Modal */}
+      {showQRModal && selectedQRProduct && (
+        <div className="modal-overlay" onClick={() => setShowQRModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ width: 'auto', textAlign: 'center', padding: '30px' }}>
+            <div className="modal-header" style={{ justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
+              <h2>QR Code - {selectedQRProduct.name}</h2>
+              <button 
+                style={{ position: 'absolute', right: '0', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }} 
+                onClick={() => setShowQRModal(false)}
+              >
+                <X size={22} />
+              </button>
+            </div>
+            <div style={{ background: '#fff', padding: '16px', borderRadius: '8px', display: 'inline-block' }}>
+              <QRCodeCanvas
+                id={`qr-${selectedQRProduct.name}`}
+                value={`${CLIENT_URL}/scan-product/${selectedQRProduct.qr_code}?storeId=${storeId}`}
+                size={200}
+                level={"H"}
+                includeMargin={true}
+              />
+            </div>
+            <p style={{ marginTop: '15px', color: '#94a3b8' }}>ID: {selectedQRProduct.product_id}</p>
+          </div>
+        </div>
       )}
     </div>
   );

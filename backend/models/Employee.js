@@ -35,6 +35,20 @@ const employeeSchema = new mongoose.Schema({
     },
     resetOTP: String,
     otpExpiry: Date,
+    performance: {
+        salesCount: { type: Number, default: 0 },
+        totalRevenue: { type: Number, default: 0 },
+        rating: { type: Number, default: 0 },
+        reviews: [{
+            text: String,
+            date: { type: Date, default: Date.now }
+        }]
+    },
+    schedule: {
+        clockedIn: { type: Boolean, default: false },
+        lastClockIn: { type: Date },
+        lastClockOut: { type: Date }
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Employee', employeeSchema);

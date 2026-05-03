@@ -22,25 +22,6 @@
     color: #38bdf8;
 }
 
-.add-btn {
-    background: #38bdf8;
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.add-btn:hover {
-    background: #0ea5e9;
-    transform: translateY(-2px);
-}
-
 /* ================== PRODUCTS TABLE ================== */
 .products-table-wrap {
     overflow-x: auto;
