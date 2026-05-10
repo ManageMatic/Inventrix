@@ -1,4 +1,7 @@
 import Store from '../models/Store.js';
+import Product from '../models/Product.js';
+import Employee from '../models/Employee.js';
+import Sale from '../models/Sale.js';
 
 // ── Public endpoint to fetch all stores (for employee registration)
 export const getAllStores = async (req, res) => {
@@ -142,5 +145,74 @@ export const deleteStore = async (req, res) => {
     } catch (error) {
         console.error("Error deleting store:", error);
         res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+// ---------------- Get Analytics ----------------
+export const getAnalytics = async (req, res) => {
+    try {
+        const { storeId } = req.query;
+        const owner_id = req.user._id;
+
+        let storeQuery = {};
+        if (storeId && storeId !== "All" && storeId !== "undefined") {
+            const store = await Store.findOne({ _id: storeId, owner_id });
+            if (!store) {
+                return res.status(403).json({ success: false, message: "Access denied or store not found" });
+            }
+            storeQuery = { store: storeId };
+        } else {
+            const stores = await Store.find({ owner_id }).select('_id');
+            const storeIds = stores.map(s => s._id);
+            storeQuery = { store: { $in: storeIds } };
+        }
+
+        const productsCount = await Product.countDocuments(storeQuery);
+
+        const employeeQuery = storeId && storeId !== "All" && storeId !== "undefined" ? { store_id: storeId } : { store_id: { $in: storeQuery.store.$in } };
+        const employeesCount = await Employee.countDocuments(employeeQuery);
+
+        const salesQuery = storeId && storeId !== "All" && storeId !== "undefined" ? { store_id: storeId } : { store_id: { $in: storeQuery.store.$in } };
+        const sales = await Sale.find(salesQuery).select('totalAmount date');
+        
+        const totalRevenue = sales.reduce((acc, sale) => acc + (sale.totalAmount || 0), 0);
+
+        const chartDataMap = {};
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        
+        const d = new Date();
+        for (let i = 5; i >= 0; i--) {
+            const pastDate = new Date(d.getFullYear(), d.getMonth() - i, 1);
+            chartDataMap[monthNames[pastDate.getMonth()]] = { sales: 0, profit: 0 };
+        }
+
+        sales.forEach(sale => {
+            const saleDate = new Date(sale.date);
+            const monthStr = monthNames[saleDate.getMonth()];
+            if (chartDataMap[monthStr]) {
+                chartDataMap[monthStr].sales += sale.totalAmount;
+                chartDataMap[monthStr].profit += sale.totalAmount * 0.4; 
+            }
+        });
+
+        const chartData = Object.keys(chartDataMap).map(month => ({
+            month,
+            sales: chartDataMap[month].sales,
+            profit: chartDataMap[month].profit
+        }));
+
+        res.json({
+            success: true,
+            stats: {
+                products: productsCount,
+                employees: employeesCount,
+                revenue: "₹" + totalRevenue.toLocaleString('en-IN')
+            },
+            chartData
+        });
+
+    } catch (error) {
+        console.error("Error fetching analytics:", error);
+        res.status(500).json({ success: false, message: "Server error fetching analytics" });
     }
 };

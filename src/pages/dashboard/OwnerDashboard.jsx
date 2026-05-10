@@ -6,14 +6,24 @@ import StatsGrid from "../../components/dashboard/owner/StatsGrid";
 import StoreList from "../../components/dashboard/owner/StoreList";
 import CreateStoreModal from "../../components/dashboard/owner/CreateStoreModal";
 import AnalyticsChart from "../../components/dashboard/owner/AnalyticsChart";
+import ProductsTable from "../../components/dashboard/store/ProductsTable";
+import Employees from "../../components/dashboard/store/Employees";
 import "../../styles/OwnerDashboard.css";
 import { API_URL } from "../../config";
+import { io } from "socket.io-client";
 
 const OwnerDashboard = () => {
   const [user, setUser] = useState({ name: "", role: "Store Owner" });
   const [stores, setStores] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  
+  const [activeTab, setActiveTab] = useState("Dashboard");
+  const [selectedStore, setSelectedStore] = useState("All");
+  const [notifications, setNotifications] = useState([]);
+  
+  const [stats, setStats] = useState({ products: 0, employees: 0, revenue: "₹0" });
+  const [chartData, setChartData] = useState([]);
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -21,7 +31,43 @@ const OwnerDashboard = () => {
   useEffect(() => {
     fetchOwnerData();
     fetchStores();
+    fetchNotifications();
   }, []);
+
+  // Fetch analytics whenever selectedStore changes
+  useEffect(() => {
+    fetchAnalytics(selectedStore);
+  }, [selectedStore]);
+
+  useEffect(() => {
+    // Connect WebSocket
+    const socket = io(API_URL);
+
+    if (user?._id) {
+      socket.emit("join-user", user._id);
+    }
+
+    // Listen for events
+    socket.on("storeCreated", (newStore) => {
+      setStores((prev) => [...prev, newStore]);
+    });
+    
+    socket.on("storeUpdated", (updatedStore) => {
+      setStores((prev) => prev.map(s => s._id === updatedStore._id ? updatedStore : s));
+    });
+
+    socket.on("storeDeleted", (deletedStoreId) => {
+      setStores((prev) => prev.filter(s => s._id !== deletedStoreId));
+    });
+
+    socket.on("newNotification", (notification) => {
+      setNotifications((prev) => [notification, ...prev]);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [user?._id]);
 
   const fetchOwnerData = async () => {
     try {
@@ -29,9 +75,21 @@ const OwnerDashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (data.success) setUser({ name: data.user.name, role: "Store Owner" });
+      if (data.success) setUser({ name: data.user.name, role: "Store Owner", _id: data.user._id });
     } catch (err) {
       console.error("Error fetching owner info:", err);
+    }
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) setNotifications(data.data);
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
     }
   };
 
@@ -44,6 +102,27 @@ const OwnerDashboard = () => {
       if (data.success) setStores(data.data);
     } catch (err) {
       console.error("Error fetching stores:", err);
+    }
+  };
+
+  const fetchAnalytics = async (storeId) => {
+    try {
+      const url = storeId === "All" 
+        ? `${API_URL}/api/stores/analytics` 
+        : `${API_URL}/api/stores/analytics?storeId=${storeId}`;
+        
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setStats(data.stats);
+          setChartData(data.chartData);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching analytics:", err);
     }
   };
 
@@ -60,6 +139,8 @@ const OwnerDashboard = () => {
         setSidebarOpen={setSidebarOpen}
         user={user}
         onLogout={handleLogout}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
       />
 
       {/* Main Content */}
@@ -69,10 +150,46 @@ const OwnerDashboard = () => {
           onOpenModal={() => setShowModal(true)}
           setSidebarOpen={setSidebarOpen}
           sidebarOpen={sidebarOpen}
+          notifications={notifications}
+          setNotifications={setNotifications}
+          stores={stores}
+          selectedStore={selectedStore}
+          setSelectedStore={setSelectedStore}
         />
-        <StatsGrid stores={stores} />
-        <AnalyticsChart />
-        <StoreList stores={stores} />
+        
+        {activeTab === "Dashboard" && (
+          <>
+            <StatsGrid stores={selectedStore === "All" ? stores : stores.filter(s => s._id === selectedStore)} stats={stats} />
+            <AnalyticsChart data={chartData} />
+            <StoreList stores={selectedStore === "All" ? stores : stores.filter(s => s._id === selectedStore)} />
+          </>
+        )}
+
+        {activeTab === "Stores" && (
+          <StoreList stores={selectedStore === "All" ? stores : stores.filter(s => s._id === selectedStore)} />
+        )}
+
+        {activeTab === "Products" && (
+          <ProductsTable storeId={selectedStore} />
+        )}
+
+        {activeTab === "Employees" && (
+          <Employees storeId={selectedStore} />
+        )}
+
+        {/* Placeholders for other tabs */}
+        {["Reports", "Generate QR", "Settings"].includes(activeTab) && (
+          <div className="placeholder-view">
+            <h2>{activeTab} Management</h2>
+            <p>The {activeTab} module is under construction and will be available soon.</p>
+          </div>
+        )}
+        
+        {activeTab === "Analytics" && (
+          <div className="analytics-container">
+            <AnalyticsChart data={chartData} />
+          </div>
+        )}
       </main>
 
       {/* Create Store Modal */}

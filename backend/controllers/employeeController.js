@@ -25,7 +25,21 @@ exports.getEmployeeCountByStore = async (req, res) => {
 exports.getEmployeesByStore = async (req, res) => {
     try {
         const { storeId } = req.params;
-        const employees = await Employee.find({ store_id: storeId }).populate('role', 'name');
+        const owner_id = req.user._id;
+
+        let query = {};
+        if (storeId === "All" || storeId === "undefined") {
+            const Store = require('../models/Store');
+            const stores = await Store.find({ owner_id }).select('_id');
+            const storeIds = stores.map(s => s._id);
+            query = { store_id: { $in: storeIds } };
+        } else {
+            query = { store_id: storeId };
+        }
+
+        const employees = await Employee.find(query)
+            .populate('role', 'name')
+            .populate('store_id', 'name');
         
         res.status(200).json({
             success: true,

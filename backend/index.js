@@ -55,6 +55,12 @@ io.on("connection", (socket) => {
     console.log(`📦 Socket ${socket.id} joined store room: ${storeId}`);
   });
 
+  // User joins their personal room for notifications
+  socket.on("join-user", (userId) => {
+    socket.join(userId);
+    console.log(`👤 Socket ${socket.id} joined user room: ${userId}`);
+  });
+
   socket.on("disconnect", () => {
     console.log("❌ Client disconnected:", socket.id);
   });
@@ -74,10 +80,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/stores', storeRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/employees', employeeRoutes);
-app.use('/qr_codes', express.static(path.join(__dirname, 'qr_codes')));
-app.use('/invoices', express.static(path.join(__dirname, 'invoices')));
 app.use('/api/sales', saleRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/notifications', require('./routes/notificationRoutes')); // ← ADD
+app.use('/qr_codes', express.static(path.join(__dirname, 'qr_codes')));
+app.use('/invoices', express.static(path.join(__dirname, 'invoices')));
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT}`));

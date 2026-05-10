@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
+const defaultData = [
   { month: "Jan", sales: 4000, profit: 2400 },
   { month: "Feb", sales: 3000, profit: 1398 },
   { month: "Mar", sales: 5000, profit: 2800 },
@@ -20,7 +20,9 @@ const data = [
   { month: "Jun", sales: 4390, profit: 3800 },
 ];
 
-function AnalyticsChart() {
+function AnalyticsChart({ data }) {
+  const chartData = data && data.length > 0 ? data : defaultData;
+
   return (
     <div className="analytics-section">
       <h2>Business Overview</h2>
@@ -28,7 +30,7 @@ function AnalyticsChart() {
         {/* Bar Chart */}
         <div className="chart-box">
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data}>
+            <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="month" stroke="#94a3b8" />
               <YAxis stroke="#94a3b8" />
@@ -43,7 +45,7 @@ function AnalyticsChart() {
         {/* Line Chart */}
         <div className="chart-box">
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data}>
+            <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="month" stroke="#94a3b8" />
               <YAxis stroke="#94a3b8" />

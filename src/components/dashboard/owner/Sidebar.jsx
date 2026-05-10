@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import logo from "../../../assets/logo.png";
 
-function Sidebar({ sidebarOpen, setSidebarOpen, user, onLogout }) {
+function Sidebar({ sidebarOpen, setSidebarOpen, user, onLogout, activeTab, setActiveTab }) {
   const menuItems = [
     { name: "Dashboard", icon: <Store size={20} /> },
     { name: "Stores", icon: <Store size={20} /> },
@@ -35,7 +35,15 @@ function Sidebar({ sidebarOpen, setSidebarOpen, user, onLogout }) {
         {menuItems.map((item, index) => (
           <button
             key={index}
-            className={`nav-link ${index === 0 ? "active" : ""}`}
+            className={`nav-link ${activeTab === item.name ? "active" : ""}`}
+            onClick={() => {
+              setActiveTab(item.name);
+              // Auto-close sidebar on smaller screens (optional, if we want mobile friendliness)
+              if (window.innerWidth <= 768) {
+                setSidebarOpen(false);
+              }
+            }}
+            title={!sidebarOpen ? item.name : ""}
           >
             {item.icon}
             <span>{item.name}</span>

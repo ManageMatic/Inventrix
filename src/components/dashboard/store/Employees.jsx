@@ -135,15 +135,17 @@ const Employees = ({ storeId }) => {
     <div className="employees-tab">
       <div className="employees-header">
         <h2>Staff Management</h2>
-        <button
-          className="add-employee-btn"
-          onClick={() => {
-            setFormData({ name: "", email: "", phone: "", status: "active", password: "" });
-            setEditingId(null);
-            setShowModal(true);
-          }}
-        >Add Employee
-        </button>
+        {storeId !== "All" && (
+          <button
+            className="add-employee-btn"
+            onClick={() => {
+              setFormData({ name: "", email: "", phone: "", status: "active", password: "" });
+              setEditingId(null);
+              setShowModal(true);
+            }}
+          >Add Employee
+          </button>
+        )}
       </div>
 
       <div className="employees-table-container">
@@ -151,6 +153,7 @@ const Employees = ({ storeId }) => {
           <thead>
             <tr>
               <th>Name</th>
+              {storeId === "All" && <th>Store</th>}
               <th>Contact Info</th>
               <th>Status</th>
               <th>Performance</th>
@@ -160,9 +163,9 @@ const Employees = ({ storeId }) => {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="6" style={{ textAlign: "center" }}>Loading employees...</td></tr>
+              <tr><td colSpan={storeId === "All" ? "7" : "6"} style={{ textAlign: "center" }}>Loading employees...</td></tr>
             ) : employees.length === 0 ? (
-              <tr><td colSpan="6" style={{ textAlign: "center" }}>No employees found.</td></tr>
+              <tr><td colSpan={storeId === "All" ? "7" : "6"} style={{ textAlign: "center" }}>No employees found.</td></tr>
             ) : (
               employees.map(emp => (
                 <tr key={emp._id}>
@@ -170,6 +173,7 @@ const Employees = ({ storeId }) => {
                     <strong>{emp.name}</strong><br />
                     <small>{emp.employee_id}</small>
                   </td>
+                  {storeId === "All" && <td>{emp.store_id?.name || "Unknown"}</td>}
                   <td>
                     {emp.email}<br />
                     {emp.phone}

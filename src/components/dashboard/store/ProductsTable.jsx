@@ -138,9 +138,11 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
       <div className="products-header">
         <h2>Products</h2>
         <div>
-          <button className="add-product" onClick={handleAdd}>
-            Add Product
-          </button>
+          {storeId !== "All" && (
+            <button className="add-product" onClick={handleAdd}>
+              Add Product
+            </button>
+          )}
         </div>
       </div>
 
@@ -177,6 +179,7 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
                       <ChevronDown size={14} />
                     ))}
                 </th>
+                {storeId === "All" && <th>Store</th>}
                 <th
                   onClick={() => handleSort("category")}
                   className="sortable-header"
@@ -213,38 +216,52 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
                       <ChevronDown size={14} />
                     ))}
                 </th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedProducts.map((p) => (
-                <tr key={p._id}>
-                  <td>{p.product_id}</td>
-                  <td>{p.name}</td>
-                  <td>{p.category || "—"}</td>
-                  <td>₹{p.sellingPrice.toFixed(2)}</td>
-                  <td>{p.quantity}</td>
-                  <td>
-                    <button
-                      className="icon-btn"
-                      onClick={() => handleEdit(p)}
-                      title="Edit"
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button
-                      className="icon-btn"
-                      onClick={() => handleDeleteClick(p._id)}
-                      title="Delete"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                    <button className="icon-btn" title="QR" onClick={() => handleShowQR(p)}>
-                      <QrCode size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {paginatedProducts.map((p) => {
+                const isLowStock = p.quantity < 5;
+                return (
+                  <tr key={p._id}>
+                    <td>{p.product_id}</td>
+                    <td>{p.name}</td>
+                    {storeId === "All" && <td>{p.store?.name || "Unknown"}</td>}
+                    <td>{p.category || "—"}</td>
+                    <td><span className="price-highlight">₹{p.sellingPrice.toFixed(2)}</span></td>
+                    <td>
+                      <div className="stock-info">
+                        <strong>{p.quantity}</strong>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={`status-badge ${isLowStock ? 'danger' : 'success'}`}>
+                        {isLowStock ? 'Low Stock' : 'In Stock'}
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        className="icon-btn"
+                        onClick={() => handleEdit(p)}
+                        title="Edit"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        className="icon-btn"
+                        onClick={() => handleDeleteClick(p._id)}
+                        title="Delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                      <button className="icon-btn" title="QR" onClick={() => handleShowQR(p)}>
+                        <QrCode size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
@@ -314,8 +331,8 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
           <div className="modal" onClick={(e) => e.stopPropagation()} style={{ width: 'auto', textAlign: 'center', padding: '30px' }}>
             <div className="modal-header" style={{ justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
               <h2>QR Code - {selectedQRProduct.name}</h2>
-              <button 
-                style={{ position: 'absolute', right: '0', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }} 
+              <button
+                style={{ position: 'absolute', right: '0', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
                 onClick={() => setShowQRModal(false)}
               >
                 <X size={22} />

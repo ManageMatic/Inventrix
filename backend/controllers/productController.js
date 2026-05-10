@@ -98,15 +98,23 @@ exports.addProduct = async (req, res) => {
 exports.getProductsByStore = async (req, res) => {
     try {
         const storeId = req.params.storeId;
+        const owner_id = req.user._id;
 
-        // find products that belong to this store
-        const products = await Product.find({ store: storeId });
+        let query = {};
+        if (storeId === "All" || storeId === "undefined") {
+            const stores = await Store.find({ owner_id }).select('_id');
+            const storeIds = stores.map(s => s._id);
+            query = { store: { $in: storeIds } };
+        } else {
+            query = { store: storeId };
+        }
+
+        const products = await Product.find(query).populate('store', 'name');
 
         return res.status(200).json({
             success: true,
             data: products,
         });
-        console.log("Products fetched:", products);
     } catch (error) {
         console.error("Error fetching products:", error);
         return res.status(500).json({
