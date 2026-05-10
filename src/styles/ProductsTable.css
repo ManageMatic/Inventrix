@@ -94,8 +94,16 @@
     transition: color 0.2s, transform 0.2s;
 }
 
-.icon-btn:hover {
+.edit-btn:hover {
     color: #38bdf8;
+}
+
+.delete-btn:hover {
+    color: #dc2626;
+}
+
+.qr-btn:hover {
+    color: #10b981;
 }
 
 /* Pagination Styles */

@@ -242,20 +242,20 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
                     </td>
                     <td>
                       <button
-                        className="icon-btn"
+                        className="icon-btn edit-btn"
                         onClick={() => handleEdit(p)}
                         title="Edit"
                       >
                         <Edit size={16} />
                       </button>
                       <button
-                        className="icon-btn"
+                        className="icon-btn delete-btn"
                         onClick={() => handleDeleteClick(p._id)}
                         title="Delete"
                       >
                         <Trash2 size={16} />
                       </button>
-                      <button className="icon-btn" title="QR" onClick={() => handleShowQR(p)}>
+                      <button className="icon-btn qr-btn" title="QR" onClick={() => handleShowQR(p)}>
                         <QrCode size={16} />
                       </button>
                     </td>

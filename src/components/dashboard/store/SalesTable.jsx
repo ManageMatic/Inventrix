@@ -1,8 +1,10 @@
 import "../../../styles/SalesTable.css";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Trash2, Edit2, ChevronUp, ChevronDown } from "lucide-react";
+import { Trash2, Edit, ChevronUp, ChevronDown } from "lucide-react";
 import { API_URL } from "../../../config";
+import ConfirmDialog from "../../common/ConfirmDialog";
+import Toast from "../../common/Toast";
 
 const SalesTable = () => {
   const { storeId } = useParams();
@@ -15,6 +17,10 @@ const SalesTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const token = localStorage.getItem("token");
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [toast, setToast] = useState(null);
 
   // Fetch sales data
   useEffect(() => {
@@ -96,12 +102,17 @@ const SalesTable = () => {
     setCurrentPage(page);
   };
 
-  const handleDelete = async (saleId) => {
-    if (!window.confirm("Are you sure you want to delete this sale?")) return;
+  const handleDeleteClick = (saleId) => {
+    setDeleteId(saleId);
+    setConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
 
     try {
       const res = await fetch(
-        `${API_URL}/api/sales/${saleId}`,
+        `${API_URL}/api/sales/${deleteId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -111,13 +122,16 @@ const SalesTable = () => {
       const data = await res.json();
 
       if (data.success) {
-        setSales(sales.filter((s) => s._id !== saleId));
-        alert("Sale deleted successfully");
+        setSales(sales.filter((s) => s._id !== deleteId));
+        setToast({ message: "Sale deleted successfully", type: "success" });
       } else {
-        alert(data.message || "Failed to delete sale");
+        setToast({ message: "Failed to delete sale", type: "error" });
       }
     } catch (err) {
-      alert("Error deleting sale: " + err.message);
+      setToast({ message: "Error deleting sale: " + err.message, type: "error" });
+    } finally {
+      setConfirmOpen(false);
+      setDeleteId(null);
     }
   };
 
@@ -281,11 +295,11 @@ const SalesTable = () => {
                       }
                       title="Edit Status"
                     >
-                      <Edit2 size={16} />
+                      <Edit size={16} />
                     </button>
                     <button
                       className="delete-btn"
-                      onClick={() => handleDelete(sale._id)}
+                      onClick={() => handleDeleteClick(sale._id)}
                       title="Delete Sale"
                     >
                       <Trash2 size={16} />
@@ -333,11 +347,30 @@ const SalesTable = () => {
 
           <div className="sales-total">
             <h3>
-              Total Sales: ₹
-              {sales.reduce((sum, sale) => sum + sale.totalAmount, 0)}
+              Total Sales: <span>₹{sales.reduce((sum, sale) => sum + sale.totalAmount, 0).toLocaleString('en-IN')}</span>
             </h3>
           </div>
         </div>
+      )}
+
+      {confirmOpen && (
+        <ConfirmDialog
+          title="Delete Sale Record"
+          message="Are you sure you want to delete this sale? This action cannot be undone and will permanently remove the record."
+          onConfirm={confirmDelete}
+          onCancel={() => {
+            setConfirmOpen(false);
+            setDeleteId(null);
+          }}
+        />
+      )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

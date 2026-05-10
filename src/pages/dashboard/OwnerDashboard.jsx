@@ -8,6 +8,9 @@ import CreateStoreModal from "../../components/dashboard/owner/CreateStoreModal"
 import AnalyticsChart from "../../components/dashboard/owner/AnalyticsChart";
 import ProductsTable from "../../components/dashboard/store/ProductsTable";
 import Employees from "../../components/dashboard/store/Employees";
+import Reports from "../../components/dashboard/store/Reports";
+import GenerateQR from "../../components/dashboard/store/GenerateQR";
+import OwnerSettings from "../../components/dashboard/owner/OwnerSettings";
 import "../../styles/OwnerDashboard.css";
 import { API_URL } from "../../config";
 import { io } from "socket.io-client";
@@ -177,12 +180,16 @@ const OwnerDashboard = () => {
           <Employees storeId={selectedStore} />
         )}
 
-        {/* Placeholders for other tabs */}
-        {["Reports", "Generate QR", "Settings"].includes(activeTab) && (
-          <div className="placeholder-view">
-            <h2>{activeTab} Management</h2>
-            <p>The {activeTab} module is under construction and will be available soon.</p>
-          </div>
+        {activeTab === "Reports" && (
+          <Reports storeId={selectedStore} />
+        )}
+
+        {activeTab === "Generate QR" && (
+          <GenerateQR storeId={selectedStore} />
+        )}
+
+        {activeTab === "Settings" && (
+          <OwnerSettings storeId={selectedStore} />
         )}
         
         {activeTab === "Analytics" && (

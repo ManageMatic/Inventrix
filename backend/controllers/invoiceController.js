@@ -92,9 +92,15 @@ exports.generateInvoice = async (req, res) => {
             doc.fillColor("#ffffff").font("Helvetica-Bold").fontSize(22)
                 .text(sale.store_id.name, 40, 22);
 
+            // Format address string properly
+            const addrObj = sale.store_id.address;
+            const addressString = addrObj && typeof addrObj === 'object'
+                ? [addrObj.street, addrObj.city, addrObj.state, addrObj.zipCode].filter(Boolean).join(', ')
+                : (addrObj || "Surat, Gujarat");
+
             // Store details
             doc.font("Helvetica").fontSize(9).fillColor("#cbd5e1")
-                .text(sale.store_id.address || "Surat, Gujarat", 40, 48)
+                .text(addressString, 40, 48)
                 .text(`Phone: ${sale.store_id.contact?.phone || "N/A"}  |  Email: ${sale.store_id.contact?.email || "N/A"}`, 40, 60);
             // INVOICE accent badge (top right)
             doc.fillColor("#ffffff").font("Helvetica-Bold").fontSize(30)

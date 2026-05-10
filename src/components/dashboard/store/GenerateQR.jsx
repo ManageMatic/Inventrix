@@ -155,8 +155,9 @@ const GenerateQR = ({ storeId }) => {
       {/* QR grid */}
       <div className="generate-qr-grid">
         {products.map((p) => {
-          // Dynamically create the QR code URL based on the current hostname
-          const qrData = `${CLIENT_URL}/scan-product/${p.qr_code}?storeId=${storeId}`;
+          // Use the actual store ID of the product if viewing "All Stores", otherwise fallback
+          const actualStoreId = p.store?._id || p.store || storeId;
+          const qrData = `${CLIENT_URL}/scan-product/${p.qr_code}?storeId=${actualStoreId}`;
           
           return (
             <div 
@@ -179,6 +180,11 @@ const GenerateQR = ({ storeId }) => {
               <div className="generate-qr-info">
                 <p className="generate-qr-product-name">{p.name}</p>
                 <small className="generate-qr-product-id">{p.product_id}</small>
+                {storeId === "All" && p.store?.name && (
+                  <div style={{ marginTop: '4px', fontSize: '0.75rem', color: '#10b981', fontWeight: '500' }}>
+                    {p.store.name}
+                  </div>
+                )}
               </div>
 
               {/* Action buttons */}

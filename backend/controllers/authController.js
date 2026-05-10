@@ -149,11 +149,82 @@ exports.getCurrentUser = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                phone: user.phone,
                 userType: user.userType,
             },
         });
     } catch (error) {
         res.status(500).json({ success: false, message: "Failed to fetch user", error: error.message });
+    }
+};
+
+// ---------------- Update Profile ----------------
+exports.updateProfile = async (req, res) => {
+    try {
+        const { name, phone } = req.body;
+        const userId = req.user._id;
+        const userType = req.user.userType;
+
+        let Model;
+        if (userType === 'employee') Model = Employee;
+        else if (userType === 'store_owner') Model = StoreOwner;
+        else if (userType === 'supplier') Model = Supplier;
+        else return res.status(400).json({ success: false, message: 'Invalid user type' });
+
+        const updatedUser = await Model.findByIdAndUpdate(
+            userId,
+            { name, phone },
+            { new: true }
+        );
+
+        res.json({
+            success: true,
+            message: "Profile updated successfully",
+            user: {
+                id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                phone: updatedUser.phone,
+                userType: userType
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Failed to update profile", error: error.message });
+    }
+};
+
+// ---------------- Change Password ----------------
+exports.changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user._id;
+        const userType = req.user.userType;
+
+        let Model;
+        if (userType === 'employee') Model = Employee;
+        else if (userType === 'store_owner') Model = StoreOwner;
+        else if (userType === 'supplier') Model = Supplier;
+        else return res.status(400).json({ success: false, message: 'Invalid user type' });
+
+        const user = await Model.findById(userId).select('+password');
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: "Incorrect current password" });
+        }
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "Password changed successfully"
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Failed to change password", error: error.message });
     }
 };
 

@@ -113,18 +113,44 @@ exports.createSale = async (req, res) => {
 exports.getSalesByStore = async (req, res) => {
     try {
         const { storeId } = req.params;
-        const { limit = 50, page = 1 } = req.query;
+        const { limit = 50, page = 1, timeframe } = req.query;
 
         const skip = (page - 1) * limit;
 
-        const sales = await Sale.find({ store_id: storeId })
+        let query = {};
+        if (storeId === "All" || storeId === "undefined") {
+            const Store = require('../models/Store');
+            const owner_id = req.user._id;
+            const stores = await Store.find({ owner_id }).select('_id');
+            const storeIds = stores.map(s => s._id);
+            query = { store_id: { $in: storeIds } };
+        } else {
+            query = { store_id: storeId };
+        }
+
+        // Apply timeframe filtering
+        if (timeframe && timeframe !== 'all') {
+            const now = new Date();
+            let startDate = new Date();
+            if (timeframe === 'week') {
+                startDate.setDate(now.getDate() - 7);
+            } else if (timeframe === 'month') {
+                startDate.setMonth(now.getMonth() - 1);
+            } else if (timeframe === 'year') {
+                startDate.setFullYear(now.getFullYear() - 1);
+            }
+            query.date = { $gte: startDate };
+        }
+
+        const sales = await Sale.find(query)
+            .populate("store_id", "name")
             .populate("employee_id", "name email")
             .populate("store_owner_id", "name email")
             .sort({ date: -1 })
             .limit(parseInt(limit))
             .skip(skip);
 
-        const total = await Sale.countDocuments({ store_id: storeId });
+        const total = await Sale.countDocuments(query);
 
         res.json({
             success: true,
