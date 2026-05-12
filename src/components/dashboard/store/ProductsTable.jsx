@@ -6,7 +6,7 @@ import { Trash2, Edit, QrCode, ChevronUp, ChevronDown, X } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { API_URL, CLIENT_URL } from "../../../config";
 
-const ProductsTable = ({ storeId, refreshSignal }) => {
+const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -21,6 +21,14 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
   const [deleteId, setDeleteId] = useState(null);
   const [showQRModal, setShowQRModal] = useState(false);
   const [selectedQRProduct, setSelectedQRProduct] = useState(null);
+
+  // Helper to check permissions
+  const hasPermission = (resource, action) => {
+    // If no permissions array is provided, assume it's the owner (full access)
+    if (!permissions || permissions.length === 0) return true;
+    const perm = permissions.find((p) => p.resource === resource);
+    return perm && perm.actions.includes(action);
+  };
 
   useEffect(() => {
     if (storeId) fetchProducts();
@@ -138,7 +146,7 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
       <div className="products-header">
         <h2>Products</h2>
         <div>
-          {storeId !== "All" && (
+          {storeId !== "All" && hasPermission("products", "create") && (
             <button className="add-product" onClick={handleAdd}>
               Add Product
             </button>
@@ -241,20 +249,24 @@ const ProductsTable = ({ storeId, refreshSignal }) => {
                       </span>
                     </td>
                     <td>
-                      <button
-                        className="icon-btn edit-btn"
-                        onClick={() => handleEdit(p)}
-                        title="Edit"
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        className="icon-btn delete-btn"
-                        onClick={() => handleDeleteClick(p._id)}
-                        title="Delete"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      {hasPermission("products", "update") && (
+                        <button
+                          className="icon-btn edit-btn"
+                          onClick={() => handleEdit(p)}
+                          title="Edit"
+                        >
+                          <Edit size={16} />
+                        </button>
+                      )}
+                      {hasPermission("products", "delete") && (
+                        <button
+                          className="icon-btn delete-btn"
+                          onClick={() => handleDeleteClick(p._id)}
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
                       <button className="icon-btn qr-btn" title="QR" onClick={() => handleShowQR(p)}>
                         <QrCode size={16} />
                       </button>

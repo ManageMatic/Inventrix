@@ -16,7 +16,7 @@ import { API_URL, SOCKET_URL } from "../../config";
 // ── Create socket ONCE outside component (prevents reconnecting on re-renders) ──
 const socket = io(SOCKET_URL);
 
-const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
+const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updateCartStoreId }) => {
   const { storeId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
@@ -30,6 +30,7 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
   // ── Fetch store details on mount ─────────────────────────────
   useEffect(() => {
     if (!storeId) return;
+    if (updateCartStoreId) updateCartStoreId(storeId);
     fetchStoreDetails();
 
     const joinRoom = () => {
@@ -137,7 +138,14 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh }) => {
         <ProductsTable storeId={store._id} refreshSignal={dashboardRefresh} />
       )}
 
-      {activeTab === "sales" && <SalesTable cart={cart} setCart={setCart} />}
+      {activeTab === "sales" && (
+        <SalesTable 
+          storeId={storeId} 
+          refreshSignal={dashboardRefresh}
+          cart={cart}
+          setCart={setCart}
+        />
+      )}
 
       {activeTab === "generateQR" && store && (
         <GenerateQR storeId={store._id} />

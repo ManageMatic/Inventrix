@@ -185,13 +185,24 @@ const Employees = ({ storeId }) => {
                   </td>
                   <td>
                     Sales: {emp.performance?.salesCount || 0}<br />
+                    Revenue: ₹{emp.performance?.totalRevenue?.toFixed(2) || "0.00"}<br />
                     Rating: {emp.performance?.rating || "N/A"}
                   </td>
                   <td>
                     {emp.schedule?.clockedIn ? (
-                      <span style={{ color: "#4ade80" }}>Clocked In</span>
+                      <div>
+                        <span style={{ color: "#4ade80", fontWeight: "500" }}>Clocked In</span><br/>
+                        <small style={{ color: "#94a3b8" }}>
+                          {emp.schedule?.lastClockIn ? new Date(emp.schedule.lastClockIn).toLocaleTimeString("en-IN", {hour: '2-digit', minute:'2-digit', hour12: true}) : ""}
+                        </small>
+                      </div>
                     ) : (
-                      <span style={{ color: "#94a3b8" }}>Clocked Out</span>
+                      <div>
+                        <span style={{ color: "#94a3b8" }}>Clocked Out</span><br/>
+                        <small style={{ color: "#94a3b8" }}>
+                          {emp.schedule?.lastClockOut ? new Date(emp.schedule.lastClockOut).toLocaleTimeString("en-IN", {hour: '2-digit', minute:'2-digit', hour12: true}) : ""}
+                        </small>
+                      </div>
                     )}
                   </td>
                   <td>

@@ -15,6 +15,11 @@ function App() {
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [dashboardRefresh, setDashboardRefresh] = useState(0);
+  const [activeStoreId, setActiveStoreId] = useState(null);
+
+  const updateCartStoreId = (id) => {
+    setActiveStoreId(id);
+  };
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -46,7 +51,18 @@ function App() {
 
         {/* Dashboard Routes */}
         <Route path="/OwnerDashboard" element={<OwnerDashboard />} />
-        <Route path="/EmployeeDashboard" element={<EmployeeDashboard />} />
+        <Route 
+          path="/EmployeeDashboard" 
+          element={
+            <EmployeeDashboard 
+              cart={cart}
+              setCart={setCart}
+              setCartOpen={setCartOpen}
+              dashboardRefresh={dashboardRefresh}
+              updateCartStoreId={updateCartStoreId}
+            />
+          } 
+        />
 
         <Route
           path="/store/:storeId"
@@ -56,13 +72,14 @@ function App() {
               setCart={setCart}
               setCartOpen={setCartOpen}
               dashboardRefresh={dashboardRefresh}
+              updateCartStoreId={updateCartStoreId}
             />
           }
         />
 
         <Route
           path="/sales"
-          element={<SalesTable cart={cart} setCart={setCart} />}
+          element={<SalesTable storeId="All" cart={cart} setCart={setCart} />}
         />
 
         <Route
@@ -78,6 +95,7 @@ function App() {
           setCart={setCart}
           onClose={() => setCartOpen(false)}
           refreshDashboard={() => setDashboardRefresh((prev) => prev + 1)}
+          storeId={activeStoreId}
         />
       )}
     </BrowserRouter>

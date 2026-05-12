@@ -53,6 +53,7 @@ const authenticate = async (req, res, next) => {
             case 'employee':
                 user = await Models.Employee.findById(decoded.id)
                     .populate('role')
+                    .populate('store_id', 'name') // Populate store name
                     .select('-password');
                 break;
             case 'store_owner':
@@ -122,6 +123,43 @@ const authenticateCustomer = [authenticate, restrictTo(['customer'])];
 const authenticateSupplier = [authenticate, restrictTo(['supplier'])];
 const authenticateStoreStaff = [authenticate, restrictTo(['store_owner', 'employee'])];
 
+// -------------------- RBAC Permission Middleware --------------------
+
+const authorizePermission = (resource, action) => {
+    return (req, res, next) => {
+        // Store Owners have full access
+        if (req.userType === 'store_owner') {
+            return next();
+        }
+
+        // Check Employee permissions
+        if (req.userType === 'employee') {
+            const user = req.user;
+            if (!user.role || !user.role.permissions) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Access denied. No permissions assigned."
+                });
+            }
+
+            const permission = user.role.permissions.find(p => p.resource === resource);
+            if (permission && permission.actions.includes(action)) {
+                return next();
+            }
+
+            return res.status(403).json({
+                success: false,
+                message: `Permission denied: ${resource}:${action}`
+            });
+        }
+
+        return res.status(403).json({
+            success: false,
+            message: "Access denied. Unauthorized user type."
+        });
+    };
+};
+
 // -------------------- Export --------------------
 
 module.exports = {
@@ -133,5 +171,6 @@ module.exports = {
     authenticateEmployee,
     authenticateCustomer,
     authenticateSupplier,
-    authenticateStoreStaff
+    authenticateStoreStaff,
+    authorizePermission
 };

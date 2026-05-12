@@ -78,7 +78,7 @@ function EmployeeHeader({ setSidebarOpen, sidebarOpen, user, notifications = [],
         {user?.store_id && (
           <div className="employee-role-badge" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <MapPin size={14} />
-            Store Active
+            {user?.store_id?.name || "Store Active"}
           </div>
         )}
 

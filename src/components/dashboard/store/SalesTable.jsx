@@ -6,8 +6,7 @@ import { API_URL } from "../../../config";
 import ConfirmDialog from "../../common/ConfirmDialog";
 import Toast from "../../common/Toast";
 
-const SalesTable = () => {
-  const { storeId } = useParams();
+const SalesTable = ({ storeId, employeeId, permissions = [], refreshSignal }) => {
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,21 +21,30 @@ const SalesTable = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [toast, setToast] = useState(null);
 
+  // Helper to check permissions
+  const hasPermission = (resource, action) => {
+    if (!permissions || permissions.length === 0) return true;
+    const perm = permissions.find((p) => p.resource === resource);
+    return perm && perm.actions.includes(action);
+  };
+
   // Fetch sales data
   useEffect(() => {
     if (!storeId) return;
     fetchSales();
-  }, [storeId]);
+  }, [storeId, employeeId, refreshSignal]);
 
   const fetchSales = async () => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `${API_URL}/api/sales/store/${storeId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      let url = `${API_URL}/api/sales/store/${storeId}`;
+      if (employeeId) {
+        url += `?employeeId=${employeeId}`;
+      }
+
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const data = await res.json();
 
@@ -214,6 +222,7 @@ const SalesTable = () => {
                       <ChevronDown size={14} />
                     ))}
                 </th>
+                <th>Processed By</th>
                 <th>Items</th>
                 <th
                   onClick={() => handleSort("subtotal")}
@@ -252,7 +261,7 @@ const SalesTable = () => {
                       <ChevronDown size={14} />
                     ))}
                 </th>
-                <th>Actions</th>
+                {hasPermission("sales", "update") || hasPermission("sales", "delete") ? <th>Actions</th> : null}
               </tr>
             </thead>
 
@@ -261,6 +270,16 @@ const SalesTable = () => {
                 <tr key={sale._id}>
                   <td>{sale.sale_id}</td>
                   <td>{new Date(sale.date).toLocaleDateString()}</td>
+                  <td>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: '500' }}>
+                        {sale.employee_id?.name || sale.store_owner_id?.name || "N/A"}
+                      </span>
+                      <small style={{ color: '#94a3b8', fontSize: '0.75rem' }}>
+                        {sale.employee_id ? "Employee" : sale.store_owner_id ? "Store Owner" : ""}
+                      </small>
+                    </div>
+                  </td>
                   <td>{sale.items.length} items</td>
                   <td>₹{sale.subtotal}</td>
                   <td>
@@ -285,26 +304,32 @@ const SalesTable = () => {
                       </span>
                     )}
                   </td>
-                  <td>
-                    <button
-                      className="edit-btn"
-                      onClick={() =>
-                        setEditingSale(
-                          editingSale === sale._id ? null : sale._id,
-                        )
-                      }
-                      title="Edit Status"
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDeleteClick(sale._id)}
-                      title="Delete Sale"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
+                  {hasPermission("sales", "update") || hasPermission("sales", "delete") ? (
+                    <td>
+                      {hasPermission("sales", "update") && (
+                        <button
+                          className="edit-btn"
+                          onClick={() =>
+                            setEditingSale(
+                              editingSale === sale._id ? null : sale._id,
+                            )
+                          }
+                          title="Edit Status"
+                        >
+                          <Edit size={16} />
+                        </button>
+                      )}
+                      {hasPermission("sales", "delete") && (
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDeleteClick(sale._id)}
+                          title="Delete Sale"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </td>
+                  ) : null}
                 </tr>
               ))}
             </tbody>

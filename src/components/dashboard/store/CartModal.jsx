@@ -5,10 +5,10 @@ import { useLocation } from "react-router-dom";
 import Toast from "../../common/Toast";
 import { API_URL } from "../../../config";
 
-const CartModal = ({ cart, setCart, onClose, refreshDashboard }) => {
+const CartModal = ({ cart, setCart, onClose, refreshDashboard, storeId }) => {
   const location = useLocation();
-  // Extract storeId from URL path /store/:storeId
-  const storeId = location.pathname.split("/store/")[1];
+  // Extract storeId from URL path /store/:storeId if not passed as prop
+  const effectiveStoreId = storeId || location.pathname.split("/store/")[1];
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerMobile, setCustomerMobile] = useState("");
   const [toast, setToast] = useState(null);
@@ -49,7 +49,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard }) => {
         return;
       }
 
-      if (!storeId) {
+      if (!effectiveStoreId) {
         showToast("Store information not found. Please try again.", "error");
         return;
       }
@@ -70,7 +70,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard }) => {
           },
           body: JSON.stringify({
             items: cart,
-            store_id: storeId,
+            store_id: effectiveStoreId,
             subtotal: total,
             totalAmount: total,
             customer_mobile: customerMobile || null,

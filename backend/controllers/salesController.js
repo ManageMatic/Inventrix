@@ -92,6 +92,17 @@ exports.createSale = async (req, res) => {
 
         await sale.save();
 
+        // Update employee performance if applicable
+        if (req.userType === 'employee') {
+            const Employee = require("../models/Employee");
+            await Employee.findByIdAndUpdate(req.user._id, {
+                $inc: { 
+                    "performance.salesCount": 1,
+                    "performance.totalRevenue": totalAmount
+                }
+            });
+        }
+
         res.json({
             success: true,
             message: "Sale completed",
@@ -126,6 +137,14 @@ exports.getSalesByStore = async (req, res) => {
             query = { store_id: { $in: storeIds } };
         } else {
             query = { store_id: storeId };
+        }
+
+        // 🛡️ RBAC: Employees can only see THEIR OWN sales
+        if (req.userType === 'employee') {
+            query.employee_id = req.user._id;
+        } else if (req.query.employeeId) {
+            // Owners can filter by specific employee
+            query.employee_id = req.query.employeeId;
         }
 
         // Apply timeframe filtering
