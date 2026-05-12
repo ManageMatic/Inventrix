@@ -40,7 +40,11 @@ function Login() {
 
       // small delay so toast is visible
       setTimeout(() => {
-        navigate("/OwnerDashboard");
+        if (res.data.user.userType === 'employee') {
+          navigate("/EmployeeDashboard");
+        } else {
+          navigate("/OwnerDashboard");
+        }
       }, 1000);
     } catch (err) {
       showToast(err.response?.data?.message || "Invalid credentials", "error");

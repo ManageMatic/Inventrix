@@ -3,6 +3,7 @@ import LandingPage from "./pages/landing/LandingPage";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import OwnerDashboard from "./pages/dashboard/OwnerDashboard";
+import EmployeeDashboard from "./pages/dashboard/EmployeeDashboard";
 import StoreDashboard from "./pages/dashboard/StoreDashboard";
 import ScanProduct from "./pages/ScanProduct";
 import SalesTable from "./components/dashboard/store/SalesTable";
@@ -43,7 +44,9 @@ function App() {
 
         <Route path="/reset-password" element={<ResetPassword />} />
 
+        {/* Dashboard Routes */}
         <Route path="/OwnerDashboard" element={<OwnerDashboard />} />
+        <Route path="/EmployeeDashboard" element={<EmployeeDashboard />} />
 
         <Route
           path="/store/:storeId"

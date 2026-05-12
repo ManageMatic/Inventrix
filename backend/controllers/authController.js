@@ -150,7 +150,10 @@ exports.getCurrentUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                userType: user.userType,
+                userType: req.userType,
+                role: user.role || null,
+                store_id: user.store_id || null,
+                schedule: user.schedule || null,
             },
         });
     } catch (error) {
