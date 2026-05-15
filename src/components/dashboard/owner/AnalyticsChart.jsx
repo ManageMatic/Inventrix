@@ -10,6 +10,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import TopProducts from "./TopProducts";
+import HourlySalesChart from "./HourlySalesChart";
+import CategoryPieChart from "./CategoryPieChart";
 
 const defaultData = [
   { month: "Jan", sales: 4000, profit: 2400 },
@@ -20,53 +23,74 @@ const defaultData = [
   { month: "Jun", sales: 4390, profit: 3800 },
 ];
 
-function AnalyticsChart({ data }) {
+function AnalyticsChart({ data, advancedData }) {
   const chartData = data && data.length > 0 ? data : defaultData;
 
   return (
     <div className="analytics-section">
-      <h2>Business Overview</h2>
-      <div className="charts-grid">
+      <div className="section-header">
+        <h2>Advanced Analytics</h2>
+      </div>
+
+      <div className="charts-grid main-charts">
         {/* Bar Chart */}
         <div className="chart-box">
+          <h3>Monthly Sales vs Profit</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="month" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+              <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} />
+              <YAxis stroke="#94a3b8" fontSize={12} />
+              <Tooltip 
+                contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
+                itemStyle={{ color: '#f8fafc' }}
+              />
               <Legend />
-              <Bar dataKey="sales" fill="#3b82f6" />
-              <Bar dataKey="profit" fill="#10b981" />
+              <Bar dataKey="sales" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="profit" fill="#10b981" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Line Chart */}
         <div className="chart-box">
+          <h3>Growth Trend</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="month" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+              <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} />
+              <YAxis stroke="#94a3b8" fontSize={12} />
+              <Tooltip 
+                contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
+                itemStyle={{ color: '#f8fafc' }}
+              />
               <Legend />
               <Line
                 type="monotone"
                 dataKey="sales"
                 stroke="#3b82f6"
-                strokeWidth={2}
+                strokeWidth={3}
+                dot={{ r: 4, fill: '#3b82f6' }}
               />
               <Line
                 type="monotone"
                 dataKey="profit"
                 stroke="#10b981"
-                strokeWidth={2}
+                strokeWidth={3}
+                dot={{ r: 4, fill: '#10b981' }}
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
+
+      {advancedData && (
+        <div className="advanced-charts-grid">
+          <HourlySalesChart data={advancedData.hourlySales} />
+          <CategoryPieChart data={advancedData.categoryDistribution} />
+          <TopProducts products={advancedData.topProducts} />
+        </div>
+      )}
     </div>
   );
 }

@@ -142,11 +142,42 @@ exports.login = async (req, res) => {
 // ---------------- Get Current User ----------------
 exports.getCurrentUser = async (req, res) => {
     try {
-        const user = req.user; // populated by authenticateStoreOwner middleware
+        let user = req.user;
+
+        // 🛠️ Auto-Sync Stats for Employees: Ensure performance matches real sales
+        if (req.userType === 'employee') {
+            const Sale = require('../models/Sale');
+            const stats = await Sale.aggregate([
+                { $match: { employee_id: user._id, status: 'completed' } },
+                { $group: { 
+                    _id: null, 
+                    count: { $sum: 1 }, 
+                    total: { $sum: '$totalAmount' } 
+                }}
+            ]);
+
+            const actualCount = stats.length > 0 ? stats[0].count : 0;
+            const actualRevenue = stats.length > 0 ? stats[0].total : 0;
+
+            // If DB stats are out of sync, update them
+            if (user.performance.salesCount !== actualCount || user.performance.totalRevenue !== actualRevenue) {
+                const Employee = require('../models/Employee');
+                user = await Employee.findByIdAndUpdate(
+                    user._id,
+                    { 
+                        'performance.salesCount': actualCount, 
+                        'performance.totalRevenue': actualRevenue 
+                    },
+                    { new: true }
+                ).populate('role').populate('store_id', 'name');
+            }
+        }
+
         res.json({
             success: true,
             user: {
                 id: user._id,
+                employee_id: user.employee_id || null, // For staff
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
@@ -154,6 +185,7 @@ exports.getCurrentUser = async (req, res) => {
                 role: user.role || null,
                 store_id: user.store_id || null,
                 schedule: user.schedule || null,
+                performance: user.performance || null, // Added for stats
             },
         });
     } catch (error) {

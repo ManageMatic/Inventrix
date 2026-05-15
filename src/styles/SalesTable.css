@@ -1,7 +1,6 @@
 /* ================== SALES TABLE STYLES (PREMIUM GLASSMORPHISM) ================== */
-
 .sales-section {
-    color: #f8fafc;
+    padding: 20px;
     animation: fadeIn 0.4s ease-in-out;
 }
 
@@ -21,17 +20,84 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
-.sales-header h2 {
-    color: #f8fafc;
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
+.header-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 30px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.export-btn:hover {
+    background: rgba(56, 189, 248, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.1);
+}
+
+.header-left h2 {
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0 15px;
+    min-width: 300px;
+    transition: all 0.3s ease;
+}
+
+.search-bar:focus-within {
+    border-color: #38bdf8;
+    background: rgba(30, 41, 59, 0.8);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+}
+
+.search-bar svg {
+    color: #94a3b8;
+    margin-right: 12px;
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    color: #f8fafc;
+    padding: 12px 0;
+    width: 100%;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.search-bar input::placeholder {
+    color: #64748b;
 }
 
 /* Glassmorphism Table Wrapper */
@@ -223,8 +289,7 @@
 
 /* Sales Total Gradient Box */
 .sales-total {
-    margin: 20px 0 0 0;
-    padding: 20px 24px;
+    padding: 10px 24px;
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(56, 189, 248, 0.15) 100%);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     text-align: right;

@@ -1,9 +1,9 @@
 /* GENERATE QR COMPONENT STYLES */
 .generate-qr-wrapper {
     padding: 24px;
-    background: #0f172a;
     border-radius: 12px;
     min-height: 400px;
+    animation: fadeIn 0.4s ease-in-out;
 }
 
 /* Header section */
@@ -332,6 +332,7 @@
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
+
     .generate-qr-card,
     .generate-qr-spinner,
     .generate-qr-download-btn,

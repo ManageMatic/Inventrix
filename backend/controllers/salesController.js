@@ -332,3 +332,117 @@ exports.getRecentSales = async (req, res) => {
         });
     }
 };
+
+// Get advanced analytics for store/owner
+exports.getAdvancedAnalytics = async (req, res) => {
+    try {
+        const { storeId } = req.params;
+        const mongoose = require('mongoose');
+
+        let matchQuery = { status: 'completed' };
+        if (storeId !== "All" && storeId !== "undefined") {
+            matchQuery.store_id = new mongoose.Types.ObjectId(storeId);
+        } else {
+            // If "All", get all stores for this owner
+            const Store = require('../models/Store');
+            const owner_id = req.user._id;
+            const stores = await Store.find({ owner_id }).select('_id');
+            const storeIds = stores.map(s => s._id);
+            matchQuery.store_id = { $in: storeIds };
+        }
+
+        // 1. Top 5 Products by Quantity
+        const topProducts = await Sale.aggregate([
+            { $match: matchQuery },
+            { $unwind: "$items" },
+            {
+                $group: {
+                    _id: "$items.product_id",
+                    totalQty: { $sum: "$items.quantity" },
+                    revenue: { $sum: "$items.subtotal" }
+                }
+            },
+            { $sort: { totalQty: -1 } },
+            { $limit: 5 },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "productInfo"
+                }
+            },
+            { $unwind: "$productInfo" },
+            {
+                $project: {
+                    name: "$productInfo.name",
+                    quantity: "$totalQty",
+                    revenue: "$revenue"
+                }
+            }
+        ]);
+
+        // 2. Hourly Sales (Peak Hours)
+        const hourlySales = await Sale.aggregate([
+            { $match: matchQuery },
+            {
+                $group: {
+                    _id: { $hour: "$date" },
+                    count: { $sum: 1 },
+                    revenue: { $sum: "$totalAmount" }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+
+        // 3. Category Distribution
+        const categoryData = await Sale.aggregate([
+            { $match: matchQuery },
+            { $unwind: "$items" },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "items.product_id",
+                    foreignField: "_id",
+                    as: "productInfo"
+                }
+            },
+            { $unwind: "$productInfo" },
+            {
+                $group: {
+                    _id: "$productInfo.category",
+                    revenue: { $sum: "$items.subtotal" },
+                    count: { $sum: "$items.quantity" }
+                }
+            },
+            { $sort: { revenue: -1 } }
+        ]);
+
+        res.json({
+            success: true,
+            data: {
+                topProducts,
+                hourlySales: Array.from({ length: 24 }, (_, i) => {
+                    const hourData = hourlySales.find(h => h._id === i);
+                    return {
+                        hour: `${i}:00`,
+                        sales: hourData ? hourData.count : 0,
+                        revenue: hourData ? hourData.revenue : 0
+                    };
+                }),
+                categoryDistribution: categoryData.map(c => ({
+                    category: c._id || "Uncategorized",
+                    revenue: c.revenue,
+                    count: c.count
+                }))
+            }
+        });
+
+    } catch (error) {
+        console.error("GET ADVANCED ANALYTICS ERROR:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};

@@ -1,14 +1,15 @@
-import "../../../styles/StoreStats.css";
+import { Package, ShoppingCart, Users, AlertTriangle, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../../config";
+import "../../../styles/StoreStats.css";
 
 const StoreStats = ({ storeId }) => {
   const [stats, setStats] = useState({
     totalProducts: 0,
-    totalSales: 15000,
-    employees: 120,
+    totalSales: 0,
+    employees: 0,
     stockAlerts: 0,
-    lowStockItems: [], // ⬅️ will hold {name, quantity}
+    lowStockItems: [],
   });
 
   const token = localStorage.getItem("token");
@@ -19,7 +20,6 @@ const StoreStats = ({ storeId }) => {
 
   const fetchStats = async () => {
     try {
-      // Fetch products
       const productsRes = await fetch(`${API_URL}/api/products/${storeId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -39,45 +39,33 @@ const StoreStats = ({ storeId }) => {
           }));
       }
 
-      // Fetch sales for total sales amount
-      const salesRes = await fetch(
-        `${API_URL}/api/sales/store/${storeId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const salesRes = await fetch(`${API_URL}/api/sales/store/${storeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const salesData = await salesRes.json();
 
       let totalSales = 0;
       if (salesData.success && Array.isArray(salesData.data)) {
-        totalSales = salesData.data.reduce(
-          (sum, sale) => sum + (sale.totalAmount || 0),
-          0
-        );
+        totalSales = salesData.data.reduce((sum, sale) => sum + (sale.totalAmount || 0), 0);
       }
 
-      // Fetch employees count from employee table
-      const employeesRes = await fetch(
-        `${API_URL}/api/employees/count/${storeId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const employeesRes = await fetch(`${API_URL}/api/employees/count/${storeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const employeesData = await employeesRes.json();
 
       let employees = 0;
-      if (employeesData.success && employeesData.data && typeof employeesData.data.count === 'number') {
+      if (employeesData.success && employeesData.data) {
         employees = employeesData.data.count;
       }
 
-      setStats((prev) => ({
-        ...prev,
+      setStats({
         totalProducts,
         totalSales,
         employees,
         stockAlerts: lowStockItems.length,
         lowStockItems,
-      }));
+      });
     } catch (err) {
       console.error("❌ Error fetching store stats:", err);
     }
@@ -85,40 +73,54 @@ const StoreStats = ({ storeId }) => {
 
   return (
     <div className="store-stats">
-      {/* Summary Cards */}
-      <div className="stats-grid">
-        <div className="stat-card">
-          <h3>Total Products</h3>
-          <p>{stats.totalProducts}</p>
+      <div className="store-stats-grid">
+        <div className="store-stat-card products">
+          <div className="store-stat-icon"><Package size={24} /></div>
+          <div className="store-stat-details">
+            <h3>Total Products</h3>
+            <p>{stats.totalProducts}</p>
+          </div>
         </div>
 
-        <div className="stat-card">
-          <h3>Total Sales</h3>
-          <p>₹{stats.totalSales}</p>
+        <div className="store-stat-card sales">
+          <div className="store-stat-icon"><TrendingUp size={24} /></div>
+          <div className="store-stat-details">
+            <h3>Total Sales</h3>
+            <p>₹{stats.totalSales.toLocaleString('en-IN')}</p>
+          </div>
         </div>
 
-        <div className="stat-card">
-          <h3>Employees</h3>
-          <p>{stats.employees}</p>
+        <div className="store-stat-card employees">
+          <div className="store-stat-icon"><Users size={24} /></div>
+          <div className="store-stat-details">
+            <h3>Employees</h3>
+            <p>{stats.employees}</p>
+          </div>
         </div>
 
-        <div className="stat-card">
-          <h3>Stock Alerts</h3>
-          <p>{stats.stockAlerts}</p>
+        <div className="store-stat-card alerts">
+          <div className="store-stat-icon"><AlertTriangle size={24} /></div>
+          <div className="store-stat-details">
+            <h3>Stock Alerts</h3>
+            <p className={stats.stockAlerts > 0 ? "text-danger" : ""}>{stats.stockAlerts}</p>
+          </div>
         </div>
       </div>
 
-      {/* Low Stock Items List */}
       {stats.lowStockItems.length > 0 && (
         <div className="low-stock-section">
-          <h4>⚠️ Low Stock Products</h4>
-          <ul>
+          <div className="section-header">
+            <AlertTriangle size={20} className="warning-icon" />
+            <h4>Low Stock Products</h4>
+          </div>
+          <div className="low-stock-list">
             {stats.lowStockItems.map((item, index) => (
-              <li key={index}>
-                <strong>{item.name}</strong> — only {item.quantity} left
-              </li>
+              <div key={index} className="low-stock-item">
+                <span className="item-name">{item.name}</span>
+                <span className="item-qty">Only {item.quantity} left</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>

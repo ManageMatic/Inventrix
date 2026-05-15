@@ -21,12 +21,17 @@ const OwnerDashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   
-  const [activeTab, setActiveTab] = useState("Dashboard");
+  const [activeTab, setActiveTab] = useState(localStorage.getItem("ownerActiveTab") || "Dashboard");
+
+  useEffect(() => {
+    localStorage.setItem("ownerActiveTab", activeTab);
+  }, [activeTab]);
   const [selectedStore, setSelectedStore] = useState("All");
   const [notifications, setNotifications] = useState([]);
   
-  const [stats, setStats] = useState({ products: 0, employees: 0, revenue: "₹0" });
+  const [stats, setStats] = useState({ products: 0, sales: 0, employees: 0, revenue: "₹0" });
   const [chartData, setChartData] = useState([]);
+  const [advancedAnalytics, setAdvancedAnalytics] = useState(null);
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -40,7 +45,20 @@ const OwnerDashboard = () => {
   // Fetch analytics whenever selectedStore changes
   useEffect(() => {
     fetchAnalytics(selectedStore);
+    fetchAdvancedAnalytics(selectedStore);
   }, [selectedStore]);
+
+  const fetchAdvancedAnalytics = async (storeId) => {
+    try {
+      const res = await fetch(`${API_URL}/api/sales/analytics/${storeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) setAdvancedAnalytics(data.data);
+    } catch (err) {
+      console.error("Error fetching advanced analytics:", err);
+    }
+  };
 
   useEffect(() => {
     // Connect WebSocket
@@ -131,6 +149,8 @@ const OwnerDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("ownerActiveTab");
+    localStorage.removeItem("storeActiveTab");
     navigate("/login");
   };
 
@@ -163,7 +183,7 @@ const OwnerDashboard = () => {
         {activeTab === "Dashboard" && (
           <>
             <StatsGrid stores={selectedStore === "All" ? stores : stores.filter(s => s._id === selectedStore)} stats={stats} />
-            <AnalyticsChart data={chartData} />
+            <AnalyticsChart data={chartData} advancedData={advancedAnalytics} />
             <StoreList stores={selectedStore === "All" ? stores : stores.filter(s => s._id === selectedStore)} />
           </>
         )}
@@ -194,7 +214,7 @@ const OwnerDashboard = () => {
         
         {activeTab === "Analytics" && (
           <div className="analytics-container">
-            <AnalyticsChart data={chartData} />
+            <AnalyticsChart data={chartData} advancedData={advancedAnalytics} />
           </div>
         )}
       </main>

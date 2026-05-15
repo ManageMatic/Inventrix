@@ -1,4 +1,4 @@
-import { Menu, X, Bell, Calendar, MapPin } from "lucide-react";
+import { Menu, X, Bell, Calendar, MapPin, Store } from "lucide-react";
 import { useState, useEffect } from "react";
 import { API_URL } from "../../../config";
 
@@ -73,18 +73,18 @@ function EmployeeHeader({ setSidebarOpen, sidebarOpen, user, notifications = [],
       </div>
 
       <div className="header-right">
-        
+
         {/* Store Assignment Badge */}
         {user?.store_id && (
           <div className="employee-role-badge" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <MapPin size={14} />
+            <Store size={16} />
             {user?.store_id?.name || "Store Active"}
           </div>
         )}
 
         <div className="notif-wrapper">
-          <button 
-            className="notif-btn" 
+          <button
+            className="notif-btn"
             title="Notifications"
             onClick={() => setIsNotifOpen(!isNotifOpen)}
           >
@@ -102,7 +102,7 @@ function EmployeeHeader({ setSidebarOpen, sidebarOpen, user, notifications = [],
                 <h3>Notifications</h3>
                 <div style={{ display: "flex", gap: "10px" }}>
                   {unreadCount > 0 && (
-                    <button 
+                    <button
                       className="mark-all-btn"
                       onClick={handleMarkAllAsRead}
                     >
@@ -114,7 +114,7 @@ function EmployeeHeader({ setSidebarOpen, sidebarOpen, user, notifications = [],
                   </button>
                 </div>
               </div>
-              
+
               <div className="notif-list">
                 {notifications.length === 0 ? (
                   <div className="no-notifs">
@@ -122,8 +122,8 @@ function EmployeeHeader({ setSidebarOpen, sidebarOpen, user, notifications = [],
                   </div>
                 ) : (
                   notifications.map(notif => (
-                    <div 
-                      key={notif.id} 
+                    <div
+                      key={notif.id}
                       className={`notif-item ${!notif.read ? 'unread' : ''}`}
                       onClick={() => !notif.read && handleMarkAsRead(notif.id)}
                     >

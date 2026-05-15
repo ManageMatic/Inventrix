@@ -171,3 +171,54 @@ exports.clockOut = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to clock out', error: error.message });
     }
 };
+
+// Update personal profile
+exports.updateProfile = async (req, res) => {
+    try {
+        const { name, phone } = req.body;
+        const employee = await Employee.findByIdAndUpdate(
+            req.user._id,
+            { name, phone },
+            { new: true }
+        ).populate('role', 'name').populate('store_id', 'name');
+
+        if (!employee) return res.status(404).json({ success: false, message: 'Employee not found' });
+
+        res.status(200).json({ 
+            success: true, 
+            message: 'Profile updated successfully', 
+            data: {
+                id: employee._id,
+                employee_id: employee.employee_id,
+                name: employee.name,
+                email: employee.email,
+                phone: employee.phone,
+                userType: 'employee',
+                role: employee.role,
+                store_id: employee.store_id,
+                schedule: employee.schedule,
+                performance: employee.performance
+            } 
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to update profile', error: error.message });
+    }
+};
+
+// Change password
+exports.changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const employee = await Employee.findById(req.user._id).select('+password');
+
+        const isMatch = await bcrypt.compare(currentPassword, employee.password);
+        if (!isMatch) return res.status(401).json({ success: false, message: 'Incorrect current password' });
+
+        employee.password = await bcrypt.hash(newPassword, 10);
+        await employee.save();
+
+        res.status(200).json({ success: true, message: 'Password updated successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to change password', error: error.message });
+    }
+};

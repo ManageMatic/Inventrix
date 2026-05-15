@@ -19,7 +19,11 @@ const socket = io(SOCKET_URL);
 const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updateCartStoreId }) => {
   const { storeId } = useParams();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState(localStorage.getItem("storeActiveTab") || "overview");
+
+  useEffect(() => {
+    localStorage.setItem("storeActiveTab", activeTab);
+  }, [activeTab]);
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

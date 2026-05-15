@@ -154,28 +154,29 @@ export const getAnalytics = async (req, res) => {
         const { storeId } = req.query;
         const owner_id = req.user._id;
 
-        let storeQuery = {};
+        let productsQuery = {};
+        let otherQuery = {}; // for employees and sales (store_id)
+
         if (storeId && storeId !== "All" && storeId !== "undefined") {
             const store = await Store.findOne({ _id: storeId, owner_id });
             if (!store) {
                 return res.status(403).json({ success: false, message: "Access denied or store not found" });
             }
-            storeQuery = { store: storeId };
+            productsQuery = { store: storeId };
+            otherQuery = { store_id: storeId };
         } else {
             const stores = await Store.find({ owner_id }).select('_id');
             const storeIds = stores.map(s => s._id);
-            storeQuery = { store: { $in: storeIds } };
+            productsQuery = { store: { $in: storeIds } };
+            otherQuery = { store_id: { $in: storeIds } };
         }
 
-        const productsCount = await Product.countDocuments(storeQuery);
-
-        const employeeQuery = storeId && storeId !== "All" && storeId !== "undefined" ? { store_id: storeId } : { store_id: { $in: storeQuery.store.$in } };
-        const employeesCount = await Employee.countDocuments(employeeQuery);
-
-        const salesQuery = storeId && storeId !== "All" && storeId !== "undefined" ? { store_id: storeId } : { store_id: { $in: storeQuery.store.$in } };
-        const sales = await Sale.find(salesQuery).select('totalAmount date');
+        const productsCount = await Product.countDocuments(productsQuery);
+        const employeesCount = await Employee.countDocuments(otherQuery);
+        const sales = await Sale.find(otherQuery).select('totalAmount date');
         
         const totalRevenue = sales.reduce((acc, sale) => acc + (sale.totalAmount || 0), 0);
+        const totalSalesCount = sales.length;
 
         const chartDataMap = {};
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -205,6 +206,7 @@ export const getAnalytics = async (req, res) => {
             success: true,
             stats: {
                 products: productsCount,
+                sales: sales.length,
                 employees: employeesCount,
                 revenue: "₹" + totalRevenue.toLocaleString('en-IN')
             },

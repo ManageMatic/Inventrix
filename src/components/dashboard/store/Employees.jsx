@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Clock } from "lucide-react";
+import { Plus, Edit, Trash2, Clock, Search } from "lucide-react";
 import Toast from "../../common/Toast";
 import ConfirmDialog from "../../common/ConfirmDialog";
 import "../../../styles/Employees.css";
@@ -11,6 +11,7 @@ const Employees = ({ storeId }) => {
   const [toast, setToast] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({ show: false, id: null });
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -38,13 +39,10 @@ const Employees = ({ storeId }) => {
       }
     } catch (err) {
       console.error("Error fetching employees:", err);
-      showToast("Failed to load employees", "error");
     } finally {
       setLoading(false);
     }
   };
-
-  const showToast = (message, type = "info") => setToast({ message, type });
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -69,14 +67,14 @@ const Employees = ({ storeId }) => {
 
       const data = await res.json();
       if (data.success) {
-        showToast(editingId ? "Employee updated" : "Employee added", "success");
+        setToast({ message: editingId ? "Employee updated" : "Employee added", type: "success" });
         setShowModal(false);
         fetchEmployees();
       } else {
-        showToast(data.message || "Operation failed", "error");
+        setToast({ message: data.message || "Operation failed", type: "error" });
       }
     } catch (err) {
-      showToast("Network error", "error");
+      setToast({ message: "Network error", type: "error" });
     }
   };
 
@@ -100,13 +98,11 @@ const Employees = ({ storeId }) => {
       });
       const data = await res.json();
       if (data.success) {
-        showToast("Employee deleted", "success");
+        setToast({ message: "Employee deleted", type: "success" });
         fetchEmployees();
-      } else {
-        showToast("Failed to delete", "error");
       }
     } catch (err) {
-      showToast("Network error", "error");
+      setToast({ message: "Network error", type: "error" });
     } finally {
       setConfirmDialog({ show: false, id: null });
     }
@@ -121,20 +117,40 @@ const Employees = ({ storeId }) => {
       });
       const data = await res.json();
       if (data.success) {
-        showToast(`Clocked ${isClockedIn ? "out" : "in"} successfully`, "success");
+        setToast({ message: `Clocked ${isClockedIn ? "out" : "in"} successfully`, type: "success" });
         fetchEmployees();
-      } else {
-        showToast(data.message || `Failed to clock ${isClockedIn ? "out" : "in"}`, "error");
       }
     } catch (err) {
-      showToast("Network error", "error");
+      setToast({ message: "Network error", type: "error" });
     }
   };
+
+  // Search logic
+  const filteredEmployees = employees.filter(emp => {
+    const query = searchQuery.toLowerCase();
+    return (
+      emp.name?.toLowerCase().includes(query) ||
+      emp.email?.toLowerCase().includes(query) ||
+      emp.phone?.includes(query) ||
+      emp.employee_id?.toString().includes(query)
+    );
+  });
 
   return (
     <div className="employees-tab">
       <div className="employees-header">
-        <h2>Staff Management</h2>
+        <div className="header-left">
+          <h2>Staff Management</h2>
+          <div className="search-bar">
+            <Search size={18} />
+            <input 
+              type="text" 
+              placeholder="Search staff..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
         {storeId !== "All" && (
           <button
             className="add-employee-btn"
@@ -143,7 +159,8 @@ const Employees = ({ storeId }) => {
               setEditingId(null);
               setShowModal(true);
             }}
-          >Add Employee
+          >
+            <Plus size={18} /> Add Employee
           </button>
         )}
       </div>
@@ -164,10 +181,10 @@ const Employees = ({ storeId }) => {
           <tbody>
             {loading ? (
               <tr><td colSpan={storeId === "All" ? "7" : "6"} style={{ textAlign: "center" }}>Loading employees...</td></tr>
-            ) : employees.length === 0 ? (
-              <tr><td colSpan={storeId === "All" ? "7" : "6"} style={{ textAlign: "center" }}>No employees found.</td></tr>
+            ) : filteredEmployees.length === 0 ? (
+              <tr><td colSpan={storeId === "All" ? "7" : "6"} style={{ textAlign: "center" }}>No staff found.</td></tr>
             ) : (
-              employees.map(emp => (
+              filteredEmployees.map(emp => (
                 <tr key={emp._id}>
                   <td>
                     <strong>{emp.name}</strong><br />
@@ -185,8 +202,7 @@ const Employees = ({ storeId }) => {
                   </td>
                   <td>
                     Sales: {emp.performance?.salesCount || 0}<br />
-                    Revenue: ₹{emp.performance?.totalRevenue?.toFixed(2) || "0.00"}<br />
-                    Rating: {emp.performance?.rating || "N/A"}
+                    Revenue: ₹{emp.performance?.totalRevenue?.toFixed(2) || "0.00"}
                   </td>
                   <td>
                     {emp.schedule?.clockedIn ? (
@@ -253,7 +269,7 @@ const Employees = ({ storeId }) => {
       {confirmDialog.show && (
         <ConfirmDialog
           title="Delete Employee"
-          message="Are you sure you want to remove this employee? This action cannot be undone."
+          message="Are you sure you want to remove this employee?"
           onConfirm={() => handleDelete(confirmDialog.id)}
           onCancel={() => setConfirmDialog({ show: false, id: null })}
         />

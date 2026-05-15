@@ -1,10 +1,10 @@
-import "../../../styles/ProductsTable.css";
 import { useEffect, useState } from "react";
 import ProductModal from "./ProductModal";
 import ConfirmDialog from "../../common/ConfirmDialog";
-import { Trash2, Edit, QrCode, ChevronUp, ChevronDown, X } from "lucide-react";
+import { Trash2, Edit, QrCode, ChevronUp, ChevronDown, X, Search } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { API_URL, CLIENT_URL } from "../../../config";
+import "../../../styles/ProductsTable.css";
 
 const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
   const [products, setProducts] = useState([]);
@@ -15,6 +15,7 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
   const [sortDirection, setSortDirection] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
   const token = localStorage.getItem("token");
   const [toast, setToast] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -24,7 +25,6 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
 
   // Helper to check permissions
   const hasPermission = (resource, action) => {
-    // If no permissions array is provided, assume it's the owner (full access)
     if (!permissions || permissions.length === 0) return true;
     const perm = permissions.find((p) => p.resource === resource);
     return perm && perm.actions.includes(action);
@@ -79,17 +79,12 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-
       const data = await res.json();
-
       if (data.success) {
         setProducts(products.filter((p) => p._id !== deleteId));
-      } else {
-        setToast({ message: "Error deleting product", type: "error" });
       }
     } catch (err) {
       console.error("Error deleting product:", err);
-      setToast({ message: "Error deleting product", type: "error" });
     } finally {
       setConfirmOpen(false);
       setDeleteId(null);
@@ -103,14 +98,20 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
       setSortField(field);
       setSortDirection("asc");
     }
-    setCurrentPage(1); // Reset to first page when sorting
+    setCurrentPage(1);
   };
 
-  const sortedProducts = [...products].sort((a, b) => {
+  // Filter products based on search query
+  const filteredProducts = products.filter(p => 
+    p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    p.product_id?.toString().includes(searchQuery) ||
+    p.category?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
     let aValue = a[sortField];
     let bValue = b[sortField];
 
-    // Handle different data types
     if (sortField === "sellingPrice" || sortField === "quantity") {
       aValue = Number(aValue);
       bValue = Number(bValue);
@@ -129,7 +130,6 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
     }
   });
 
-  // Pagination logic
   const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = sortedProducts.slice(
@@ -144,7 +144,21 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
   return (
     <div className="products-section">
       <div className="products-header">
-        <h2>Products</h2>
+        <div className="header-left">
+          <h2>Products</h2>
+          <div className="search-bar">
+            <Search size={18} />
+            <input 
+              type="text" 
+              placeholder="Search products..." 
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+        </div>
         <div>
           {storeId !== "All" && hasPermission("products", "create") && (
             <button className="add-product" onClick={handleAdd}>
@@ -163,66 +177,21 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
           <table className="products-table">
             <thead>
               <tr>
-                <th
-                  onClick={() => handleSort("product_id")}
-                  className="sortable-header"
-                >
-                  ID{" "}
-                  {sortField === "product_id" &&
-                    (sortDirection === "asc" ? (
-                      <ChevronUp size={14} />
-                    ) : (
-                      <ChevronDown size={14} />
-                    ))}
+                <th onClick={() => handleSort("product_id")} className="sortable-header">
+                  ID {sortField === "product_id" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
                 </th>
-                <th
-                  onClick={() => handleSort("name")}
-                  className="sortable-header"
-                >
-                  Name{" "}
-                  {sortField === "name" &&
-                    (sortDirection === "asc" ? (
-                      <ChevronUp size={14} />
-                    ) : (
-                      <ChevronDown size={14} />
-                    ))}
+                <th onClick={() => handleSort("name")} className="sortable-header">
+                  Name {sortField === "name" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
                 </th>
                 {storeId === "All" && <th>Store</th>}
-                <th
-                  onClick={() => handleSort("category")}
-                  className="sortable-header"
-                >
-                  Category{" "}
-                  {sortField === "category" &&
-                    (sortDirection === "asc" ? (
-                      <ChevronUp size={14} />
-                    ) : (
-                      <ChevronDown size={14} />
-                    ))}
+                <th onClick={() => handleSort("category")} className="sortable-header">
+                  Category {sortField === "category" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
                 </th>
-                <th
-                  onClick={() => handleSort("sellingPrice")}
-                  className="sortable-header"
-                >
-                  Price{" "}
-                  {sortField === "sellingPrice" &&
-                    (sortDirection === "asc" ? (
-                      <ChevronUp size={14} />
-                    ) : (
-                      <ChevronDown size={14} />
-                    ))}
+                <th onClick={() => handleSort("sellingPrice")} className="sortable-header">
+                  Price {sortField === "sellingPrice" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
                 </th>
-                <th
-                  onClick={() => handleSort("quantity")}
-                  className="sortable-header"
-                >
-                  Stock{" "}
-                  {sortField === "quantity" &&
-                    (sortDirection === "asc" ? (
-                      <ChevronUp size={14} />
-                    ) : (
-                      <ChevronDown size={14} />
-                    ))}
+                <th onClick={() => handleSort("quantity")} className="sortable-header">
+                  Stock {sortField === "quantity" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
                 </th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -250,20 +219,12 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
                     </td>
                     <td>
                       {hasPermission("products", "update") && (
-                        <button
-                          className="icon-btn edit-btn"
-                          onClick={() => handleEdit(p)}
-                          title="Edit"
-                        >
+                        <button className="icon-btn edit-btn" onClick={() => handleEdit(p)} title="Edit">
                           <Edit size={16} />
                         </button>
                       )}
                       {hasPermission("products", "delete") && (
-                        <button
-                          className="icon-btn delete-btn"
-                          onClick={() => handleDeleteClick(p._id)}
-                          title="Delete"
-                        >
+                        <button className="icon-btn delete-btn" onClick={() => handleDeleteClick(p._id)} title="Delete">
                           <Trash2 size={16} />
                         </button>
                       )}
@@ -277,36 +238,23 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
             </tbody>
           </table>
 
-          {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="pagination">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="pagination-btn"
-              >
+              <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="pagination-btn">
                 Previous
               </button>
-
               <div className="pagination-numbers">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      onClick={() => handlePageChange(page)}
-                      className={`pagination-btn ${currentPage === page ? "active" : ""}`}
-                    >
-                      {page}
-                    </button>
-                  ),
-                )}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`pagination-btn ${currentPage === page ? "active" : ""}`}
+                  >
+                    {page}
+                  </button>
+                ))}
               </div>
-
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="pagination-btn"
-              >
+              <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="pagination-btn">
                 Next
               </button>
             </div>
@@ -314,7 +262,6 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
         </div>
       )}
 
-      {/* Product Modal for Add/Edit */}
       {showModal && (
         <ProductModal
           storeId={storeId}
@@ -327,7 +274,6 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
         />
       )}
 
-      {/* Confirm Delete Dialog */}
       {confirmOpen && (
         <ConfirmDialog
           title="Delete Product"
@@ -337,7 +283,6 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
         />
       )}
 
-      {/* QR Modal */}
       {showQRModal && selectedQRProduct && (
         <div className="modal-overlay" onClick={() => setShowQRModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()} style={{ width: 'auto', textAlign: 'center', padding: '30px' }}>

@@ -1,10 +1,7 @@
 /* ================== STORE DETAILS SECTION ================== */
 .store-details-section {
-    background: #0f172a;
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    margin-bottom: 25px;
+    animation: fadeIn 0.4s ease-in-out;
 }
 
 .store-details-header {

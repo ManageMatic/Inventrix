@@ -6,9 +6,15 @@ const {
     getSaleById, 
     updateSale, 
     deleteSale,
-    getRecentSales 
+    getRecentSales,
+    getAdvancedAnalytics
 } = require("../controllers/salesController");
 const { authenticateStoreStaff, authorizePermission } = require("../middleware/auth");
+
+// ... (other routes)
+
+// Get advanced analytics
+router.get("/analytics/:storeId", authenticateStoreStaff, authorizePermission('sales', 'read'), getAdvancedAnalytics);
 
 // Create sale
 router.post("/create", authenticateStoreStaff, createSale);

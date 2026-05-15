@@ -6,7 +6,9 @@ const {
     updateEmployee, 
     deleteEmployee, 
     clockIn, 
-    clockOut 
+    clockOut,
+    updateProfile,
+    changePassword
 } = require('../controllers/employeeController');
 const { authenticateStoreStaff, authenticateStoreOwner } = require('../middleware/auth');
 
@@ -20,5 +22,9 @@ router.delete('/:id', authenticateStoreOwner, deleteEmployee);
 
 router.post('/:id/clock-in', authenticateStoreStaff, clockIn);
 router.post('/:id/clock-out', authenticateStoreStaff, clockOut);
+
+// Personal Profile Management
+router.put('/profile/update', authenticateStoreStaff, updateProfile);
+router.put('/profile/change-password', authenticateStoreStaff, changePassword);
 
 module.exports = router;

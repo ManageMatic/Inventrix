@@ -30,7 +30,11 @@ const socket = io(SOCKET_URL);
 const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updateCartStoreId }) => {
   const [employee, setEmployee] = useState(null);
   const [permissions, setPermissions] = useState([]);
-  const [activeTab, setActiveTab] = useState("clock");
+  const [activeTab, setActiveTab] = useState(localStorage.getItem("employeeActiveTab") || "clock");
+
+  useEffect(() => {
+    localStorage.setItem("employeeActiveTab", activeTab);
+  }, [activeTab]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -103,6 +107,7 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("employeeActiveTab");
     navigate("/login");
   };
 
