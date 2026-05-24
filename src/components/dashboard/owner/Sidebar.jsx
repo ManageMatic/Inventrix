@@ -7,6 +7,7 @@ import {
   Settings,
   LogOut,
   QrCode,
+  Truck,
 } from "lucide-react";
 import logo from "../../../assets/logo.png";
 
@@ -16,6 +17,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, user, onLogout, activeTab, setAc
     { name: "Stores", icon: <Store size={20} /> },
     { name: "Products", icon: <Package size={20} /> },
     { name: "Employees", icon: <Users size={20} /> },
+    { name: "Suppliers", icon: <Truck size={20} /> },
     { name: "Reports", icon: <TrendingUp size={20} /> },
     { name: "Analytics", icon: <BarChart2 size={20} /> },
     { name: "Generate QR", icon: <QrCode size={20} /> },

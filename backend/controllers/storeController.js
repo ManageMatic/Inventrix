@@ -1,10 +1,10 @@
-import Store from '../models/Store.js';
-import Product from '../models/Product.js';
-import Employee from '../models/Employee.js';
-import Sale from '../models/Sale.js';
+const Store = require('../models/Store');
+const Product = require('../models/Product');
+const Employee = require('../models/Employee');
+const Sale = require('../models/Sale');
 
 // ── Public endpoint to fetch all stores (for employee registration)
-export const getAllStores = async (req, res) => {
+exports.getAllStores = async (req, res) => {
     try {
         const stores = await Store.find()
             .select('_id name location address')
@@ -26,7 +26,7 @@ export const getAllStores = async (req, res) => {
 // ────────────────────────────────────────────────────────────
 
 // ---------------- Create Store ----------------
-export const createStore = async (req, res) => {
+exports.createStore = async (req, res) => {
     try {
         const { name, location, contact, address } = req.body;
 
@@ -61,7 +61,7 @@ export const createStore = async (req, res) => {
 };
 
 // ---------------- Get Stores of Owner ----------------
-export const getMyStores = async (req, res) => {
+exports.getMyStores = async (req, res) => {
     try {
         const owner_id = req.user._id;
         const stores = await Store.find({ owner_id });
@@ -72,7 +72,7 @@ export const getMyStores = async (req, res) => {
 };
 
 // ---------------- Get Store by ID ----------------
-export const getStoreById = async (req, res) => {
+exports.getStoreById = async (req, res) => {
     try {
         const store = await Store.findById(req.params.id)
             .populate('owner_id', 'name email phone');
@@ -89,7 +89,7 @@ export const getStoreById = async (req, res) => {
 };
 
 // ---------------- Update Store ----------------
-export const updateStore = async (req, res) => {
+exports.updateStore = async (req, res) => {
     try {
         const store = await Store.findById(req.params.id);
 
@@ -124,7 +124,7 @@ export const updateStore = async (req, res) => {
 };
 
 // ---------------- Delete Store ----------------
-export const deleteStore = async (req, res) => {
+exports.deleteStore = async (req, res) => {
     try {
         const store = await Store.findById(req.params.id);
 
@@ -149,7 +149,7 @@ export const deleteStore = async (req, res) => {
 };
 
 // ---------------- Get Analytics ----------------
-export const getAnalytics = async (req, res) => {
+exports.getAnalytics = async (req, res) => {
     try {
         const { storeId } = req.query;
         const owner_id = req.user._id;
@@ -174,13 +174,13 @@ export const getAnalytics = async (req, res) => {
         const productsCount = await Product.countDocuments(productsQuery);
         const employeesCount = await Employee.countDocuments(otherQuery);
         const sales = await Sale.find(otherQuery).select('totalAmount date');
-        
+
         const totalRevenue = sales.reduce((acc, sale) => acc + (sale.totalAmount || 0), 0);
         const totalSalesCount = sales.length;
 
         const chartDataMap = {};
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        
+
         const d = new Date();
         for (let i = 5; i >= 0; i--) {
             const pastDate = new Date(d.getFullYear(), d.getMonth() - i, 1);
@@ -192,7 +192,7 @@ export const getAnalytics = async (req, res) => {
             const monthStr = monthNames[saleDate.getMonth()];
             if (chartDataMap[monthStr]) {
                 chartDataMap[monthStr].sales += sale.totalAmount;
-                chartDataMap[monthStr].profit += sale.totalAmount * 0.4; 
+                chartDataMap[monthStr].profit += sale.totalAmount * 0.4;
             }
         });
 

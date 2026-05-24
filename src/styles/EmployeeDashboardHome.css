@@ -1,0 +1,67 @@
+/* Employee Dashboard Home stylesheet */
+
+.employee-home-container {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.employee-welcome {
+    margin-bottom: 2rem;
+}
+
+.employee-welcome h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0 0 0.3rem 0;
+}
+
+.employee-welcome p {
+    color: #818cf8;
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Stock Alerts List */
+.stock-alerts-card {
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.05);
+}
+
+.stock-alert-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ef4444;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.stock-alert-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(239, 68, 68, 0.03);
+    border: 1px solid rgba(239, 68, 68, 0.1);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.stock-alert-item-name {
+    font-weight: 600;
+    color: white;
+}
+
+.stock-alert-item-details {
+    font-size: 0.85rem;
+    color: #ef4444;
+    font-weight: 700;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+}

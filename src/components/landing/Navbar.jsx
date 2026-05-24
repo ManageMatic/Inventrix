@@ -22,6 +22,11 @@ function Navbar() {
             <a href="#contact">Contact</a>
           </li>
           <li>
+            <Link to="/customer">
+              Customer Portal
+            </Link>
+          </li>
+          <li>
             <Link to="/login" className="login-btn">
               Login
             </Link>

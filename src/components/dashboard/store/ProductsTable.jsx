@@ -102,8 +102,8 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
   };
 
   // Filter products based on search query
-  const filteredProducts = products.filter(p => 
-    p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredProducts = products.filter(p =>
+    p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.product_id?.toString().includes(searchQuery) ||
     p.category?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -148,9 +148,9 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
           <h2>Products</h2>
           <div className="search-bar">
             <Search size={18} />
-            <input 
-              type="text" 
-              placeholder="Search products..." 
+            <input
+              type="text"
+              placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);

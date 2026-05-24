@@ -1,0 +1,479 @@
+/* Breathtaking Customer Portal Styling - Premium Glassmorphism & Enterprise UI */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Clean up parent scrollbars to prevent double scrollbars */
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.customer-portal-body {
+    min-height: 100vh;
+    background: radial-gradient(circle at top right, #130f26 0%, #06040a 100%);
+    color: #f8fafc;
+    font-family: 'Outfit', sans-serif;
+    padding: 2.5rem 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+    overflow-x: hidden; /* Normal vertical scroll allowed! */
+}
+
+.customer-portal-body::before {
+    content: '';
+    position: fixed; /* Fixed position stays in background and never stretches document height! */
+    top: -20%;
+    left: -10%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.customer-portal-body::after {
+    content: '';
+    position: fixed; /* Fixed position stays in background and never stretches document height! */
+    bottom: -20%;
+    right: -10%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 60%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.customer-portal-container {
+    width: 100%;
+    max-width: 96%; /* Expanded to widescreen! */
+    z-index: 1;
+}
+
+.portal-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.portal-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.75px;
+    background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 50%, #f472b6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.75rem;
+}
+
+.portal-subtitle {
+    color: #94a3b8;
+    font-size: 1.15rem;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+/* Glassmorphism Auth Card */
+.customer-auth-card {
+    background: rgba(18, 14, 38, 0.6);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 3.5rem;
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    animation: scaleUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+}
+
+.auth-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 2.2rem;
+    line-height: 1.6;
+}
+
+.form-group {
+    margin-bottom: 1.8rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #a5b4fc;
+    margin-bottom: 0.75rem;
+}
+
+.form-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 1.05rem 1.3rem;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #a5b4fc;
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 0 20px rgba(165, 180, 252, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.form-input::placeholder {
+    color: #4b5563;
+}
+
+.primary-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    border: none;
+    border-radius: 14px;
+    padding: 1.1rem;
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+    filter: brightness(1.15);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+}
+
+.primary-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.secondary-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.secondary-link:hover {
+    color: #a5b4fc;
+}
+
+/* History Dashboard View */
+.customer-dashboard {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dashboard-card {
+    background: rgba(18, 14, 38, 0.5);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 3rem;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.customer-info h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.75px;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.customer-info p {
+    color: #a5b4fc;
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(165, 180, 252, 0.1);
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    border: 1px solid rgba(165, 180, 252, 0.15);
+}
+
+.logout-link-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 12px;
+    padding: 0.7rem 1.4rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logout-link-btn:hover {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Premium List Table Layout */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Gives nice spacing between rows */
+    text-align: left;
+    font-size: 0.95rem;
+    padding: 0 1rem 1rem 1rem;
+}
+
+.history-table th {
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    padding: 1.5rem;
+    border-bottom: none;
+}
+
+.history-table tbody tr {
+    background: rgba(255, 255, 255, 0.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.history-table tbody tr td:first-child {
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+.history-table tbody tr td:last-child {
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+}
+
+.history-table td {
+    padding: 1.5rem;
+    border-bottom: none;
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.history-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(165, 180, 252, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.invoice-badge {
+    background: rgba(165, 180, 252, 0.15);
+    color: #a5b4fc;
+    padding: 0.4rem 0.85rem;
+    border-radius: 10px;
+    font-family: 'Inter', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: 1px solid rgba(165, 180, 252, 0.1);
+    letter-spacing: 0.5px;
+}
+
+.amount-text {
+    font-weight: 800;
+    color: #ffffff;
+    font-size: 1.15rem;
+    background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.download-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.download-link:hover {
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45);
+    filter: brightness(1.2);
+    transform: translateY(-1px);
+}
+
+.empty-state {
+    padding: 5rem 2rem;
+    text-align: center;
+    color: #64748b;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    filter: drop-shadow(0 10px 20px rgba(165, 180, 252, 0.1));
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Custom UI helpers to eliminate JSX inline styles */
+.form-input-icon-wrapper {
+    position: relative;
+}
+
+.form-input-with-icon {
+    padding-left: 3rem !important;
+}
+
+.form-input-icon {
+    position: absolute;
+    left: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+}
+
+.btn-spinner {
+    display: inline;
+    margin-right: 8px;
+}
+
+.flex-center-gap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.otp-input {
+    padding-left: 3rem !important;
+    letter-spacing: 4px;
+    font-size: 1.15rem;
+    font-weight: bold;
+}
+
+.flex-space-between-full {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.btn-link-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.loader-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 4rem 0;
+}
+
+.loader-icon-color {
+    color: #818cf8;
+}
+
+/* History table standard modifications */
+.history-table td .store-name {
+    font-weight: 600;
+    color: white;
+}
+
+.history-table td .store-loc {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.history-table td .payment-text {
+    text-transform: capitalize;
+    font-size: 0.85rem;
+}
+

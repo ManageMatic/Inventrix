@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { 
   ShoppingCart, 
   Package, 
@@ -19,6 +19,8 @@ import EmployeeSidebar from "../../components/dashboard/employee/EmployeeSidebar
 // Lazy-loaded or separate components
 import TimeClock from "../../components/dashboard/employee/TimeClock";
 import EmployeeProfile from "../../components/dashboard/employee/EmployeeProfile";
+import EmployeeDashboardHome from "../../components/dashboard/employee/EmployeeDashboardHome";
+import "../../styles/EmployeeDashboardHome.css";
 
 // Reusing Owner's tables but wrapped/restricted in future if needed
 import ProductsTable from "../../components/dashboard/store/ProductsTable"; 
@@ -28,9 +30,15 @@ import SalesTable from "../../components/dashboard/store/SalesTable";
 const socket = io(SOCKET_URL);
 
 const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updateCartStoreId }) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
   const [employee, setEmployee] = useState(null);
   const [permissions, setPermissions] = useState([]);
-  const [activeTab, setActiveTab] = useState(localStorage.getItem("employeeActiveTab") || "clock");
+  const [activeTab, setActiveTab] = useState(localStorage.getItem("employeeActiveTab") || "dashboard");
 
   useEffect(() => {
     localStorage.setItem("employeeActiveTab", activeTab);
@@ -121,6 +129,7 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
     const tabs = [];
 
     // Core Tabs
+    tabs.push({ id: "dashboard", label: "Dashboard", icon: <TrendingUp size={20} /> });
     tabs.push({ id: "clock", label: "Time & Schedule", icon: <Clock size={20} /> });
 
     // RBAC Tabs
@@ -142,6 +151,8 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
     if (loading) return <div className="employee-placeholder"><div className="spinner"></div><p>Loading Workspace...</p></div>;
     
     switch (activeTab) {
+      case "dashboard":
+        return <EmployeeDashboardHome employee={employee} />;
       case "clock":
         return <TimeClock employee={employee} onUpdate={fetchEmployeeProfile} />;
       case "inventory":

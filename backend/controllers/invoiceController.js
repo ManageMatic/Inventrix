@@ -455,3 +455,70 @@ exports.downloadInvoice = async (req, res) => {
         });
     }
 };
+
+exports.getCustomerInvoiceHistory = async (req, res) => {
+    try {
+        const email = req.user.email; // verified from authenticateCustomer middleware
+        const invoices = await Invoice.find({ customer_email: email.toLowerCase() })
+            .populate("store_id", "name location address")
+            .sort({ date: -1 });
+
+        res.json({
+            success: true,
+            data: invoices
+        });
+    } catch (error) {
+        console.error("GET CUSTOMER HISTORY ERROR:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+exports.publicDownloadInvoice = async (req, res) => {
+    try {
+        const { invoiceId } = req.params;
+        const { email } = req.query;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: "Email query param is required"
+            });
+        }
+
+        const invoice = await Invoice.findById(invoiceId);
+        if (!invoice) {
+            return res.status(404).json({
+                success: false,
+                message: "Invoice not found"
+            });
+        }
+
+        // Security check: email must match the invoice's email
+        if (invoice.customer_email.toLowerCase() !== email.toLowerCase()) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied. Email mismatch."
+            });
+        }
+
+        const filePath = path.join(invoicesDir, path.basename(invoice.invoiceUrl));
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({
+                success: false,
+                message: "PDF file not found on disk"
+            });
+        }
+
+        res.download(filePath, `${invoice.invoice_id}.pdf`);
+    } catch (error) {
+        console.error("PUBLIC DOWNLOAD INVOICE ERROR:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};

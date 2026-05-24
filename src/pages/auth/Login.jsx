@@ -42,6 +42,8 @@ function Login() {
       setTimeout(() => {
         if (res.data.user.userType === 'employee') {
           navigate("/EmployeeDashboard");
+        } else if (res.data.user.userType === 'supplier') {
+          navigate("/SupplierDashboard");
         } else {
           navigate("/OwnerDashboard");
         }

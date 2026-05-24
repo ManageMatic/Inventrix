@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import Sidebar from "../../components/dashboard/owner/Sidebar";
 import DashboardHeader from "../../components/dashboard/owner/DashboardHeader";
 import StatsGrid from "../../components/dashboard/owner/StatsGrid";
@@ -11,6 +11,7 @@ import Employees from "../../components/dashboard/store/Employees";
 import Reports from "../../components/dashboard/store/Reports";
 import GenerateQR from "../../components/dashboard/store/GenerateQR";
 import OwnerSettings from "../../components/dashboard/owner/OwnerSettings";
+import SupplierManagement from "../../components/dashboard/owner/SupplierManagement";
 import "../../styles/OwnerDashboard.css";
 import { API_URL } from "../../config";
 import { io } from "socket.io-client";
@@ -20,7 +21,7 @@ const OwnerDashboard = () => {
   const [stores, setStores] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  
+
   const [activeTab, setActiveTab] = useState(localStorage.getItem("ownerActiveTab") || "Dashboard");
 
   useEffect(() => {
@@ -28,13 +29,17 @@ const OwnerDashboard = () => {
   }, [activeTab]);
   const [selectedStore, setSelectedStore] = useState("All");
   const [notifications, setNotifications] = useState([]);
-  
+
   const [stats, setStats] = useState({ products: 0, sales: 0, employees: 0, revenue: "₹0" });
   const [chartData, setChartData] = useState([]);
   const [advancedAnalytics, setAdvancedAnalytics] = useState(null);
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
 
   useEffect(() => {
     fetchOwnerData();
@@ -72,7 +77,7 @@ const OwnerDashboard = () => {
     socket.on("storeCreated", (newStore) => {
       setStores((prev) => [...prev, newStore]);
     });
-    
+
     socket.on("storeUpdated", (updatedStore) => {
       setStores((prev) => prev.map(s => s._id === updatedStore._id ? updatedStore : s));
     });
@@ -128,10 +133,10 @@ const OwnerDashboard = () => {
 
   const fetchAnalytics = async (storeId) => {
     try {
-      const url = storeId === "All" 
-        ? `${API_URL}/api/stores/analytics` 
+      const url = storeId === "All"
+        ? `${API_URL}/api/stores/analytics`
         : `${API_URL}/api/stores/analytics?storeId=${storeId}`;
-        
+
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -179,7 +184,7 @@ const OwnerDashboard = () => {
           selectedStore={selectedStore}
           setSelectedStore={setSelectedStore}
         />
-        
+
         {activeTab === "Dashboard" && (
           <>
             <StatsGrid stores={selectedStore === "All" ? stores : stores.filter(s => s._id === selectedStore)} stats={stats} />
@@ -200,6 +205,10 @@ const OwnerDashboard = () => {
           <Employees storeId={selectedStore} />
         )}
 
+        {activeTab === "Suppliers" && (
+          <SupplierManagement storeId={selectedStore} />
+        )}
+
         {activeTab === "Reports" && (
           <Reports storeId={selectedStore} />
         )}
@@ -211,7 +220,7 @@ const OwnerDashboard = () => {
         {activeTab === "Settings" && (
           <OwnerSettings storeId={selectedStore} />
         )}
-        
+
         {activeTab === "Analytics" && (
           <div className="analytics-container">
             <AnalyticsChart data={chartData} advancedData={advancedAnalytics} />

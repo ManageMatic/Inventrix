@@ -2,12 +2,12 @@ const express = require('express');
 const { register, login, logout, sendOTP, resetPassword, verifyOTP } = require('../controllers/authController');
 const router = express.Router();
 const { getCurrentUser, updateProfile, changePassword } = require('../controllers/authController');
-const { authenticateStoreOwner, authenticateStoreStaff } = require('../middleware/auth');
+const { authenticateStoreOwner, authenticateStoreStaff, authenticate } = require('../middleware/auth');
 
 // Existing routes...
-router.get('/me', authenticateStoreStaff, getCurrentUser);
-router.put('/update-profile', authenticateStoreStaff, updateProfile);
-router.put('/change-password', authenticateStoreStaff, changePassword);
+router.get('/me', authenticate, getCurrentUser);
+router.put('/update-profile', authenticate, updateProfile);
+router.put('/change-password', authenticate, changePassword);
 router.post('/register', register);
 router.post('/login', login);
 router.post('/logout', logout);

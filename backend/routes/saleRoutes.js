@@ -10,6 +10,7 @@ const {
     getAdvancedAnalytics
 } = require("../controllers/salesController");
 const { authenticateStoreStaff, authorizePermission } = require("../middleware/auth");
+const { logActivity } = require("../middleware/rbac");
 
 // ... (other routes)
 
@@ -17,7 +18,7 @@ const { authenticateStoreStaff, authorizePermission } = require("../middleware/a
 router.get("/analytics/:storeId", authenticateStoreStaff, authorizePermission('sales', 'read'), getAdvancedAnalytics);
 
 // Create sale
-router.post("/create", authenticateStoreStaff, createSale);
+router.post("/create", authenticateStoreStaff, logActivity('create', 'sale'), createSale);
 
 // Get all sales for a store
 router.get("/store/:storeId", authenticateStoreStaff, authorizePermission('sales', 'read'), getSalesByStore);
@@ -29,9 +30,9 @@ router.get("/recent/:storeId", authenticateStoreStaff, authorizePermission('sale
 router.get("/:saleId", authenticateStoreStaff, authorizePermission('sales', 'read'), getSaleById);
 
 // Update sale
-router.put("/:saleId", authenticateStoreStaff, authorizePermission('sales', 'update'), updateSale);
+router.put("/:saleId", authenticateStoreStaff, authorizePermission('sales', 'update'), logActivity('update', 'sale'), updateSale);
 
 // Delete sale
-router.delete("/:saleId", authenticateStoreStaff, authorizePermission('sales', 'delete'), deleteSale);
+router.delete("/:saleId", authenticateStoreStaff, authorizePermission('sales', 'delete'), logActivity('delete', 'sale'), deleteSale);
 
 module.exports = router;

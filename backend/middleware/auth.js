@@ -119,7 +119,7 @@ const restrictTo = (allowedTypes) => {
 
 const authenticateStoreOwner = [authenticate, restrictTo(['store_owner'])];
 const authenticateEmployee = [authenticate, restrictTo(['employee'])];
-const authenticateCustomer = [authenticate, restrictTo(['customer'])];
+const authenticateCustomer = [authenticate, restrictTo(['customer', 'store_owner', 'employee', 'supplier'])];
 const authenticateSupplier = [authenticate, restrictTo(['supplier'])];
 const authenticateStoreStaff = [authenticate, restrictTo(['store_owner', 'employee'])];
 

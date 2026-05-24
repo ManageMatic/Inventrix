@@ -9,6 +9,8 @@ import ScanProduct from "./pages/ScanProduct";
 import SalesTable from "./components/dashboard/store/SalesTable";
 import CartModal from "./components/dashboard/store/CartModal";
 import ResetPassword from "./pages/auth/ResetPassword";
+import CustomerPortal from "./pages/CustomerPortal";
+import SupplierDashboard from "./pages/dashboard/SupplierDashboard";
 import { useState } from "react";
 
 function App() {
@@ -51,17 +53,17 @@ function App() {
 
         {/* Dashboard Routes */}
         <Route path="/OwnerDashboard" element={<OwnerDashboard />} />
-        <Route 
-          path="/EmployeeDashboard" 
+        <Route
+          path="/EmployeeDashboard"
           element={
-            <EmployeeDashboard 
+            <EmployeeDashboard
               cart={cart}
               setCart={setCart}
               setCartOpen={setCartOpen}
               dashboardRefresh={dashboardRefresh}
               updateCartStoreId={updateCartStoreId}
             />
-          } 
+          }
         />
 
         <Route
@@ -85,6 +87,16 @@ function App() {
         <Route
           path="/scan-product/:qrCode"
           element={<ScanProduct addToCart={addToCart} />}
+        />
+
+        <Route
+          path="/customer"
+          element={<CustomerPortal />}
+        />
+
+        <Route
+          path="/SupplierDashboard"
+          element={<SupplierDashboard />}
         />
       </Routes>
 

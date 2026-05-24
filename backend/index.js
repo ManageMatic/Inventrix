@@ -83,6 +83,7 @@ app.use('/api/employees', employeeRoutes);
 app.use('/api/sales', saleRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/notifications', require('./routes/notificationRoutes')); // ← ADD
+app.use('/api/suppliers', require('./routes/supplierRoutes')); // ← ADD SUPPLIERS
 app.use('/qr_codes', express.static(path.join(__dirname, 'qr_codes')));
 app.use('/invoices', express.static(path.join(__dirname, 'invoices')));
 

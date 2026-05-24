@@ -36,6 +36,8 @@ const customerSchema = new mongoose.Schema({
         type: Boolean,
         default: false // Walk-in customers are not registered
     },
+    resetOTP: String,
+    otpExpiry: Date,
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 }, { timestamps: true });

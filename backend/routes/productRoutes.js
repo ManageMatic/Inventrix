@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const productController = require("../controllers/productController");
 const { authenticateStoreOwner, authenticate, authenticateStoreStaff, authorizePermission } = require("../middleware/auth"); // use your auth middleware
+const { logActivity } = require("../middleware/rbac");
 
 // Add product to store (storeId)
-router.post("/add/:storeId", authenticateStoreStaff, authorizePermission('products', 'create'), productController.addProduct);
+router.post("/add/:storeId", authenticateStoreStaff, authorizePermission('products', 'create'), logActivity('create', 'product'), productController.addProduct);
 
 // Get product by QR code
 router.get("/qr/:qrCode", productController.getProductByQR);
@@ -13,10 +14,10 @@ router.get("/qr/:qrCode", productController.getProductByQR);
 router.get("/:storeId", authenticateStoreStaff, authorizePermission('products', 'read'), productController.getProductsByStore);
 
 // Update product (by product Id)
-router.put("/:id", authenticateStoreStaff, authorizePermission('products', 'update'), productController.updateProduct);
+router.put("/:id", authenticateStoreStaff, authorizePermission('products', 'update'), logActivity('update', 'product'), productController.updateProduct);
 
 // Delete product
-router.delete("/:id", authenticateStoreStaff, authorizePermission('products', 'delete'), productController.deleteProduct);
+router.delete("/:id", authenticateStoreStaff, authorizePermission('products', 'delete'), logActivity('delete', 'product'), productController.deleteProduct);
 
 /*
 // Temporarily add in productRoutes.js to debug

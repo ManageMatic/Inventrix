@@ -4,7 +4,7 @@ const { Role, ActivityLog, StoreOwner, Invoice, PurchaseOrder } = require('../mo
 const hasRole = (...allowedRoles) => {
     return async (req, res, next) => {
         try {
-            if (req.userType === 'storeOwner') return next();
+            if (req.userType === 'storeOwner' || req.userType === 'store_owner') return next();
 
             if (!req.user?.role) {
                 return res.status(403).json({ success: false, message: 'Access denied. No role assigned.' });
@@ -34,7 +34,7 @@ const hasRole = (...allowedRoles) => {
 const hasPermission = (resource, action) => {
     return async (req, res, next) => {
         try {
-            if (req.userType === 'storeOwner') return next();
+            if (req.userType === 'storeOwner' || req.userType === 'store_owner') return next();
 
             if (!req.user?.role) {
                 return res.status(403).json({ success: false, message: 'Access denied. No role assigned.' });
@@ -73,7 +73,7 @@ const managesStore = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Store ID is required' });
         }
 
-        if (req.userType === 'storeOwner') {
+        if (req.userType === 'storeOwner' || req.userType === 'store_owner') {
             const owner = await StoreOwner.findById(req.user._id);
             if (owner?.stores.includes(storeId)) return next();
         }
@@ -101,7 +101,7 @@ const canViewInvoice = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Invoice not found' });
         }
 
-        if (req.userType === 'storeOwner') {
+        if (req.userType === 'storeOwner' || req.userType === 'store_owner') {
             const owner = await StoreOwner.findById(req.user._id);
             if (owner?.stores.includes(invoice.store_id)) return next();
         }
@@ -138,7 +138,7 @@ const canAccessPurchaseOrder = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Purchase Order not found' });
         }
 
-        if (req.userType === 'storeOwner' && po.owner_id?.toString() === req.user._id.toString()) {
+        if ((req.userType === 'storeOwner' || req.userType === 'store_owner') && po.owner_id?.toString() === req.user._id.toString()) {
             return next();
         }
 
@@ -159,12 +159,27 @@ const logActivity = (action, resource) => {
 
         res.json = function (data) {
             if (res.statusCode >= 200 && res.statusCode < 300) {
+                // Map incoming userType string to Mongoose Model Names
+                let mappedUserType = req.userType;
+                if (req.userType === 'store_owner' || req.userType === 'storeOwner') {
+                    mappedUserType = 'StoreOwner';
+                } else if (req.userType === 'employee') {
+                    mappedUserType = 'Employee';
+                } else if (req.userType === 'customer') {
+                    mappedUserType = 'Customer';
+                } else if (req.userType === 'supplier') {
+                    mappedUserType = 'Supplier';
+                }
+
+                // Dynamically resolve target resource ID
+                const resourceId = req.params.id || req.params.saleId || req.params.poId || data?.data?._id || data?._id;
+
                 ActivityLog.create({
                     user_id: req.user._id,
-                    userType: req.userType,
+                    userType: mappedUserType,
                     action,
                     resource,
-                    resourceId: req.params.id || data?.data?._id,
+                    resourceId,
                     details: {
                         method: req.method,
                         path: req.originalUrl,
@@ -183,7 +198,7 @@ const logActivity = (action, resource) => {
 
 // 🔹 Owner only
 const ownerOnly = (req, res, next) => {
-    if (req.userType !== 'storeOwner') {
+    if (req.userType !== 'storeOwner' && req.userType !== 'store_owner') {
         return res.status(403).json({ success: false, message: 'Access denied. Store owners only.' });
     }
     next();

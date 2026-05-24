@@ -149,11 +149,13 @@ exports.getCurrentUser = async (req, res) => {
             const Sale = require('../models/Sale');
             const stats = await Sale.aggregate([
                 { $match: { employee_id: user._id, status: 'completed' } },
-                { $group: { 
-                    _id: null, 
-                    count: { $sum: 1 }, 
-                    total: { $sum: '$totalAmount' } 
-                }}
+                {
+                    $group: {
+                        _id: null,
+                        count: { $sum: 1 },
+                        total: { $sum: '$totalAmount' }
+                    }
+                }
             ]);
 
             const actualCount = stats.length > 0 ? stats[0].count : 0;
@@ -164,9 +166,9 @@ exports.getCurrentUser = async (req, res) => {
                 const Employee = require('../models/Employee');
                 user = await Employee.findByIdAndUpdate(
                     user._id,
-                    { 
-                        'performance.salesCount': actualCount, 
-                        'performance.totalRevenue': actualRevenue 
+                    {
+                        'performance.salesCount': actualCount,
+                        'performance.totalRevenue': actualRevenue
                     },
                     { new: true }
                 ).populate('role').populate('store_id', 'name');
@@ -178,9 +180,10 @@ exports.getCurrentUser = async (req, res) => {
             user: {
                 id: user._id,
                 employee_id: user.employee_id || null, // For staff
+                supplier_id: user.supplier_id || null, // For suppliers
                 name: user.name,
                 email: user.email,
-                phone: user.phone,
+                phone: user.phone || user.contact || null, // Map contact to phone for suppliers
                 userType: req.userType,
                 role: user.role || null,
                 store_id: user.store_id || null,
@@ -275,16 +278,27 @@ const transporter = nodemailer.createTransport({
 });
 
 // ---------------- Send Reset Password OTP ----------------
+// ---------------- Send Reset Password OTP ----------------
 exports.sendOTP = async (req, res) => {
     try {
-        const { email } = req.body;
-        let user = await Employee.findOne({ email }) || await StoreOwner.findOne({ email }) || await Supplier.findOne({ email });
+        const { email, isCustomer } = req.body;
+        const Customer = require('../models/Customer');
+        let user = await Employee.findOne({ email }) || await StoreOwner.findOne({ email }) || await Supplier.findOne({ email }) || await Customer.findOne({ email });
 
         if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "Email not registered",
-            });
+            if (isCustomer) {
+                user = await Customer.create({
+                    name: "Customer",
+                    email: email,
+                    phone: "CUST-" + Date.now(),
+                    isRegistered: true
+                });
+            } else {
+                return res.status(404).json({
+                    success: false,
+                    message: "Email not registered",
+                });
+            }
         }
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -320,9 +334,9 @@ exports.sendOTP = async (req, res) => {
         <!-- Body -->
         <tr>
           <td style="padding:40px 40px 20px;">
-            <h2 style="margin:0 0 10px;color:#1e293b;font-size:20px;">Password Reset Request</h2>
+            <h2 style="margin:0 0 10px;color:#1e293b;font-size:20px;">Your One-Time Password (OTP)</h2>
             <p style="margin:0 0 24px;color:#64748b;font-size:14px;line-height:1.6;">
-              We received a request to reset your password. Use the OTP below to proceed.
+              Please use the OTP below to access your account or verify your identity.
               If you didn't request this, you can safely ignore this email.
             </p>
 
@@ -346,24 +360,6 @@ exports.sendOTP = async (req, res) => {
               </p>
             </div>
 
-            <!-- Steps -->
-            <p style="margin:0 0 12px;color:#1e293b;font-size:14px;font-weight:700;">How to reset your password:</p>
-            <table width="100%" cellpadding="0" cellspacing="0">
-              ${["Enter the OTP on the reset page", "Create a new strong password", "Log in with your new password"]
-                    .map((step, i) => `
-                <tr>
-                  <td style="padding:6px 0;">
-                    <table cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="width:28px;height:28px;background:#4f46e5;border-radius:50%;text-align:center;vertical-align:middle;">
-                          <span style="color:#fff;font-size:12px;font-weight:700;">${i + 1}</span>
-                        </td>
-                        <td style="padding-left:12px;color:#475569;font-size:13px;">${step}</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>`).join("")}
-            </table>
           </td>
         </tr>
 
@@ -437,11 +433,23 @@ exports.resetPassword = async (req, res) => {
 exports.verifyOTP = async (req, res) => {
     try {
         const { email, otp } = req.body;
+        const Customer = require('../models/Customer');
 
-        let user =
-            await StoreOwner.findOne({ email }) ||
-            await Employee.findOne({ email }) ||
-            await Customer.findOne({ email });
+        let user = await StoreOwner.findOne({ email });
+        let userType = 'store_owner';
+
+        if (!user) {
+            user = await Employee.findOne({ email });
+            userType = 'employee';
+        }
+        if (!user) {
+            user = await Customer.findOne({ email });
+            userType = 'customer';
+        }
+        if (!user) {
+            user = await Supplier.findOne({ email });
+            userType = 'supplier';
+        }
 
         if (!user) {
             return res.status(404).json({
@@ -464,7 +472,24 @@ exports.verifyOTP = async (req, res) => {
             });
         }
 
-        res.json({ success: true });
+        // Clear OTP after success
+        user.resetOTP = null;
+        user.otpExpiry = null;
+        await user.save();
+
+        // Generate JWT token
+        const token = generateToken(user._id, userType, user.role || null);
+
+        res.json({
+            success: true,
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                userType
+            }
+        });
     } catch (error) {
         console.error("OTP ERROR:", error);
         res.status(500).json({ success: false, message: error.message });
