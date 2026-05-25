@@ -1,8 +1,9 @@
 import "../../styles/ConfirmDialog.css";
+import { createPortal } from "react-dom";
 import { X, Trash2 } from "lucide-react";
 
 const ConfirmDialog = ({ title, message, onConfirm, onCancel }) => {
-  return (
+  return createPortal(
     <div className="confirm-overlay" onClick={onCancel}>
       <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
@@ -29,7 +30,8 @@ const ConfirmDialog = ({ title, message, onConfirm, onCancel }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

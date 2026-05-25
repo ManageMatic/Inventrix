@@ -129,12 +129,15 @@ function DashboardHeader({ onOpenModal, setSidebarOpen, sidebarOpen, user, notif
                       onClick={() => handleMarkAsRead(notif.id)}
                       className={`notif-item ${notif.read ? 'read' : 'unread'}`}
                     >
-                      <p className="notif-message">
-                        {notif.message}
-                      </p>
-                      <span className="notif-time">
-                        {notif.time ? new Date(notif.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now"}
-                      </span>
+                      <div className="notif-content" style={{ paddingRight: "20px" }}>
+                        <p className="notif-message">
+                          {notif.message}
+                        </p>
+                        <span className="notif-time">
+                          {notif.time ? new Date(notif.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now"}
+                        </span>
+                      </div>
+                      {!notif.read && <div className="notif-dot"></div>}
                     </div>
                   ))
                 )}

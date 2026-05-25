@@ -166,10 +166,10 @@
 
 .employee-content-area {
   padding: 40px;
-  animation: fadeIn 0.3s ease-out;
+  animation: empFadeIn 0.3s ease-out;
 }
 
-@keyframes fadeIn {
+@keyframes empFadeIn {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -352,6 +352,16 @@
 
 .employee-theme .notif-dot {
   background: #10b981 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6) !important;
+}
+
+.employee-theme .notif-item.unread {
+  background-color: rgba(16, 185, 129, 0.04) !important;
+  border-left: 3px solid #10b981 !important;
+}
+
+.employee-theme .mark-all-btn {
+  color: #10b981 !important;
 }
 
 .employee-theme .notif-badge {

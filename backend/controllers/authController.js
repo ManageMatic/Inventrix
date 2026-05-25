@@ -184,6 +184,7 @@ exports.getCurrentUser = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone || user.contact || null, // Map contact to phone for suppliers
+                address: user.address || null, // Address for suppliers
                 userType: req.userType,
                 role: user.role || null,
                 store_id: user.store_id || null,
@@ -199,19 +200,30 @@ exports.getCurrentUser = async (req, res) => {
 // ---------------- Update Profile ----------------
 exports.updateProfile = async (req, res) => {
     try {
-        const { name, phone } = req.body;
+        const { name, phone, address } = req.body;
         const userId = req.user._id;
-        const userType = req.user.userType;
+        const userType = req.userType;
 
         let Model;
-        if (userType === 'employee') Model = Employee;
-        else if (userType === 'store_owner') Model = StoreOwner;
-        else if (userType === 'supplier') Model = Supplier;
-        else return res.status(400).json({ success: false, message: 'Invalid user type' });
+        let updatePayload = { name };
+
+        if (userType === 'employee') {
+            Model = Employee;
+            updatePayload.phone = phone;
+        } else if (userType === 'store_owner') {
+            Model = StoreOwner;
+            updatePayload.phone = phone;
+        } else if (userType === 'supplier') {
+            Model = Supplier;
+            updatePayload.contact = phone; // Map phone to contact for Supplier model
+            updatePayload.address = address; // Add address support
+        } else {
+            return res.status(400).json({ success: false, message: 'Invalid user type' });
+        }
 
         const updatedUser = await Model.findByIdAndUpdate(
             userId,
-            { name, phone },
+            updatePayload,
             { new: true }
         );
 
@@ -222,7 +234,8 @@ exports.updateProfile = async (req, res) => {
                 id: updatedUser._id,
                 name: updatedUser.name,
                 email: updatedUser.email,
-                phone: updatedUser.phone,
+                phone: updatedUser.phone || updatedUser.contact || null,
+                address: updatedUser.address || null,
                 userType: userType
             }
         });
@@ -236,7 +249,7 @@ exports.changePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
         const userId = req.user._id;
-        const userType = req.user.userType;
+        const userType = req.userType;
 
         let Model;
         if (userType === 'employee') Model = Employee;

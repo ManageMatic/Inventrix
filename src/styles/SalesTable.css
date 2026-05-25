@@ -1,10 +1,10 @@
 /* ================== SALES TABLE STYLES (PREMIUM GLASSMORPHISM) ================== */
 .sales-section {
     padding: 20px;
-    animation: fadeIn 0.4s ease-in-out;
+    animation: salesFadeIn 0.4s ease-in-out;
 }
 
-@keyframes fadeIn {
+@keyframes salesFadeIn {
     from {
         opacity: 0;
         transform: translateY(10px);
@@ -25,7 +25,7 @@
     gap: 20px;
 }
 
-.header-left {
+.sales-header .header-left {
     display: flex;
     align-items: center;
     gap: 30px;
@@ -58,47 +58,11 @@
     box-shadow: 0 4px 12px rgba(56, 189, 248, 0.1);
 }
 
-.header-left h2 {
+.sales-header .header-left h2 {
     font-size: 1.6rem;
     margin: 0;
 }
 
-.search-bar {
-    position: relative;
-    display: flex;
-    align-items: center;
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 0 15px;
-    min-width: 300px;
-    transition: all 0.3s ease;
-}
-
-.search-bar:focus-within {
-    border-color: #38bdf8;
-    background: rgba(30, 41, 59, 0.8);
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
-}
-
-.search-bar svg {
-    color: #94a3b8;
-    margin-right: 12px;
-}
-
-.search-bar input {
-    background: transparent;
-    border: none;
-    color: #f8fafc;
-    padding: 12px 0;
-    width: 100%;
-    outline: none;
-    font-size: 0.95rem;
-}
-
-.search-bar input::placeholder {
-    color: #64748b;
-}
 
 /* Glassmorphism Table Wrapper */
 .sales-table-wrap {

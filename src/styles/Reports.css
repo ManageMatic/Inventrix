@@ -1,10 +1,10 @@
 .reports-tab {
     padding: 25px;
     color: #f8fafc;
-    animation: fadeIn 0.4s ease;
+    animation: reportsFadeIn 0.4s ease;
 }
 
-@keyframes fadeIn {
+@keyframes reportsFadeIn {
     from {
         opacity: 0;
         transform: translateY(10px);
@@ -117,11 +117,6 @@
     animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-    100% {
-        transform: rotate(360deg);
-    }
-}
 
 /* ===== OWNER THEME + STORE DASHBOARD — SAPPHIRE OVERRIDES ===== */
 .owner-theme .reports-header h2,

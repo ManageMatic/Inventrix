@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Store } from "lucide-react";
 import Toast from "../../common/Toast";
 import { API_URL } from "../../../config";
@@ -62,7 +63,7 @@ function EditStoreModal({ store, onClose, onUpdate }) {
     }
   };
 
-  return (
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
@@ -184,7 +185,8 @@ function EditStoreModal({ store, onClose, onUpdate }) {
           <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

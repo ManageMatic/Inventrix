@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { X, Store } from "lucide-react";
 import Toast from "../../common/Toast";
 
@@ -61,7 +62,7 @@ function CreateStoreModal({ onClose, setStores, stores }) {
     }
   };
 
-  return (
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
@@ -180,7 +181,8 @@ function CreateStoreModal({ onClose, setStores, stores }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

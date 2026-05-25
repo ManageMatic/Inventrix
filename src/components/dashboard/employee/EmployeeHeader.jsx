@@ -115,9 +115,10 @@ function EmployeeHeader({ setSidebarOpen, sidebarOpen, user, notifications = [],
                 </div>
               </div>
 
-              <div className="notif-list">
+              <div className="notif-dropdown-body">
                 {notifications.length === 0 ? (
-                  <div className="no-notifs">
+                  <div className="notif-empty">
+                    <Bell size={24} style={{ margin: "0 auto 8px", opacity: 0.5 }} />
                     <p>No new notifications</p>
                   </div>
                 ) : (

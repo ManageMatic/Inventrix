@@ -107,7 +107,7 @@
 }
 
 /* Content Card */
-.profile-content-card {
+.employee-profile-container .profile-content-card {
     background: rgba(30, 41, 59, 0.5);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -115,32 +115,32 @@
     padding: 40px;
 }
 
-.section-header {
+.employee-profile-container .section-header {
     margin-bottom: 35px;
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.section-header h2 {
+.employee-profile-container .section-header h2 {
     font-size: 1.4rem;
     font-weight: 700;
     margin: 0 0 8px 0;
 }
 
-.section-header p {
+.employee-profile-container .section-header p {
     color: #94a3b8;
     margin: 0;
     font-size: 0.95rem;
 }
 
 /* Form Styling */
-.profile-form {
+.employee-profile-container .profile-form {
     display: flex;
     flex-direction: column;
     gap: 25px;
 }
 
-.form-group-row {
+.employee-profile-container .form-group-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
@@ -158,19 +158,19 @@
     color: #cbd5e1;
 }
 
-.input-with-icon {
+.employee-profile-container .input-with-icon {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.input-with-icon svg {
+.employee-profile-container .input-with-icon svg {
     position: absolute;
     left: 14px;
     color: #64748b;
 }
 
-.input-with-icon input {
+.employee-profile-container .input-with-icon input {
     width: 100%;
     padding: 12px 14px 12px 42px;
     background: rgba(15, 23, 42, 0.5);
@@ -181,26 +181,26 @@
     transition: all 0.2s;
 }
 
-.input-with-icon input:focus {
+.employee-profile-container .input-with-icon input:focus {
     outline: none;
     border-color: #38bdf8;
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
 }
 
-.input-with-icon.disabled input {
+.employee-profile-container .input-with-icon.disabled input {
     background: rgba(15, 23, 42, 0.2);
     color: #64748b;
     cursor: not-allowed;
     border-color: rgba(255, 255, 255, 0.05);
 }
 
-.field-note {
+.employee-profile-container .field-note {
     font-size: 0.75rem;
     color: #64748b;
     margin: 4px 0 0 0;
 }
 
-.role-display-badge {
+.employee-profile-container .role-display-badge {
     padding: 10px 16px;
     background: rgba(56, 189, 248, 0.1);
     color: #38bdf8;
@@ -212,7 +212,7 @@
     display: inline-block;
 }
 
-.store-display-info {
+.employee-profile-container .store-display-info {
     padding: 10px 16px;
     background: rgba(16, 185, 129, 0.1);
     color: #10b981;
@@ -222,7 +222,7 @@
     display: inline-block;
 }
 
-.save-profile-btn {
+.employee-profile-container .save-profile-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -238,39 +238,39 @@
     margin-top: 10px;
 }
 
-.save-profile-btn:hover:not(:disabled) {
+.employee-profile-container .save-profile-btn:hover:not(:disabled) {
     background: #0ea5e9;
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
 }
 
-.save-profile-btn.secondary {
+.employee-profile-container .save-profile-btn.secondary {
     background: #475569;
     color: #fff;
 }
 
-.save-profile-btn.secondary:hover:not(:disabled) {
+.employee-profile-container .save-profile-btn.secondary:hover:not(:disabled) {
     background: #334155;
 }
 
-.save-profile-btn:disabled {
+.employee-profile-container .save-profile-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
 /* Responsive */
 @media (max-width: 992px) {
-    .profile-main-layout {
+    .employee-profile-container .emp-profile-main-layout {
         grid-template-columns: 1fr;
     }
 
-    .profile-nav-aside {
+    .employee-profile-container .emp-profile-nav-aside {
         flex-direction: row;
         overflow-x: auto;
         padding-bottom: 10px;
     }
 
-    .profile-nav-btn {
+    .employee-profile-container .emp-profile-nav-btn {
         flex: 1;
         justify-content: center;
         white-space: nowrap;
@@ -278,11 +278,11 @@
 }
 
 @media (max-width: 768px) {
-    .form-group-row {
+    .employee-profile-container .form-group-row {
         grid-template-columns: 1fr;
     }
 
-    .profile-content-card {
+    .employee-profile-container .profile-content-card {
         padding: 25px;
     }
 }

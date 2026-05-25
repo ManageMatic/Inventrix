@@ -1,5 +1,6 @@
 import "../../../styles/ProductModal.css";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import Toast from "../../common/Toast";
 import { API_URL } from "../../../config";
@@ -60,7 +61,7 @@ const ProductModal = ({ storeId, product, onClose }) => {
     }
   };
 
-  return (
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
@@ -156,7 +157,8 @@ const ProductModal = ({ storeId, product, onClose }) => {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
