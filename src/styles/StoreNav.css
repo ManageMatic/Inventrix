@@ -47,3 +47,49 @@
         justify-content: center;
     }
 }
+
+/* ===== STORE DASHBOARD — SAPPHIRE THEME ===== */
+.store-dashboard .store-nav {
+    gap: 4px !important;
+    padding: 5px !important;
+    background: rgba(6, 9, 22, 0.75) !important;
+    border: 1px solid rgba(59, 130, 246, 0.18) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.store-dashboard .nav-tab {
+    background: transparent !important;
+    color: #64748b !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid transparent !important;
+}
+
+.store-dashboard .nav-tab:hover {
+    background: rgba(59, 130, 246, 0.08) !important;
+    color: #93c5fd !important;
+    border-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+.store-dashboard .nav-tab.active {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%) !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.store-dashboard .nav-tab.refresh-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25) !important;
+}
+
+.store-dashboard .nav-tab.refresh-btn:hover:not(:disabled) {
+    filter: brightness(1.1) !important;
+    transform: translateY(-1px) !important;
+}

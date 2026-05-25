@@ -341,3 +341,87 @@
         transition: none;
     }
 }
+
+/* ===== OWNER THEME + STORE DASHBOARD — SAPPHIRE OVERRIDES ===== */
+.owner-theme .generate-qr-title,
+.store-dashboard .generate-qr-title {
+    color: #60a5fa !important;
+}
+
+.owner-theme .generate-qr-header,
+.store-dashboard .generate-qr-header {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.12) !important;
+}
+
+.owner-theme .generate-qr-badge,
+.store-dashboard .generate-qr-badge {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: #3b82f6 !important;
+    border: 1px solid rgba(59, 130, 246, 0.25) !important;
+}
+
+.owner-theme .generate-qr-card,
+.store-dashboard .generate-qr-card {
+    background: rgba(8, 12, 30, 0.6) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.owner-theme .generate-qr-card:hover,
+.store-dashboard .generate-qr-card:hover {
+    border-color: rgba(59, 130, 246, 0.28) !important;
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.12) !important;
+}
+
+.owner-theme .generate-qr-box,
+.store-dashboard .generate-qr-box {
+    background: rgba(4, 7, 18, 0.7) !important;
+    border-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+.owner-theme .generate-qr-card:hover .generate-qr-box,
+.store-dashboard .generate-qr-card:hover .generate-qr-box {
+    border-color: #3b82f6 !important;
+}
+
+.owner-theme .generate-qr-download-btn,
+.store-dashboard .generate-qr-download-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.28) !important;
+    transition: all 0.25s ease !important;
+}
+
+.owner-theme .generate-qr-download-btn:hover,
+.store-dashboard .generate-qr-download-btn:hover {
+    filter: brightness(1.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+.owner-theme .generate-qr-print-btn,
+.store-dashboard .generate-qr-print-btn {
+    color: #3b82f6 !important;
+    border: 1.5px solid rgba(59, 130, 246, 0.3) !important;
+}
+
+.owner-theme .generate-qr-print-btn:hover,
+.store-dashboard .generate-qr-print-btn:hover {
+    border-color: #3b82f6 !important;
+    background: rgba(59, 130, 246, 0.08) !important;
+    color: #60a5fa !important;
+}
+
+.owner-theme .generate-qr-spinner,
+.store-dashboard .generate-qr-spinner {
+    border: 4px solid rgba(59, 130, 246, 0.15) !important;
+    border-top-color: #3b82f6 !important;
+}
+
+.owner-theme .generate-qr-retry-btn,
+.store-dashboard .generate-qr-retry-btn {
+    background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.28) !important;
+}

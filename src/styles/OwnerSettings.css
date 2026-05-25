@@ -157,3 +157,111 @@
     justify-content: space-between;
     align-items: center;
 }
+
+/* ==================== OWNER THEME OVERRIDES ==================== */
+
+/* Settings wrapper & card */
+.owner-theme .owner-settings-wrapper {
+    animation: ownerFadeInST 0.4s ease-out both;
+}
+
+@keyframes ownerFadeInST {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Details group card */
+.owner-theme .details-group {
+    background: rgba(8, 12, 30, 0.55) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+}
+
+.owner-theme .details-group h3 {
+    color: #60a5fa !important;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Input fields */
+.owner-theme .owner-settings-input {
+    background: rgba(0, 0, 0, 0.35) !important;
+    border: 1px solid rgba(59, 130, 246, 0.15) !important;
+    color: #f8fafc !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.owner-theme .owner-settings-input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+}
+
+.owner-theme .owner-settings-input:disabled {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(59, 130, 246, 0.05) !important;
+    color: #475569 !important;
+}
+
+/* Detail item span (read-only display) */
+.owner-theme .detail-item span {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    color: #e2e8f0 !important;
+}
+
+/* Save button */
+.owner-theme .owner-settings-save-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.28) !important;
+    transition: all 0.25s ease !important;
+}
+
+.owner-theme .owner-settings-save-btn:hover:not(:disabled) {
+    filter: brightness(1.1) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* Password update button */
+.owner-theme .owner-settings-update-pwd-btn {
+    color: #3b82f6 !important;
+    border: 1px solid rgba(59, 130, 246, 0.4) !important;
+    transition: all 0.2s ease !important;
+}
+
+.owner-theme .owner-settings-update-pwd-btn:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Role badge */
+.owner-theme .owner-settings-role-badge {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(59, 130, 246, 0.12) !important;
+    color: #60a5fa !important;
+}
+
+/* Store count */
+.owner-theme .owner-settings-store-count span {
+    color: #3b82f6 !important;
+}
+
+/* Status badge */
+.owner-theme .owner-settings-status-badge {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #10b981 !important;
+    border: 1px solid rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Toggle (active) */
+.owner-theme .owner-settings-toggle.active {
+    background: #3b82f6 !important;
+}
+
+/* Store header h2 */
+.owner-theme .store-details-header h2 {
+    color: #60a5fa !important;
+}
+

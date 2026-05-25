@@ -25,3 +25,35 @@
 .recent-sales th {
     color: #94a3b8;
 }
+
+/* ===== STORE DASHBOARD — SAPPHIRE OVERRIDES ===== */
+.store-dashboard .recent-sales {
+    background: rgba(8, 12, 30, 0.6) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+}
+
+.store-dashboard .recent-sales h2 {
+    color: #60a5fa !important;
+    font-weight: 700 !important;
+}
+
+.store-dashboard .recent-sales th {
+    color: #60a5fa !important;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.2) !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.store-dashboard .recent-sales td {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.05) !important;
+    color: #cbd5e1 !important;
+}
+
+.store-dashboard .recent-sales tr:hover td {
+    background: rgba(59, 130, 246, 0.04) !important;
+}

@@ -78,6 +78,39 @@
     border: 1px solid #334155;
 }
 
+/* ===== STORE DASHBOARD — SAPPHIRE OVERRIDES for StoreDetails ===== */
+.store-dashboard .store-details-header {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.12) !important;
+}
+
+.store-dashboard .store-details-header h2 {
+    color: #60a5fa !important;
+}
+
+.store-dashboard .details-group {
+    background: rgba(8, 12, 30, 0.55) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.store-dashboard .details-group h3 {
+    color: #60a5fa !important;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
+}
+
+.store-dashboard .detail-item label {
+    color: #94a3b8 !important;
+}
+
+.store-dashboard .detail-item span {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(59, 130, 246, 0.12) !important;
+    color: #e2e8f0 !important;
+}
+
 .detail-item span.status-active {
     color: #10b981;
     font-weight: 500;
@@ -109,6 +142,12 @@
     border: 1px solid #334155;
 }
 
+.store-dashboard .day-hours-display {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    color: #cbd5e1 !important;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .store-details-content {
@@ -122,4 +161,53 @@
     .details-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ==================== OWNER THEME OVERRIDES ==================== */
+
+.owner-theme .store-details-section {
+    animation: ownerFadeInSD 0.4s ease-out both;
+}
+
+@keyframes ownerFadeInSD {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.owner-theme .store-details-header {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
+}
+
+.owner-theme .store-details-header h2 {
+    color: #60a5fa !important;
+}
+
+.owner-theme .details-group {
+    background: rgba(8, 12, 30, 0.55) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.owner-theme .details-group h3 {
+    color: #60a5fa !important;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
+}
+
+.owner-theme .detail-item label {
+    color: #94a3b8 !important;
+}
+
+.owner-theme .detail-item span {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    color: #e2e8f0 !important;
+}
+
+.owner-theme .day-hours-display {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(59, 130, 246, 0.08) !important;
+    color: #cbd5e1 !important;
 }

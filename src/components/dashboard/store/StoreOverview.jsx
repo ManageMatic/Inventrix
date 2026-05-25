@@ -17,13 +17,14 @@ const StoreOverview = ({ storeId }) => {
       {/* 📊 Store Stats Section */}
       <StoreStats storeId={storeId} />
 
-      {/* 📈 Sales Chart */}
-      <SalesChart storeId={storeId} />
-
-      {/* 🧾 Recent Sales */}
-      <RecentSales />
+      {/* 📈 Sales Chart + 🧾 Recent Sales — side by side */}
+      <div className="chart-sales-row">
+        <SalesChart storeId={storeId} />
+        <RecentSales />
+      </div>
     </div>
   );
+
 };
 
 export default StoreOverview;

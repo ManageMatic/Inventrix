@@ -95,7 +95,7 @@ const SalesChart = ({ storeId }) => {
   }
 
   return (
-    <div className="chart-box">
+    <div className="chart-box sales-chart-box">
       <h3>Weekly Sales Overview</h3>
       {chartData.length === 0 ? (
         <p style={{ color: "#94a3b8", textAlign: "center", padding: "20px" }}>
@@ -104,28 +104,34 @@ const SalesChart = ({ storeId }) => {
       ) : (
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={chartData}>
-            <XAxis dataKey="date" stroke="#94a3b8" />
-            <YAxis stroke="#94a3b8" />
+            <XAxis dataKey="date" stroke="#475569" tick={{ fill: "#64748b", fontSize: 12 }} />
+            <YAxis stroke="#475569" tick={{ fill: "#64748b", fontSize: 12 }} />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#1e293b",
-                border: "1px solid #334155",
-                borderRadius: "8px",
+                backgroundColor: "rgba(9, 14, 35, 0.97)",
+                border: "1px solid rgba(59, 130, 246, 0.3)",
+                borderRadius: "10px",
                 color: "#f8fafc",
+                backdropFilter: "blur(12px)",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
               }}
+              labelStyle={{ color: "#60a5fa", fontWeight: 600 }}
+              itemStyle={{ color: "#cbd5e1" }}
             />
             <Line
               type="monotone"
               dataKey="sales"
-              stroke="#38bdf8"
-              strokeWidth={2}
-              dot={{ fill: "#38bdf8", r: 4 }}
+              stroke="#3b82f6"
+              strokeWidth={2.5}
+              dot={{ fill: "#3b82f6", r: 4, strokeWidth: 2, stroke: "rgba(59,130,246,0.3)" }}
+              activeDot={{ r: 6, fill: "#60a5fa", stroke: "rgba(59,130,246,0.4)", strokeWidth: 3 }}
             />
           </LineChart>
         </ResponsiveContainer>
       )}
     </div>
   );
+
 };
 
 export default SalesChart;

@@ -2,7 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 /* Clean up parent scrollbars to prevent double scrollbars */
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -18,12 +19,14 @@ html, body {
     justify-content: center;
     align-items: flex-start;
     position: relative;
-    overflow-x: hidden; /* Normal vertical scroll allowed! */
+    overflow-x: hidden;
+    /* Normal vertical scroll allowed! */
 }
 
 .customer-portal-body::before {
     content: '';
-    position: fixed; /* Fixed position stays in background and never stretches document height! */
+    position: fixed;
+    /* Fixed position stays in background and never stretches document height! */
     top: -20%;
     left: -10%;
     width: 70%;
@@ -35,7 +38,8 @@ html, body {
 
 .customer-portal-body::after {
     content: '';
-    position: fixed; /* Fixed position stays in background and never stretches document height! */
+    position: fixed;
+    /* Fixed position stays in background and never stretches document height! */
     bottom: -20%;
     right: -10%;
     width: 70%;
@@ -47,7 +51,8 @@ html, body {
 
 .customer-portal-container {
     width: 100%;
-    max-width: 96%; /* Expanded to widescreen! */
+    max-width: 96%;
+    /* Expanded to widescreen! */
     z-index: 1;
 }
 
@@ -106,12 +111,11 @@ html, body {
     line-height: 1.6;
 }
 
-.form-group {
-    margin-bottom: 1.8rem;
+.customer-portal-container .form-group {
     text-align: left;
 }
 
-.form-group label {
+.customer-portal-container .form-group label {
     display: block;
     font-size: 0.8rem;
     font-weight: 700;
@@ -266,7 +270,8 @@ html, body {
 .history-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 10px; /* Gives nice spacing between rows */
+    border-spacing: 0 10px;
+    /* Gives nice spacing between rows */
     text-align: left;
     font-size: 0.95rem;
     padding: 0 1rem 1rem 1rem;
@@ -375,6 +380,7 @@ html, body {
         opacity: 0;
         transform: translateY(-30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -386,6 +392,7 @@ html, body {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -397,6 +404,7 @@ html, body {
         opacity: 0;
         transform: scale(0.96);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -476,4 +484,3 @@ html, body {
     text-transform: capitalize;
     font-size: 0.85rem;
 }
-

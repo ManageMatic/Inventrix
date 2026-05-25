@@ -1,5 +1,9 @@
 /* Supplier Dashboard CSS - Premium Sleek Dark Theme */
 
+.supplier-theme {
+    background: #090514 !important;
+}
+
 .supplier-dashboard-body {
     min-height: 100vh;
     background: #090514;
@@ -677,5 +681,105 @@
     margin-bottom: 0;
     flex: 1;
 }
+
+/* ==================== GLOBAL SUPPLIER PORTAL THEME OVERRIDES ==================== */
+
+.supplier-theme .sidebar {
+    background: rgba(15, 12, 30, 0.7) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.supplier-theme .logo {
+    background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.supplier-theme .nav-link {
+    color: #94a3b8 !important;
+    background: none !important;
+    border: none !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.supplier-theme .nav-link:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.supplier-theme .nav-link.active {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%) !important;
+    border: 1px solid rgba(167, 139, 250, 0.25) !important;
+    box-shadow: 0 4px 15px rgba(167, 139, 250, 0.1) !important;
+}
+
+.supplier-theme .user-section {
+    background: transparent !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.supplier-theme .avatar {
+    background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%) !important;
+    color: white !important;
+}
+
+.supplier-theme .logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    background: rgba(239, 68, 68, 0.08) !important;
+    border: 1px solid rgba(239, 68, 68, 0.15) !important;
+    color: #f87171 !important;
+    padding: 0.95rem 1.2rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: auto;
+    transition: all 0.3s ease;
+}
+
+.supplier-theme .logout-btn:hover {
+    background: #ef4444 !important;
+    color: white !important;
+}
+
+/* ==================== RESTORED PREMIUM THEMED MODALS ==================== */
+.supplier-theme .modal,
+.supplier-theme .modal-content,
+.supplier-theme .product-modal-content,
+.supplier-theme .create-store-modal-content,
+.supplier-theme .po-response-box {
+  background: rgba(15, 12, 30, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(167, 139, 250, 0.3) !important;
+  box-shadow: 0 10px 40px rgba(167, 139, 250, 0.15) !important;
+}
+
+.supplier-theme .form-group input,
+.supplier-theme .form-group select,
+.supplier-theme .form-group textarea,
+.supplier-theme .textarea-input,
+.supplier-theme .date-input {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(167, 139, 250, 0.15) !important;
+  color: #f8fafc !important;
+}
+
+.supplier-theme .form-group input:focus,
+.supplier-theme .form-group select:focus,
+.supplier-theme .form-group textarea:focus,
+.supplier-theme .textarea-input:focus,
+.supplier-theme .date-input:focus {
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.15) !important;
+}
+
+
 
 

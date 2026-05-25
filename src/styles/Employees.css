@@ -36,6 +36,30 @@
     transition: all 0.3s ease;
 }
 
+/* === Sapphire override for owner/store context === */
+.owner-theme .search-bar,
+.store-dashboard .search-bar {
+    background: rgba(6, 9, 22, 0.65) !important;
+    border: 1px solid rgba(59, 130, 246, 0.22) !important;
+    box-shadow: none !important;
+}
+
+.owner-theme .search-bar:focus-within,
+.store-dashboard .search-bar:focus-within {
+    border-color: rgba(59, 130, 246, 0.6) !important;
+    background: rgba(6, 9, 22, 0.82) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.owner-theme .search-bar input,
+.store-dashboard .search-bar input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+
 .search-bar:focus-within {
     border-color: #38bdf8;
     background: rgba(30, 41, 59, 0.8);
@@ -286,4 +310,158 @@
 
 .modal-btn.save:hover {
     background: #0ea5e9;
+}
+
+/* ===== OWNER THEME + STORE DASHBOARD — SAPPHIRE OVERRIDES ===== */
+.owner-theme .employees-tab,
+.store-dashboard .employees-tab {
+    animation: sapphireFadeEmp 0.4s ease-out both;
+}
+
+@keyframes sapphireFadeEmp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.owner-theme .employees-header h2,
+.store-dashboard .employees-header h2 {
+    color: #60a5fa !important;
+}
+
+.owner-theme .employees-table-container,
+.store-dashboard .employees-table-container {
+    background: rgba(8, 12, 30, 0.6) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+.owner-theme .employees-table th,
+.store-dashboard .employees-table th {
+    background: rgba(8, 12, 30, 0.8) !important;
+    color: #60a5fa !important;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.2) !important;
+}
+
+.owner-theme .employees-table td,
+.store-dashboard .employees-table td {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.05) !important;
+}
+
+.owner-theme .employees-table tr:hover,
+.store-dashboard .employees-table tr:hover {
+    background: rgba(59, 130, 246, 0.05) !important;
+}
+
+.owner-theme .add-employee-btn,
+.store-dashboard .add-employee-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%) !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.28) !important;
+    transition: all 0.25s ease !important;
+}
+
+.owner-theme .add-employee-btn:hover,
+.store-dashboard .add-employee-btn:hover {
+    filter: brightness(1.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+.owner-theme .actions-btn:hover,
+.store-dashboard .actions-btn:hover {
+    background: rgba(59, 130, 246, 0.08) !important;
+}
+
+.owner-theme .actions-btn.edit:hover,
+.store-dashboard .actions-btn.edit:hover {
+    color: #3b82f6 !important;
+}
+
+/* Employee modal */
+.owner-theme .employee-modal-overlay,
+.store-dashboard .employee-modal-overlay {
+    background: rgba(5, 8, 20, 0.88) !important;
+    backdrop-filter: blur(6px) !important;
+}
+
+.owner-theme .employee-modal,
+.store-dashboard .employee-modal {
+    background: rgba(9, 14, 35, 0.97) !important;
+    border: 1px solid rgba(59, 130, 246, 0.28) !important;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.1) !important;
+    border-radius: 16px !important;
+}
+
+.owner-theme .employee-modal h3,
+.store-dashboard .employee-modal h3 {
+    color: #60a5fa !important;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.15) !important;
+}
+
+.owner-theme .employee-modal input,
+.owner-theme .employee-modal select,
+.store-dashboard .employee-modal input,
+.store-dashboard .employee-modal select {
+    background: rgba(0, 0, 0, 0.35) !important;
+    border: 1px solid rgba(59, 130, 246, 0.15) !important;
+    color: #f8fafc !important;
+}
+
+.owner-theme .employee-modal input:focus,
+.owner-theme .employee-modal select:focus,
+.store-dashboard .employee-modal input:focus,
+.store-dashboard .employee-modal select:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.15) !important;
+}
+
+.owner-theme .modal-actions,
+.store-dashboard .modal-actions {
+    border-top: 1px solid rgba(59, 130, 246, 0.1) !important;
+}
+
+.owner-theme .modal-btn.save,
+.store-dashboard .modal-btn.save {
+    background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.28) !important;
+}
+
+.owner-theme .modal-btn.save:hover,
+.store-dashboard .modal-btn.save:hover {
+    filter: brightness(1.1) !important;
+}
+
+.owner-theme .modal-btn.cancel,
+.store-dashboard .modal-btn.cancel {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #94a3b8 !important;
+}
+
+/* Search bar — sapphire border fix */
+.owner-theme .search-bar,
+.store-dashboard .search-bar {
+    background: rgba(6, 9, 22, 0.6) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+}
+
+.owner-theme .search-bar:focus-within,
+.store-dashboard .search-bar:focus-within {
+    border-color: rgba(59, 130, 246, 0.55) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08) !important;
+}
+
+.owner-theme .search-bar input,
+.store-dashboard .search-bar input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #f8fafc !important;
+    outline: none !important;
+}
+
+.owner-theme .search-bar svg,
+.store-dashboard .search-bar svg {
+    color: #475569 !important;
 }

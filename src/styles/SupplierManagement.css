@@ -226,3 +226,116 @@
     font-weight: 700;
     color: #10b981;
 }
+
+/* ==================== OWNER THEME OVERRIDES ==================== */
+
+/* Supplier panel animation */
+.owner-theme .supplier-owner-panel {
+    animation: ownerFadeInSM 0.5s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+@keyframes ownerFadeInSM {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Section title */
+.owner-theme .section-title {
+    color: #f1f5f9 !important;
+}
+
+/* Supplier tabs */
+.owner-theme .owner-supplier-tabs {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.15) !important;
+}
+
+.owner-theme .owner-supplier-tab-btn {
+    color: #64748b !important;
+    transition: all 0.25s ease !important;
+}
+
+.owner-theme .owner-supplier-tab-btn:hover {
+    color: #93c5fd !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+}
+
+.owner-theme .owner-supplier-tab-btn.active {
+    color: #3b82f6 !important;
+    background: rgba(59, 130, 246, 0.1) !important;
+    box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.08) !important;
+}
+
+/* Supplier directory cards */
+.owner-theme .supplier-directory-card {
+    background: rgba(8, 12, 30, 0.5) !important;
+    border: 1px solid rgba(59, 130, 246, 0.08) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.owner-theme .supplier-directory-card:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(59, 130, 246, 0.25) !important;
+    box-shadow: 0 14px 32px rgba(59, 130, 246, 0.1) !important;
+}
+
+.owner-theme .supplier-card-avatar {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: #3b82f6 !important;
+}
+
+.owner-theme .supplier-card-header {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.08) !important;
+}
+
+/* Supplier form panel */
+.owner-theme .owner-supplier-form {
+    background: rgba(8, 12, 30, 0.5) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border-radius: 18px !important;
+}
+
+/* Form select */
+.owner-theme .form-select-input {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(59, 130, 246, 0.15) !important;
+    color: #f8fafc !important;
+}
+
+.owner-theme .form-select-input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.15) !important;
+    outline: none !important;
+}
+
+.owner-theme .form-select-input option {
+    background: #090d1a !important;
+}
+
+/* Add item button */
+.owner-theme .btn-add-item {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: #60a5fa !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    transition: all 0.25s ease !important;
+}
+
+.owner-theme .btn-add-item:hover {
+    background: #3b82f6 !important;
+    color: white !important;
+}
+
+/* PO creator table */
+.owner-theme .po-creator-items-table th {
+    color: #475569 !important;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.08) !important;
+}
+
+.owner-theme .po-creator-items-table td {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.04) !important;
+}

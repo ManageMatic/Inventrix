@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Toast from "../../components/common/Toast";
 import logo from "../../assets/logo.png";
-import "../../styles/OwnerDashboard.css";
+import "../../styles/BaseDashboard.css";
 import "../../styles/SupplierDashboard.css";
 import { API_URL } from "../../config";
 
@@ -201,7 +201,7 @@ function SupplierDashboard() {
   }
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container supplier-theme">
 
       {/* Sidebar */}
       <aside className={`sidebar ${!sidebarOpen ? "sidebar-closed" : ""}`}>

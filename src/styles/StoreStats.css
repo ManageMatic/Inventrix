@@ -134,3 +134,50 @@
     padding: 4px 10px;
     border-radius: 20px;
 }
+
+/* ===== STORE DASHBOARD — SAPPHIRE THEME ===== */
+.store-dashboard .store-stat-card {
+    background: rgba(8, 12, 30, 0.55) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25) !important;
+    transition: all 0.3s ease !important;
+}
+
+.store-dashboard .store-stat-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(59, 130, 246, 0.25) !important;
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.1) !important;
+    background: rgba(8, 12, 30, 0.7) !important;
+}
+
+.store-dashboard .store-stat-card.products .store-stat-icon {
+    background: rgba(59, 130, 246, 0.12) !important;
+    color: #60a5fa !important;
+}
+
+.store-dashboard .low-stock-section {
+    background: rgba(245, 158, 11, 0.04) !important;
+    border: 1px solid rgba(245, 158, 11, 0.12) !important;
+    border-radius: 16px !important;
+}
+
+.store-dashboard .low-stock-item {
+    background: rgba(8, 12, 30, 0.5) !important;
+    border: 1px solid rgba(59, 130, 246, 0.06) !important;
+}
+
+/* Also apply inside owner-theme (OwnerDashboard Employees/Stores tabs) */
+.owner-theme .store-stat-card {
+    background: rgba(8, 12, 30, 0.55) !important;
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+}
+
+.owner-theme .store-stat-card:hover {
+    border-color: rgba(59, 130, 246, 0.25) !important;
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.1) !important;
+}

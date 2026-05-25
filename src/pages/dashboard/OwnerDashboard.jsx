@@ -12,6 +12,7 @@ import Reports from "../../components/dashboard/store/Reports";
 import GenerateQR from "../../components/dashboard/store/GenerateQR";
 import OwnerSettings from "../../components/dashboard/owner/OwnerSettings";
 import SupplierManagement from "../../components/dashboard/owner/SupplierManagement";
+import "../../styles/BaseDashboard.css";
 import "../../styles/OwnerDashboard.css";
 import { API_URL } from "../../config";
 import { io } from "socket.io-client";
@@ -160,7 +161,7 @@ const OwnerDashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container owner-theme">
       {/* Sidebar */}
       <Sidebar
         sidebarOpen={sidebarOpen}

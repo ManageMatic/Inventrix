@@ -7,7 +7,8 @@ import {
   User, 
   TrendingUp
 } from "lucide-react";
-import "../../styles/OwnerDashboard.css"; // Using Owner Dashboard styling
+import "../../styles/BaseDashboard.css"; // Shared dashboard layout
+import "../../styles/EmployeeDashboard.css"; // Using Employee Dashboard theme overrides
 import Toast from "../../components/common/Toast";
 import { API_URL, SOCKET_URL } from "../../config";
 import { io } from "socket.io-client";
@@ -184,7 +185,7 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
   }
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container employee-theme">
       {/* Sidebar */}
       <EmployeeSidebar
         sidebarOpen={sidebarOpen}

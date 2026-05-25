@@ -146,13 +146,13 @@
     gap: 20px;
 }
 
-.form-group {
+.employee-profile-container .form-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.form-group label {
+.employee-profile-container .form-group label {
     font-size: 0.9rem;
     font-weight: 500;
     color: #cbd5e1;

@@ -10,14 +10,14 @@ function LandingPage() {
   useScrollAnimation();
 
   return (
-    <>
+    <div className="landing-page-body">
       <Navbar />
       <Hero />
       <Features />
       <About />
       <Contact />
       <Footer />
-    </>
+    </div>
   );
 }
 

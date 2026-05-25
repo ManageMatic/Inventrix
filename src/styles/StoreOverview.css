@@ -6,6 +6,34 @@
     animation: fadeIn 0.4s ease-in-out;
 }
 
+/* ================= Chart + Recent Sales — Side by Side ================= */
+.chart-sales-row {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 20px;
+    align-items: stretch;
+}
+
+/* Make the SalesChart container fill the row height */
+.chart-sales-row > *:first-child {
+    min-width: 0; /* prevent overflow inside grid */
+}
+
+/* Make RecentSales fill full row height */
+.chart-sales-row .recent-sales {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    max-height: 420px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.chart-sales-row .recent-sales::-webkit-scrollbar {
+    display: none;
+}
+
 /* ================= Low Stock Products ================= */
 .low-stock-section {
     background: #1e293b;
@@ -53,7 +81,7 @@
     font-weight: bold;
 }
 
-/* Charts Section */
+/* Charts Section (legacy, kept for compatibility) */
 .charts-section {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -67,6 +95,17 @@
     padding: 20px;
     text-align: center;
     color: #94a3b8;
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 900px) {
+    .chart-sales-row {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-sales-row .recent-sales {
+        max-height: none;
+    }
 }
 
 @media (max-width: 768px) {

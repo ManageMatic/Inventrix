@@ -122,3 +122,54 @@
         transform: rotate(360deg);
     }
 }
+
+/* ===== OWNER THEME + STORE DASHBOARD — SAPPHIRE OVERRIDES ===== */
+.owner-theme .reports-header h2,
+.store-dashboard .reports-header h2 {
+    color: #60a5fa !important;
+}
+
+.owner-theme .reports-header {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.12) !important;
+}
+
+.owner-theme .report-card,
+.store-dashboard .report-card {
+    background: rgba(8, 12, 30, 0.55) !important;
+    border: 1px solid rgba(59, 130, 246, 0.08) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.owner-theme .report-card:hover,
+.store-dashboard .report-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(59, 130, 246, 0.28) !important;
+    box-shadow: 0 14px 32px rgba(59, 130, 246, 0.1) !important;
+}
+
+.owner-theme .report-icon-wrapper,
+.store-dashboard .report-icon-wrapper {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: #3b82f6 !important;
+}
+
+.owner-theme .generate-btn,
+.store-dashboard .generate-btn {
+    color: #3b82f6 !important;
+    border: 1px solid rgba(59, 130, 246, 0.35) !important;
+    background: transparent !important;
+    border-radius: 10px !important;
+    transition: all 0.25s ease !important;
+}
+
+.owner-theme .generate-btn:hover:not(:disabled),
+.store-dashboard .generate-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
