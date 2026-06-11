@@ -41,10 +41,7 @@ function SupplierManagement({ storeId }) {
 
   const token = localStorage.getItem("token");
 
-  const selectedSupplierObj = suppliers.find(s => s._id === poForm.supplier_id);
-  const filteredProducts = products.filter(p => 
-    selectedSupplierObj?.productsSupplied?.some(id => id.toString() === p._id.toString())
-  );
+  const filteredProducts = products;
 
   const showToast = (message, type = "info") => {
     setToast({ message, type });
@@ -58,11 +55,26 @@ function SupplierManagement({ storeId }) {
     fetchStores();
   }, []);
 
-  useEffect(() => {
-    if (poForm.store_id) {
-      fetchProducts(poForm.store_id);
+  const fetchSupplierCatalog = async (supplierId) => {
+    try {
+      const res = await axios.get(`${API_URL}/api/suppliers/products/catalog/${supplierId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        setProducts(res.data.data);
+      }
+    } catch (err) {
+      console.error(err);
     }
-  }, [poForm.store_id]);
+  };
+
+  useEffect(() => {
+    if (poForm.supplier_id) {
+      fetchSupplierCatalog(poForm.supplier_id);
+    } else {
+      setProducts([]);
+    }
+  }, [poForm.supplier_id]);
 
   // Reset PO items when Store or Supplier changes to prevent data mismatches
   useEffect(() => {
@@ -72,18 +84,9 @@ function SupplierManagement({ storeId }) {
   // Reactive selection of the first product supplied by the selected supplier
   useEffect(() => {
     if (poForm.supplier_id && products.length > 0) {
-      const selectedSupplierObj = suppliers.find(s => s._id === poForm.supplier_id);
-      const filtered = products.filter(p => 
-        selectedSupplierObj?.productsSupplied?.some(id => id.toString() === p._id.toString())
-      );
-      if (filtered.length > 0) {
-        if (!filtered.some(f => f._id === selectedProduct)) {
-          setSelectedProduct(filtered[0]._id);
-          setItemPrice(filtered[0].purchasePrice || 100);
-        }
-      } else {
-        setSelectedProduct("");
-        setItemPrice(0);
+      if (!products.some(f => f._id === selectedProduct)) {
+        setSelectedProduct(products[0]._id);
+        setItemPrice(products[0].purchasePrice || 100);
       }
     } else {
       setSelectedProduct("");
@@ -133,18 +136,7 @@ function SupplierManagement({ storeId }) {
     }
   };
 
-  const fetchProducts = async (selectedStoreId) => {
-    try {
-      const res = await axios.get(`${API_URL}/api/products/${selectedStoreId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.data.success) {
-        setProducts(res.data.data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+
 
   const handleProductChange = (productId) => {
     setSelectedProduct(productId);

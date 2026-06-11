@@ -3,6 +3,7 @@ const PurchaseOrder = require('../models/PurchaseOrder');
 const Product = require('../models/Product');
 const Store = require('../models/Store');
 const bcrypt = require('bcryptjs');
+const SupplierProduct = require('../models/SupplierProduct');
 
 // ── Store Owner Operations ───────────────────────────────────
 
@@ -64,14 +65,15 @@ exports.createPurchaseOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Store, Supplier and Items are required' });
         }
 
-        // Verify supplier exists and supplies these products
+        // Verify supplier exists
         const supplier = await Supplier.findById(supplier_id);
         if (!supplier) {
             return res.status(404).json({ success: false, message: 'Supplier not found' });
         }
 
         for (const item of items) {
-            if (!supplier.productsSupplied || !supplier.productsSupplied.some(prodId => prodId.toString() === item.product_id.toString())) {
+            const exists = await SupplierProduct.findOne({ _id: item.product_id, supplier_id });
+            if (!exists) {
                 return res.status(400).json({ 
                     success: false, 
                     message: `Supplier does not supply the product: ${item.productName}` 
@@ -209,12 +211,39 @@ exports.updatePOStatus = async (req, res) => {
         if (status === 'delivered') {
             po.actualDeliveryDate = new Date();
 
-            // 🔥 INCREMENT STOCK IN STORE UPON DELIVERY!
+            // 🔥 INCREMENT STOCK IN STORE UPON DELIVERY OR AUTO-CREATE PRODUCT!
             for (const item of po.items) {
                 if (item.product_id) {
-                    await Product.findByIdAndUpdate(item.product_id, {
-                        $inc: { quantity: item.quantity }
-                    });
+                    const supProd = await SupplierProduct.findById(item.product_id);
+                    if (supProd) {
+                        // Look for product in store with same name
+                        let storeProduct = await Product.findOne({
+                            store: po.store_id,
+                            name: supProd.name
+                        });
+
+                        if (storeProduct) {
+                            // Product exists, increment quantity
+                            storeProduct.quantity += item.quantity;
+                            await storeProduct.save();
+                        } else {
+                            // Product does not exist, create it and generate QR!
+                            const product_id = `PRD-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
+                            const qr_code = `QR-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
+
+                            await Product.create({
+                                product_id,
+                                store: po.store_id,
+                                name: supProd.name,
+                                category: supProd.category || "General",
+                                purchasePrice: supProd.purchasePrice,
+                                sellingPrice: supProd.purchasePrice * 1.25, // default 25% markup
+                                quantity: item.quantity,
+                                qr_code,
+                                description: supProd.description || `Delivered by supplier on ${new Date().toLocaleDateString()}`
+                            });
+                        }
+                    }
                 }
             }
         }
@@ -276,5 +305,64 @@ exports.supplyProduct = async (req, res) => {
     } catch (error) {
         console.error('SUPPLY PRODUCT ERROR:', error);
         res.status(500).json({ success: false, message: 'Failed to add product to supply list', error: error.message });
+    }
+};
+
+// Add product to supplier catalog
+exports.addCatalogProduct = async (req, res) => {
+    try {
+        const { name, category, description, purchasePrice } = req.body;
+        const supplier_id = req.user._id;
+
+        if (!name || !purchasePrice) {
+            return res.status(400).json({ success: false, message: 'Name and Purchase Price are required' });
+        }
+
+        const newProduct = await SupplierProduct.create({
+            name,
+            category,
+            description,
+            purchasePrice: Number(purchasePrice),
+            supplier_id
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Catalog product added successfully',
+            data: newProduct
+        });
+    } catch (error) {
+        console.error('ADD CATALOG PRODUCT ERROR:', error);
+        res.status(500).json({ success: false, message: 'Failed to add catalog product', error: error.message });
+    }
+};
+
+// Fetch catalog products for supplier
+exports.getCatalogProducts = async (req, res) => {
+    try {
+        const supplier_id = req.user._id;
+        const products = await SupplierProduct.find({ supplier_id });
+        res.status(200).json({
+            success: true,
+            data: products
+        });
+    } catch (error) {
+        console.error('GET CATALOG PRODUCTS ERROR:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch catalog products', error: error.message });
+    }
+};
+
+// Fetch catalog products of a specific supplier for store owner
+exports.getCatalogProductsForOwner = async (req, res) => {
+    try {
+        const { supplierId } = req.params;
+        const products = await SupplierProduct.find({ supplier_id: supplierId });
+        res.status(200).json({
+            success: true,
+            data: products
+        });
+    } catch (error) {
+        console.error('GET CATALOG PRODUCTS FOR OWNER ERROR:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch catalog products', error: error.message });
     }
 };

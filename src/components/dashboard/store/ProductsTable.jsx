@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import ProductModal from "./ProductModal";
 import ConfirmDialog from "../../common/ConfirmDialog";
 import { Trash2, Edit, QrCode, ChevronUp, ChevronDown, X, Search } from "lucide-react";
@@ -283,7 +284,7 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
         />
       )}
 
-      {showQRModal && selectedQRProduct && (
+      {showQRModal && selectedQRProduct && createPortal(
         <div className="modal-overlay" onClick={() => setShowQRModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()} style={{ width: 'auto', textAlign: 'center', padding: '30px' }}>
             <div className="modal-header" style={{ justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
@@ -306,7 +307,8 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
             </div>
             <p style={{ marginTop: '15px', color: '#94a3b8' }}>ID: {selectedQRProduct.product_id}</p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

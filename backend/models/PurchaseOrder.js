@@ -24,7 +24,7 @@ const purchaseOrderSchema = new mongoose.Schema({
     items: [{
         product_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product'
+            ref: 'SupplierProduct'
         },
         productName: String,
         quantity: {

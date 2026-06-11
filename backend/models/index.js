@@ -11,6 +11,7 @@ const ActivityLog = require('./ActivityLog');
 const PurchaseOrder = require('./PurchaseOrder');
 const Shift = require('./Shift');
 const Notification = require('./Notification');
+const SupplierProduct = require('./SupplierProduct');
 
 module.exports = {
     Role,
@@ -25,5 +26,6 @@ module.exports = {
     ActivityLog,
     PurchaseOrder,
     Shift,
-    Notification
+    Notification,
+    SupplierProduct
 };

@@ -31,7 +31,8 @@ function SupplierDashboard() {
   const [activeTab, setActiveTab] = useState(localStorage.getItem("supplierActiveTab") || "Dashboard");
   const [stats, setStats] = useState({ totalOrders: 0, pendingDeliveries: 0, completedDeliveries: 0, pendingApproval: 0 });
   const [purchaseOrders, setPurchaseOrders] = useState([]);
-  const [productsData, setProductsData] = useState({ supplied: [], allAvailable: [] });
+  const [catalogProducts, setCatalogProducts] = useState([]);
+  const [catalogForm, setCatalogForm] = useState({ name: "", category: "General", description: "", purchasePrice: "" });
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [profileForm, setProfileForm] = useState({ name: "", phone: "", address: "" });
@@ -189,14 +190,31 @@ function SupplierDashboard() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/suppliers/my-products`, {
+      const res = await axios.get(`${API_URL}/api/suppliers/products/catalog`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
-        setProductsData(res.data.data);
+        setCatalogProducts(res.data.data);
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleCreateCatalogProduct = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${API_URL}/api/suppliers/products/catalog/add`, catalogForm, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        showToast("Catalog product added successfully!", "success");
+        setCatalogForm({ name: "", category: "General", description: "", purchasePrice: "" });
+        fetchProducts();
+      }
+    } catch (err) {
+      console.error(err);
+      showToast(err.response?.data?.message || "Failed to add catalog product", "error");
     }
   };
 
@@ -221,24 +239,6 @@ function SupplierDashboard() {
     } catch (err) {
       console.error(err);
       showToast(err.response?.data?.message || "Failed to update order", "error");
-    }
-  };
-
-  const handleSupplyProduct = async (productId) => {
-    try {
-      const res = await axios.post(`${API_URL}/api/suppliers/products/supply`, {
-        product_id: productId
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (res.data.success) {
-        showToast("Product added to your supply list!", "success");
-        fetchProducts();
-      }
-    } catch (err) {
-      console.error(err);
-      showToast("Failed to supply product", "error");
     }
   };
 
@@ -553,34 +553,91 @@ function SupplierDashboard() {
 
           {/* TAB 3: SUPPLIED PRODUCTS */}
           {activeTab === "Supplied Products" && (
-            <div>
-              <h2 className="supplier-section-title">Supply Catalog</h2>
-              <p className="supplier-catalog-desc">Register items you can supply to retail locations. When store owners request these products, your contact details will serve as supplier references.</p>
+            <div className="supplier-catalog-container" style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
+              
+              {/* Form to Add Product */}
+              <div className="customer-auth-card" style={{ flex: "1 1 350px", background: "rgba(15, 12, 30, 0.45)", padding: "24px", borderRadius: "18px", border: "1px solid rgba(255, 255, 255, 0.06)" }}>
+                <h2 className="supplier-section-title" style={{ fontSize: "1.4rem", marginBottom: "1rem" }}>Add Product to Catalog</h2>
+                <form onSubmit={handleCreateCatalogProduct} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                  <div className="form-group" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <label style={{ fontSize: "0.85rem", color: "#94a3b8" }}>Product Name *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="e.g. Wireless Mouse"
+                      value={catalogForm.name}
+                      onChange={(e) => setCatalogForm({ ...catalogForm, name: e.target.value })}
+                      required
+                    />
+                  </div>
 
-              <div className="product-grid">
-                {productsData.allAvailable?.map((product) => {
-                  const isSupplied = productsData.supplied?.some(s => s._id === product._id);
-                  return (
-                    <div className="supplier-product-card" key={product._id}>
-                      <h3>{product.name}</h3>
-                      <p>{product.description || "No description provided."}</p>
-                      <div className="product-store-ref">
-                        Store: {product.store?.name || "Retail Store"}
-                      </div>
-                      <div className="product-meta-row">
-                        <div className="product-supply-price">₹{product.purchasePrice}</div>
-                        {isSupplied ? (
-                          <span className="supply-status-tag">Supplying</span>
-                        ) : (
-                          <button onClick={() => handleSupplyProduct(product._id)} className="supply-action-btn">
-                            Supply Product
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                  <div className="form-group" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <label style={{ fontSize: "0.85rem", color: "#94a3b8" }}>Category</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="e.g. Electronics"
+                      value={catalogForm.category}
+                      onChange={(e) => setCatalogForm({ ...catalogForm, category: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <label style={{ fontSize: "0.85rem", color: "#94a3b8" }}>Supply Price (₹) *</label>
+                    <input
+                      type="number"
+                      className="form-input"
+                      placeholder="e.g. 400"
+                      value={catalogForm.purchasePrice}
+                      onChange={(e) => setCatalogForm({ ...catalogForm, purchasePrice: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <label style={{ fontSize: "0.85rem", color: "#94a3b8" }}>Description</label>
+                    <textarea
+                      className="textarea-input"
+                      placeholder="Product details..."
+                      rows={3}
+                      value={catalogForm.description}
+                      onChange={(e) => setCatalogForm({ ...catalogForm, description: e.target.value })}
+                    />
+                  </div>
+
+                  <button type="submit" className="submit-btn" style={{ padding: "10px", marginTop: "10px" }}>
+                    Add Product
+                  </button>
+                </form>
               </div>
+
+              {/* Catalog List */}
+              <div style={{ flex: "2 1 500px" }}>
+                <h2 className="supplier-section-title">My Supply Catalog</h2>
+                {catalogProducts.length === 0 ? (
+                  <div className="supplier-empty-state" style={{ padding: "3rem" }}>
+                    <span>Your catalog is empty. Add products on the left to start supplying.</span>
+                  </div>
+                ) : (
+                  <div className="product-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "20px" }}>
+                    {catalogProducts.map((product) => (
+                      <div className="supplier-product-card" key={product._id} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                        <div>
+                          <h3 style={{ fontSize: "1.1rem", fontWeight: "700", color: "#fff", marginBottom: "5px" }}>{product.name}</h3>
+                          <span style={{ fontSize: "0.75rem", background: "rgba(167, 139, 250, 0.15)", color: "#a78bfa", padding: "3px 8px", borderRadius: "20px", display: "inline-block", marginBottom: "10px" }}>
+                            {product.category || "General"}
+                          </span>
+                          <p style={{ fontSize: "0.85rem", color: "#64748b", margin: "0 0 15px 0" }}>{product.description || "No description provided."}</p>
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255, 255, 255, 0.05)", paddingTop: "10px" }}>
+                          <span style={{ fontSize: "1rem", fontWeight: "bold", color: "#10b981" }}>₹{product.purchasePrice}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
             </div>
           )}
 

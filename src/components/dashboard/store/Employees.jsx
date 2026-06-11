@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Plus, Edit, Trash2, Clock, Search } from "lucide-react";
 import Toast from "../../common/Toast";
 import ConfirmDialog from "../../common/ConfirmDialog";
@@ -241,7 +242,7 @@ const Employees = ({ storeId }) => {
         </table>
       </div>
 
-      {showModal && (
+      {showModal && createPortal(
         <div className="employee-modal-overlay">
           <div className="employee-modal">
             <h3>{editingId ? "Edit Employee" : "Add Employee"}</h3>
@@ -263,7 +264,8 @@ const Employees = ({ storeId }) => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {confirmDialog.show && (
