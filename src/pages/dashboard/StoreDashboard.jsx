@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import StoreHeader from "../../components/dashboard/store/StoreHeader";
 import StoreNav from "../../components/dashboard/store/StoreNav";
@@ -30,6 +30,16 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updateCa
   const [refreshKey, setRefreshKey] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const token = localStorage.getItem("token");
+  const userType = localStorage.getItem("userType");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (userType && userType !== "store_owner" && userType !== "employee") {
+    if (userType === "supplier") return <Navigate to="/SupplierDashboard" replace />;
+    return <Navigate to="/login" replace />;
+  }
 
   // ── Fetch store details on mount ─────────────────────────────
   useEffect(() => {

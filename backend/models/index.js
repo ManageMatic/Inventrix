@@ -9,6 +9,8 @@ const Sale = require('./Sale');
 const Invoice = require('./Invoice');
 const ActivityLog = require('./ActivityLog');
 const PurchaseOrder = require('./PurchaseOrder');
+const Shift = require('./Shift');
+const Notification = require('./Notification');
 
 module.exports = {
     Role,
@@ -21,5 +23,7 @@ module.exports = {
     Sale,
     Invoice,
     ActivityLog,
-    PurchaseOrder
+    PurchaseOrder,
+    Shift,
+    Notification
 };

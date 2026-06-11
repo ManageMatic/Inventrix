@@ -15,7 +15,9 @@ import {
   Clock,
   Sparkles,
   Inbox,
-  Save
+  Save,
+  Menu,
+  X
 } from "lucide-react";
 import Toast from "../../components/common/Toast";
 import logo from "../../assets/logo.png";
@@ -33,6 +35,7 @@ function SupplierDashboard() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [profileForm, setProfileForm] = useState({ name: "", phone: "", address: "" });
+  const [date, setDate] = useState("");
 
   // Response form states
   const [selectedPOId, setSelectedPOId] = useState(null);
@@ -42,8 +45,15 @@ function SupplierDashboard() {
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const userType = localStorage.getItem("userType");
 
   if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (userType && userType !== "supplier") {
+    if (userType === "store_owner") return <Navigate to="/OwnerDashboard" replace />;
+    if (userType === "employee") return <Navigate to="/EmployeeDashboard" replace />;
     return <Navigate to="/login" replace />;
   }
 
@@ -66,6 +76,17 @@ function SupplierDashboard() {
   useEffect(() => {
     localStorage.setItem("supplierActiveTab", activeTab);
   }, [activeTab]);
+
+  useEffect(() => {
+    const today = new Date();
+    const formatted = today.toLocaleDateString("en-IN", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    setDate(formatted);
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -223,6 +244,7 @@ function SupplierDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userType");
     localStorage.removeItem("supplierActiveTab");
     navigate("/login");
   };
@@ -287,32 +309,34 @@ function SupplierDashboard() {
       <main className={`main-content ${!sidebarOpen ? "main-expanded" : ""}`}>
 
         {/* Header */}
-        <div className="supplier-dashboard-header">
-          <div className="supplier-header-left">
+        <header className="header">
+          <div className="header-left">
             <button
-              className="supplier-toggle-btn"
+              className="menu-btn"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
-              ☰
+              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            <div className="header-title">Supplier Workspace</div>
+
+            <div className="header-info">
+              <h1 className="header-title">
+                Welcome back {supplier?.name ? supplier.name.split(" ")[0] : "Supplier"} 👋
+              </h1>
+              <div className="header-date">
+                <Calendar size={16} />
+                <span>{date}</span>
+              </div>
+            </div>
           </div>
-          <div className="header-actions">
-            <span className="supplier-user-badge">
+
+          <div className="header-right">
+            <span className="supplier-user-badge" style={{ padding: "8px 16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "20px", display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "0.9rem", color: "#a78bfa" }}>
               🚚 {supplier?.email}
             </span>
           </div>
-        </div>
+        </header>
 
         <div className="supplier-content-area">
-
-          {/* Banner */}
-          <div className="supplier-welcome-banner">
-            <h1>
-              Welcome Back, {supplier?.name || "Supplier Partner"}
-            </h1>
-            <p>Manage retail store orders, supply items, and delivery logs in real-time.</p>
-          </div>
 
           {/* TAB 1: DASHBOARD */}
           {activeTab === "Dashboard" && (
@@ -447,7 +471,7 @@ function SupplierDashboard() {
                           <button onClick={() => handlePOAction(po._id, responseType === "accept" ? "accepted" : "rejected")} className={responseType === "accept" ? "action-btn-accept" : "action-btn-reject"}>
                             Confirm {responseType === "accept" ? "Accept" : "Reject"}
                           </button>
-                          <button onClick={() => setSelectedPOId(null)} className="supplier-logout-btn">Cancel</button>
+                          <button onClick={() => setSelectedPOId(null)} className="cancel-btn">Cancel</button>
                         </div>
                       </div>
                     )}

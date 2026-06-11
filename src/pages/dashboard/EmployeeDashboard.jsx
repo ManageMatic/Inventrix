@@ -32,8 +32,15 @@ const socket = io(SOCKET_URL);
 
 const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updateCartStoreId }) => {
   const token = localStorage.getItem("token");
+  const userType = localStorage.getItem("userType");
 
   if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (userType && userType !== "employee") {
+    if (userType === "store_owner") return <Navigate to="/OwnerDashboard" replace />;
+    if (userType === "supplier") return <Navigate to="/SupplierDashboard" replace />;
     return <Navigate to="/login" replace />;
   }
 
@@ -116,6 +123,7 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userType");
     localStorage.removeItem("employeeActiveTab");
     navigate("/login");
   };

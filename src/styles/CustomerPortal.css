@@ -113,6 +113,7 @@ body {
 
 .customer-portal-container .form-group {
     text-align: left;
+    margin-bottom: 1.75rem;
 }
 
 .customer-portal-container .form-group label {

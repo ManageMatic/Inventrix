@@ -62,8 +62,12 @@ exports.addEmployee = async (req, res) => {
 
         let assignedRole = roleId;
         if (!assignedRole) {
-            const defaultRole = await Role.findOne({ name: 'employee' });
-            if (defaultRole) assignedRole = defaultRole._id;
+            let defaultRole = await Role.findOne({ name: 'employee' });
+            if (!defaultRole) {
+                const defaultRolePermissions = require('../utils/rolePermissions');
+                defaultRole = await Role.create(defaultRolePermissions.employee);
+            }
+            assignedRole = defaultRole._id;
         }
 
         const newEmployee = await Employee.create({

@@ -64,6 +64,21 @@ exports.createPurchaseOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Store, Supplier and Items are required' });
         }
 
+        // Verify supplier exists and supplies these products
+        const supplier = await Supplier.findById(supplier_id);
+        if (!supplier) {
+            return res.status(404).json({ success: false, message: 'Supplier not found' });
+        }
+
+        for (const item of items) {
+            if (!supplier.productsSupplied || !supplier.productsSupplied.some(prodId => prodId.toString() === item.product_id.toString())) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: `Supplier does not supply the product: ${item.productName}` 
+                });
+            }
+        }
+
         const po_id = `PO-${Date.now()}`;
 
         // Compute total PO amount

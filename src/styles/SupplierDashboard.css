@@ -73,26 +73,6 @@
     box-shadow: 0 4px 15px rgba(167, 139, 250, 0.1);
 }
 
-.supplier-logout-btn {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.15);
-    color: #f87171;
-    padding: 0.95rem 1.2rem;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: auto;
-    transition: all 0.3s ease;
-}
-
-.supplier-logout-btn:hover {
-    background: #ef4444;
-    color: white;
-}
 
 /* Main Content Area */
 .supplier-main-content {
@@ -295,8 +275,7 @@
 }
 
 .action-btn-accept:hover {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
+    filter: brightness(1.08);
 }
 
 .action-btn-reject {
@@ -393,8 +372,7 @@
 }
 
 .supply-action-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.25);
+    filter: brightness(1.08);
 }
 
 .supply-status-tag {
@@ -604,7 +582,7 @@
     margin-top: 1rem;
 }
 
-.po-response-actions .supplier-logout-btn {
+.po-response-actions .cancel-btn {
     margin: 0;
     padding: 0.5rem 1rem;
 }
@@ -726,26 +704,32 @@
     color: white !important;
 }
 
-.supplier-theme .logout-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    background: rgba(239, 68, 68, 0.08) !important;
-    border: 1px solid rgba(239, 68, 68, 0.15) !important;
-    color: #f87171 !important;
-    padding: 0.95rem 1.2rem;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: auto;
-    transition: all 0.3s ease;
+.supplier-theme .header {
+    background: rgba(15, 12, 30, 0.7) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
 }
 
-.supplier-theme .logout-btn:hover {
-    background: #ef4444 !important;
-    color: white !important;
+.supplier-theme .header-title {
+    color: #f1f5f9 !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+}
+
+.supplier-theme .header-date {
+    color: #64748b !important;
+}
+
+.supplier-theme .menu-btn {
+    color: #64748b !important;
+    transition: color 0.2s ease !important;
+}
+
+.supplier-theme .menu-btn:hover {
+    color: #a78bfa !important;
 }
 
 /* ==================== RESTORED PREMIUM THEMED MODALS ==================== */
@@ -805,7 +789,5 @@
 }
 
 .supplier-theme .submit-btn:hover {
-    filter: brightness(1.1) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(167, 139, 250, 0.45) !important;
+    filter: brightness(1.08) !important;
 }

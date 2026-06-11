@@ -244,9 +244,7 @@
 
 .owner-theme .add-product:hover,
 .store-dashboard .add-product:hover {
-    filter: brightness(1.1) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4) !important;
+    filter: brightness(1.08) !important;
 }
 
 .owner-theme .edit-btn:hover,

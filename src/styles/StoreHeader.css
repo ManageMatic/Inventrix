@@ -115,8 +115,7 @@
 }
 
 .store-dashboard .action-btn:hover {
-    filter: brightness(1.1) !important;
-    transform: translateY(-1px) !important;
+    filter: brightness(1.08) !important;
 }
 
 .store-dashboard .action-btn.danger {

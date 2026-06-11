@@ -96,27 +96,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.employee-logout-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px;
-  background: rgba(239, 68, 68, 0.1);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
 
-.employee-logout-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
-  transform: translateY(-2px);
-}
 
 /* Main Content Area */
 .employee-main-content {
@@ -242,9 +222,6 @@
   background: #10b981 !important;
 }
 
-.employee-theme .logout-btn {
-  background: #ef4444 !important;
-}
 
 .employee-theme .header {
   background: #090e1a !important;
@@ -306,8 +283,7 @@
 }
 
 .employee-theme .action-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25) !important;
+  filter: brightness(1.08) !important;
 }
 
 /* ==================== COMPREHENSIVE THEME OVERRIDES FOR TABLES, NOTIFICATIONS, ETC ==================== */

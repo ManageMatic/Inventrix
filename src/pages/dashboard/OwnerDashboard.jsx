@@ -36,9 +36,16 @@ const OwnerDashboard = () => {
   const [advancedAnalytics, setAdvancedAnalytics] = useState(null);
 
   const token = localStorage.getItem("token");
+  const userType = localStorage.getItem("userType");
   const navigate = useNavigate();
 
   if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (userType && userType !== "store_owner") {
+    if (userType === "employee") return <Navigate to="/EmployeeDashboard" replace />;
+    if (userType === "supplier") return <Navigate to="/SupplierDashboard" replace />;
     return <Navigate to="/login" replace />;
   }
 
@@ -155,6 +162,7 @@ const OwnerDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userType");
     localStorage.removeItem("ownerActiveTab");
     localStorage.removeItem("storeActiveTab");
     navigate("/login");

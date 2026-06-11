@@ -8,7 +8,7 @@ const CategoryPieChart = ({ data }) => {
     <div className="analytics-card pie-chart-card">
       <h3>Revenue by Category</h3>
       <div style={{ width: '100%', height: 300 }}>
-        <ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}

@@ -89,21 +89,7 @@
   box-shadow: 0 0 12px rgba(59, 130, 246, 0.3) !important;
 }
 
-/* Logout button */
-.owner-theme .logout-btn {
-  background: rgba(239, 68, 68, 0.08) !important;
-  border: 1px solid rgba(239, 68, 68, 0.18) !important;
-  color: #f87171 !important;
-  border-radius: 10px !important;
-  font-weight: 600 !important;
-  transition: all 0.25s ease !important;
-}
 
-.owner-theme .logout-btn:hover {
-  background: rgba(239, 68, 68, 0.2) !important;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.15) !important;
-  transform: translateY(-2px) !important;
-}
 
 /* ==================== HEADER / TOPBAR ==================== */
 
@@ -145,9 +131,7 @@
 }
 
 .owner-theme .create-btn:hover {
-  filter: brightness(1.12) !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.38) !important;
+  filter: brightness(1.08) !important;
 }
 
 /* Store filter dropdown */
@@ -535,9 +519,7 @@
 .owner-theme .primary-btn:hover,
 .owner-theme .add-product:hover,
 .owner-theme .add-btn:hover {
-  filter: brightness(1.1) !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4) !important;
+  filter: brightness(1.08) !important;
 }
 
 .owner-theme .cancel-btn {

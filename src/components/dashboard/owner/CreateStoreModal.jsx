@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Store } from "lucide-react";
 import Toast from "../../common/Toast";
+import { API_URL } from "../../../config";
 
 function CreateStoreModal({ onClose, setStores, stores }) {
   const [formData, setFormData] = useState({
@@ -27,7 +28,7 @@ function CreateStoreModal({ onClose, setStores, stores }) {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/stores/createStore", {
+      const res = await fetch(`${API_URL}/api/stores/createStore`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

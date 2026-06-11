@@ -6,7 +6,7 @@ const HourlySalesChart = ({ data }) => {
     <div className="analytics-card hourly-chart">
       <h3>Peak Sales Hours</h3>
       <div style={{ width: '100%', height: 300 }}>
-        <ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">

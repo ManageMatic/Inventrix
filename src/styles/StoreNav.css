@@ -34,7 +34,6 @@
 
 .nav-tab.refresh-btn:hover:not(:disabled) {
     background: #0ea5e9;
-    transform: translateY(-2px);
 }
 
 .nav-tab.refresh-btn:disabled {
@@ -90,6 +89,5 @@
 }
 
 .store-dashboard .nav-tab.refresh-btn:hover:not(:disabled) {
-    filter: brightness(1.1) !important;
-    transform: translateY(-1px) !important;
+    filter: brightness(1.08) !important;
 }

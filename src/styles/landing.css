@@ -149,8 +149,6 @@
 
 .cta-btn:hover {
     background: #2563eb;
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
 }
 
 .outline-btn {
@@ -169,7 +167,6 @@
 .outline-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-3px);
 }
 
 .hero-visual {

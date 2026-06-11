@@ -2,6 +2,7 @@ const Store = require('../models/Store');
 const Product = require('../models/Product');
 const Employee = require('../models/Employee');
 const Sale = require('../models/Sale');
+const StoreOwner = require('../models/StoreOwner');
 
 // ── Public endpoint to fetch all stores (for employee registration)
 exports.getAllStores = async (req, res) => {
@@ -43,6 +44,11 @@ exports.createStore = async (req, res) => {
             owner_id,
             contact,
             address
+        });
+
+        // Add store _id to owner's stores array
+        await StoreOwner.findByIdAndUpdate(owner_id, {
+            $push: { stores: store._id }
         });
 
         res.status(201).json({
@@ -137,6 +143,11 @@ exports.deleteStore = async (req, res) => {
         }
 
         await Store.findByIdAndDelete(req.params.id);
+
+        // Remove store _id from owner's stores array
+        await StoreOwner.findByIdAndUpdate(store.owner_id, {
+            $pull: { stores: store._id }
+        });
 
         res.json({
             success: true,

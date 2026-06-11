@@ -41,6 +41,11 @@ function SupplierManagement({ storeId }) {
 
   const token = localStorage.getItem("token");
 
+  const selectedSupplierObj = suppliers.find(s => s._id === poForm.supplier_id);
+  const filteredProducts = products.filter(p => 
+    selectedSupplierObj?.productsSupplied?.some(id => id.toString() === p._id.toString())
+  );
+
   const showToast = (message, type = "info") => {
     setToast({ message, type });
   };
@@ -58,6 +63,33 @@ function SupplierManagement({ storeId }) {
       fetchProducts(poForm.store_id);
     }
   }, [poForm.store_id]);
+
+  // Reset PO items when Store or Supplier changes to prevent data mismatches
+  useEffect(() => {
+    setPoItems([]);
+  }, [poForm.store_id, poForm.supplier_id]);
+
+  // Reactive selection of the first product supplied by the selected supplier
+  useEffect(() => {
+    if (poForm.supplier_id && products.length > 0) {
+      const selectedSupplierObj = suppliers.find(s => s._id === poForm.supplier_id);
+      const filtered = products.filter(p => 
+        selectedSupplierObj?.productsSupplied?.some(id => id.toString() === p._id.toString())
+      );
+      if (filtered.length > 0) {
+        if (!filtered.some(f => f._id === selectedProduct)) {
+          setSelectedProduct(filtered[0]._id);
+          setItemPrice(filtered[0].purchasePrice || 100);
+        }
+      } else {
+        setSelectedProduct("");
+        setItemPrice(0);
+      }
+    } else {
+      setSelectedProduct("");
+      setItemPrice(0);
+    }
+  }, [poForm.supplier_id, products]);
 
   const fetchSuppliers = async () => {
     try {
@@ -108,10 +140,6 @@ function SupplierManagement({ storeId }) {
       });
       if (res.data.success) {
         setProducts(res.data.data);
-        if (res.data.data.length > 0) {
-          setSelectedProduct(res.data.data[0]._id);
-          setItemPrice(res.data.data[0].purchasePrice || 100);
-        }
       }
     } catch (err) {
       console.error(err);
@@ -318,8 +346,19 @@ function SupplierManagement({ storeId }) {
               <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr auto", gap: "1rem", alignItems: "end" }}>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label>Select Product</label>
-                  <select className="form-select-input" value={selectedProduct} onChange={(e) => handleProductChange(e.target.value)}>
-                    {products.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
+                  <select 
+                    className="form-select-input" 
+                    value={selectedProduct} 
+                    onChange={(e) => handleProductChange(e.target.value)}
+                    disabled={!poForm.supplier_id || filteredProducts.length === 0}
+                  >
+                    {!poForm.supplier_id ? (
+                      <option value="">Select supplier first...</option>
+                    ) : filteredProducts.length === 0 ? (
+                      <option value="">No products supplied by this supplier...</option>
+                    ) : (
+                      filteredProducts.map(p => <option key={p._id} value={p._id}>{p.name}</option>)
+                    )}
                   </select>
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
@@ -330,7 +369,13 @@ function SupplierManagement({ storeId }) {
                   <label>Unit Price (Rs)</label>
                   <input type="number" className="form-input" value={itemPrice} onChange={(e) => setItemPrice(e.target.value)} min={0} />
                 </div>
-                <button type="button" className="btn-add-item" onClick={handleAddPOItem} style={{ padding: "0.9rem" }}>
+                <button 
+                  type="button" 
+                  className="btn-add-item" 
+                  onClick={handleAddPOItem} 
+                  style={{ padding: "0.9rem" }}
+                  disabled={!selectedProduct || filteredProducts.length === 0}
+                >
                   <Plus size={18} />
                 </button>
               </div>

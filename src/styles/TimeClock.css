@@ -64,8 +64,7 @@
 }
 
 .clock-btn.clock-in:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
+  filter: brightness(1.08);
 }
 
 .clock-btn.clock-out {
@@ -75,8 +74,7 @@
 }
 
 .clock-btn.clock-out:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 30px rgba(239, 68, 68, 0.4);
+  filter: brightness(1.08);
 }
 
 .clock-btn:disabled {

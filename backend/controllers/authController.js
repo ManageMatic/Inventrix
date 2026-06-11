@@ -41,10 +41,14 @@ exports.register = async (req, res) => {
                 });
             }
 
-            const defaultRole = await Role.findOne({ name: 'employee' });
+            let defaultRole = await Role.findOne({ name: 'employee' });
+            if (!defaultRole) {
+                const defaultRolePermissions = require('../utils/rolePermissions');
+                defaultRole = await Role.create(defaultRolePermissions.employee);
+            }
             extraFields = {
                 employee_id: `EMP${Date.now()}`,
-                role: defaultRole ? defaultRole._id : undefined,
+                role: defaultRole._id,
                 store_id: store_id // Add store_id for employee
             };
         }
