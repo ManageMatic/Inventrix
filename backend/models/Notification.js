@@ -9,7 +9,7 @@ const notificationSchema = new mongoose.Schema({
   recipientModel: {
     type: String,
     required: true,
-    enum: ['StoreOwner', 'Employee']
+    enum: ['StoreOwner', 'Employee', 'Supplier']
   },
   store_id: {
     type: mongoose.Schema.Types.ObjectId,

@@ -192,8 +192,8 @@ const SalesTable = ({ storeId, employeeId, permissions = [], refreshSignal }) =>
 
     const formattedData = sales.map(s => ({
       'Sale ID': s.sale_id,
-      'Date': new Date(s.date).toLocaleDateString(),
-      'Time': new Date(s.date).toLocaleTimeString(),
+      'Date': new Date(s.date).toLocaleDateString("en-IN"),
+      'Time': new Date(s.date).toLocaleTimeString("en-IN"),
       'Processed By': s.employee_id?.name || s.store_owner_id?.name || 'N/A',
       'Role': s.employee_id ? "Employee" : s.store_owner_id ? "Store Owner" : "N/A",
       'Items Count': s.items?.length || 0,
@@ -270,7 +270,7 @@ const SalesTable = ({ storeId, employeeId, permissions = [], refreshSignal }) =>
               {paginatedSales.map((sale) => (
                 <tr key={sale._id}>
                   <td>{sale.sale_id}</td>
-                  <td>{new Date(sale.date).toLocaleDateString()}</td>
+                  <td>{new Date(sale.date).toLocaleDateString("en-IN")}</td>
                   <td>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <span style={{ fontWeight: '500' }}>

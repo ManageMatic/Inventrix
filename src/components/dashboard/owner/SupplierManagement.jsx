@@ -32,6 +32,17 @@ function SupplierManagement({ storeId }) {
   // Form states
   const [formData, setFormData] = useState({ name: "", email: "", contact: "", address: "", password: "" });
   const [poForm, setPoForm] = useState({ store_id: "", supplier_id: "", expectedDeliveryDate: "", notes: "" });
+  const [isPoDateFocused, setIsPoDateFocused] = useState(false);
+
+  const formatDateToIndian = (dateVal) => {
+    if (!dateVal) return "";
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return "";
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
   
   // PO items builder
   const [selectedProduct, setSelectedProduct] = useState("");
@@ -406,7 +417,15 @@ function SupplierManagement({ storeId }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
               <div className="form-group">
                 <label>Expected Delivery Date</label>
-                <input type="date" className="form-input" value={poForm.expectedDeliveryDate} onChange={(e) => setPoForm({ ...poForm, expectedDeliveryDate: e.target.value })} />
+                <input
+                  type={isPoDateFocused ? "date" : "text"}
+                  className="form-input"
+                  value={isPoDateFocused ? poForm.expectedDeliveryDate : formatDateToIndian(poForm.expectedDeliveryDate)}
+                  placeholder="dd/mm/yyyy"
+                  onFocus={() => setIsPoDateFocused(true)}
+                  onBlur={() => setIsPoDateFocused(false)}
+                  onChange={(e) => setPoForm({ ...poForm, expectedDeliveryDate: e.target.value })}
+                />
               </div>
               <div className="form-group">
                 <label>Total PO Amount</label>
@@ -468,7 +487,7 @@ function SupplierManagement({ storeId }) {
                         <span className="amount-text">₹{po.totalAmount}</span>
                       </td>
                       <td>
-                        <div>{po.expectedDeliveryDate ? new Date(po.expectedDeliveryDate).toLocaleDateString() : "Not scheduled"}</div>
+                        <div>{po.expectedDeliveryDate ? new Date(po.expectedDeliveryDate).toLocaleDateString("en-IN") : "Not scheduled"}</div>
                       </td>
                       <td>
                         <span className={`po-status-badge ${po.status}`}>{po.status}</span>

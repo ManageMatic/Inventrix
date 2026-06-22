@@ -31,7 +31,7 @@ function EmployeeDashboardHome({ employee }) {
     setLoading(true);
     try {
       // 1. Fetch Sales to calculate Today's Sales
-      const salesRes = await axios.get(`${API_URL}/api/sales/${storeId}?limit=100`, {
+      const salesRes = await axios.get(`${API_URL}/api/sales/store/${storeId}?limit=100`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -56,7 +56,7 @@ function EmployeeDashboardHome({ employee }) {
       });
 
       if (productsRes.data.success) {
-        const lowStock = productsRes.data.data.filter(prod => prod.quantity <= (prod.reorderLevel || 0));
+        const lowStock = productsRes.data.data.filter(prod => prod.quantity < 5);
         setLowStockAlerts(lowStock);
       }
 

@@ -108,6 +108,16 @@ exports.createPurchaseOrder = async (req, res) => {
             notes,
             status: 'pending'
         });
+        // Notify supplier
+        const store = await Store.findById(store_id);
+        const { createNotification } = require('../utils/notificationHelper');
+        await createNotification(req.app, {
+            recipient: supplier_id,
+            recipientModel: 'Supplier',
+            message: `New Purchase Order ${po_id} has been placed by store '${store?.name || "Retail Outlet"}' for ₹${totalAmount}.`,
+            type: 'info',
+            storeId: store_id
+        });
 
         res.status(201).json({
             success: true,
@@ -228,8 +238,17 @@ exports.updatePOStatus = async (req, res) => {
                             await storeProduct.save();
                         } else {
                             // Product does not exist, create it and generate QR!
-                            const product_id = `PRD-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
-                            const qr_code = `QR-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
+                            let product_id;
+                            let isUnique = false;
+                            while (!isUnique) {
+                                const num = Math.floor(100 + Math.random() * 900);
+                                product_id = `PROD_${num}`;
+                                const exists = await Product.findOne({ product_id });
+                                if (!exists) {
+                                    isUnique = true;
+                                }
+                            }
+                            const qr_code = `INV-${product_id}`;
 
                             await Product.create({
                                 product_id,
@@ -247,6 +266,19 @@ exports.updatePOStatus = async (req, res) => {
                 }
             }
         }
+        const { createNotification } = require('../utils/notificationHelper');
+        let statusVerb = status;
+        if (status === 'accepted') statusVerb = 'ACCEPTED';
+        if (status === 'rejected') statusVerb = 'REJECTED';
+        if (status === 'delivered') statusVerb = 'DELIVERED';
+
+        await createNotification(req.app, {
+            recipient: po.owner_id,
+            recipientModel: 'StoreOwner',
+            message: `Supplier '${req.user.name}' has ${statusVerb} your Purchase Order ${po.po_id}.`,
+            type: 'info',
+            storeId: po.store_id
+        });
 
         await po.save();
 

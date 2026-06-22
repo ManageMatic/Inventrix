@@ -1,0 +1,66 @@
+/* Metrics Grid and Stats Cards for Supplier Dashboard Home */
+
+.supplier-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.supplier-stat-card {
+    background: rgba(15, 12, 30, 0.5);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 18px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.supplier-stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(167, 139, 250, 0.2);
+}
+
+.supplier-stat-icon {
+    background: rgba(167, 139, 250, 0.1);
+    color: #a78bfa;
+    padding: 0.9rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.supplier-stat-icon.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.supplier-stat-icon.accepted {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.supplier-stat-icon.completed {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.supplier-stat-info h3 {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 0.4rem 0;
+}
+
+.supplier-stat-info p {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: white;
+    margin: 0;
+}

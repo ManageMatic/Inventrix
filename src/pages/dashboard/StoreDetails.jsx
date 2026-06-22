@@ -122,7 +122,7 @@ const StoreDetails = ({ storeId }) => {
             </div>
             <div className="detail-item">
               <label>Created At</label>
-              <span>{store.createdAt ? new Date(store.createdAt).toLocaleDateString() : "Not set"}</span>
+              <span>{store.createdAt ? new Date(store.createdAt).toLocaleDateString("en-IN") : "Not set"}</span>
             </div>
           </div>
         </div>

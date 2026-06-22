@@ -161,7 +161,7 @@ const Reports = ({ storeId }) => {
                 totalRevenueSum += s.totalAmount || 0;
                 return {
                     'Sale ID': s.sale_id,
-                    'Date': new Date(s.date).toLocaleString(),
+                    'Date': new Date(s.date).toLocaleString("en-IN"),
                     'Store': s.store_id?.name || 'N/A',
                     'Total Amount': s.totalAmount,
                     'Payment Method': s.paymentMethod,

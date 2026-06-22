@@ -51,6 +51,11 @@ exports.createSale = async (req, res) => {
 
             product.quantity -= qty;
             await product.save();
+
+            if (product.quantity <= 0) {
+                const { notifyStoreOutOfStock } = require("../utils/notificationHelper");
+                notifyStoreOutOfStock(req.app, store_id, product.name);
+            }
         }
 
         // Handle customer

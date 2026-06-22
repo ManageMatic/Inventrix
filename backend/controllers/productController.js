@@ -48,7 +48,16 @@ exports.addProduct = async (req, res) => {
         }
 
         // Auto-generate product_id
-        const product_id = `PROD-${Math.floor(Math.random() * 1000)}`;
+        let product_id;
+        let isUnique = false;
+        while (!isUnique) {
+            const num = Math.floor(100 + Math.random() * 900);
+            product_id = `PROD_${num}`;
+            const exists = await Product.findOne({ product_id });
+            if (!exists) {
+                isUnique = true;
+            }
+        }
 
         const qr_code = `INV-${product_id}`;
 
@@ -136,6 +145,11 @@ exports.updateProduct = async (req, res) => {
 
         const product = await Product.findByIdAndUpdate(id, updates, { new: true });
         if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+
+        if (product.quantity <= 0) {
+            const { notifyStoreOutOfStock } = require("../utils/notificationHelper");
+            notifyStoreOutOfStock(req.app, product.store, product.name);
+        }
 
         return res.status(200).json({ success: true, data: product });
     } catch (err) {

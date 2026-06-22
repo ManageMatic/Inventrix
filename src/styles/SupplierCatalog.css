@@ -1,0 +1,165 @@
+/* Supplier Catalog Tab Styling & Scrolling Layout */
+
+.supplier-catalog-container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+/* Left Form: Sticky to stay in view while scrolling products */
+.supplier-catalog-form-container {
+    flex: 1 1 350px;
+    background: rgba(15, 12, 30, 0.45);
+    padding: 24px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    position: sticky;
+    top: 20px;
+    align-self: flex-start;
+}
+
+/* Right Column: Dynamic flex container */
+.supplier-catalog-list-container {
+    flex: 2 1 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Product Grid: Independently scrollable when items exceed screen height */
+.supplier-catalog-product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding-right: 12px;
+}
+
+/* Custom premium scrollbar for the product grid */
+.supplier-catalog-product-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.supplier-catalog-product-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.01);
+    border-radius: 3px;
+}
+
+.supplier-catalog-product-grid::-webkit-scrollbar-thumb {
+    background: rgba(167, 139, 250, 0.18);
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.supplier-catalog-product-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(167, 139, 250, 0.35);
+}
+
+/* Product Card design */
+.supplier-product-card {
+    background: rgba(15, 12, 30, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 18px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.supplier-product-card:hover {
+    border-color: rgba(167, 139, 250, 0.2);
+}
+
+.supplier-product-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 0.5rem 0;
+}
+
+.supplier-product-card p {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+}
+
+.product-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 0.8rem;
+    margin-top: auto;
+}
+
+.product-supply-price {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #10b981;
+}
+
+.supply-action-btn {
+    background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+    color: white;
+    border: none;
+    padding: 0.45rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.supply-action-btn:hover {
+    filter: brightness(1.08);
+}
+
+.supply-status-tag {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+.textarea-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 0.75rem;
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+    resize: none;
+}
+
+.textarea-input:focus {
+    outline: none;
+    border-color: #a78bfa;
+}
+
+.date-input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: #a78bfa;
+}
+
+.supplier-catalog-desc {
+    color: #64748b;
+    margin-bottom: 2.5rem;
+}
