@@ -92,7 +92,7 @@ exports.createSale = async (req, res) => {
             items: saleItems,
             subtotal: subtotal,
             totalAmount: totalAmount,
-            paymentMethod: "cash",
+            paymentMethod: req.body.paymentMethod || "cash",
         });
 
         await sale.save();

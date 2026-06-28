@@ -11,6 +11,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard, storeId }) => {
   const effectiveStoreId = storeId || location.pathname.split("/store/")[1];
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerMobile, setCustomerMobile] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = "info") => {
@@ -74,6 +75,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard, storeId }) => {
             subtotal: total,
             totalAmount: total,
             customer_mobile: customerMobile || null,
+            paymentMethod: paymentMethod,
           }),
         },
       );
@@ -198,25 +200,38 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard, storeId }) => {
           />
         )}
         <div className="cart-footer">
-          <div className="customer-email">
-            <label>Customer Email:</label>
-            <input
-              type="email"
-              value={customerEmail}
-              onChange={(e) => setCustomerEmail(e.target.value)}
-              placeholder="Enter email address"
-              required
-            />
-          </div>
+          <div className="billing-info-row" style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem", width: "100%", textAlign: "left", alignItems: "flex-end" }}>
+            <div className="customer-email" style={{ flex: 2 }}>
+              <label>Customer Email:</label>
+              <input
+                type="email"
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+                placeholder="Enter email address"
+                required
+              />
+            </div>
 
-          <div className="customer-mobile">
-            <label>Customer Mobile:</label>
-            <input
-              type="tel"
-              value={customerMobile}
-              onChange={(e) => setCustomerMobile(e.target.value)}
-              placeholder="Enter mobile number"
-            />
+            <div className="customer-mobile" style={{ flex: 1.5 }}>
+              <label>Customer Mobile:</label>
+              <input
+                type="tel"
+                value={customerMobile}
+                onChange={(e) => setCustomerMobile(e.target.value)}
+                placeholder="Enter mobile number"
+              />
+            </div>
+
+            <div className="payment-method-container" style={{ flex: 1 }}>
+              <label>Payment Method:</label>
+              <select
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              >
+                <option value="cash" style={{ background: "#0f172a", color: "white" }}>CASH</option>
+                <option value="upi" style={{ background: "#0f172a", color: "white" }}>UPI</option>
+              </select>
+            </div>
           </div>
 
           <div className="cart-total">
