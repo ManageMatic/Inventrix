@@ -16,12 +16,13 @@ import {
   Briefcase 
 } from "lucide-react";
 import Toast from "../../common/Toast";
+import DatePicker from "../../common/DatePicker";
 import "../../../styles/SupplierManagement.css";
 import "../../../styles/ProductsTable.css";
 import { API_URL } from "../../../config";
 
 function SupplierManagement({ storeId }) {
-  const [activeTab, setActiveTab] = useState("directory"); // directory, add, po_create, po_list
+  const [activeTab, setActiveTab] = useState("directory"); // directory, po_create, po_list
   const [suppliers, setSuppliers] = useState([]);
   const [purchaseOrders, setPurchaseOrders] = useState([]);
   const [stores, setStores] = useState([]);
@@ -30,19 +31,7 @@ function SupplierManagement({ storeId }) {
   const [toast, setToast] = useState(null);
 
   // Form states
-  const [formData, setFormData] = useState({ name: "", email: "", contact: "", address: "", password: "" });
   const [poForm, setPoForm] = useState({ store_id: "", supplier_id: "", expectedDeliveryDate: "", notes: "" });
-  const [isPoDateFocused, setIsPoDateFocused] = useState(false);
-
-  const formatDateToIndian = (dateVal) => {
-    if (!dateVal) return "";
-    const d = new Date(dateVal);
-    if (isNaN(d.getTime())) return "";
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
   
   // PO items builder
   const [selectedProduct, setSelectedProduct] = useState("");
@@ -157,26 +146,7 @@ function SupplierManagement({ storeId }) {
     }
   };
 
-  const handleCreateSupplier = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API_URL}/api/suppliers/add`, formData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.data.success) {
-        showToast("Supplier registered successfully!", "success");
-        setFormData({ name: "", email: "", contact: "", address: "", password: "" });
-        fetchSuppliers();
-        setActiveTab("directory");
-      }
-    } catch (err) {
-      console.error(err);
-      showToast(err.response?.data?.message || "Failed to add supplier", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handleAddPOItem = () => {
     if (!selectedProduct) {
@@ -244,7 +214,6 @@ function SupplierManagement({ storeId }) {
 
       <div className="owner-supplier-tabs">
         <button className={`owner-supplier-tab-btn ${activeTab === "directory" ? "active" : ""}`} onClick={() => setActiveTab("directory")}>Supplier Directory</button>
-        <button className={`owner-supplier-tab-btn ${activeTab === "add" ? "active" : ""}`} onClick={() => setActiveTab("add")}>Add New Supplier</button>
         <button className={`owner-supplier-tab-btn ${activeTab === "po_create" ? "active" : ""}`} onClick={() => setActiveTab("po_create")}>Create Purchase Order</button>
         <button className={`owner-supplier-tab-btn ${activeTab === "po_list" ? "active" : ""}`} onClick={() => setActiveTab("po_list")}>Purchase Orders Log</button>
       </div>
@@ -255,7 +224,7 @@ function SupplierManagement({ storeId }) {
           <div style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.08)", padding: "4rem", borderRadius: "20px", textAlign: "center", color: "#64748b" }}>
             <Truck size={36} style={{ margin: "0 auto 1.5rem auto", display: "block" }} />
             <h3>No Suppliers Registered</h3>
-            <p>Get started by clicking the "Add New Supplier" tab to register your inventory suppliers.</p>
+            <p>There are no suppliers registered in your network.</p>
           </div>
         ) : (
           <div className="supplier-directory-grid">
@@ -288,38 +257,7 @@ function SupplierManagement({ storeId }) {
         )
       )}
 
-      {/* Add Supplier Tab */}
-      {activeTab === "add" && (
-        <div className="owner-supplier-form">
-          <h3 className="auth-title">Register Supplier</h3>
-          <p className="auth-desc" style={{ marginBottom: "2rem" }}>Provide credentials. Once registered, suppliers will use these credentials to access their secure workspace.</p>
-          <form onSubmit={handleCreateSupplier}>
-            <div className="form-group">
-              <label>Supplier Full Name</label>
-              <input type="text" className="form-input" placeholder="e.g. Paramount Foods" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
-            </div>
-            <div className="form-group">
-              <label>Email Address</label>
-              <input type="email" className="form-input" placeholder="paramount@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
-            </div>
-            <div className="form-group">
-              <label>Contact Phone</label>
-              <input type="text" className="form-input" placeholder="+91 9988776655" value={formData.contact} onChange={(e) => setFormData({ ...formData, contact: e.target.value })} required />
-            </div>
-            <div className="form-group">
-              <label>Office Address</label>
-              <input type="text" className="form-input" placeholder="Industrial Hub, Surat" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
-            </div>
-            <div className="form-group">
-              <label>Login Password</label>
-              <input type="password" className="form-input" placeholder="Set temporary password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required />
-            </div>
-            <button type="submit" className="primary-btn" disabled={loading}>
-              {loading ? "Registering..." : "Add Supplier"}
-            </button>
-          </form>
-        </div>
-      )}
+
 
       {/* Create Purchase Order Tab */}
       {activeTab === "po_create" && (
@@ -417,14 +355,9 @@ function SupplierManagement({ storeId }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
               <div className="form-group">
                 <label>Expected Delivery Date</label>
-                <input
-                  type={isPoDateFocused ? "date" : "text"}
-                  className="form-input"
-                  value={isPoDateFocused ? poForm.expectedDeliveryDate : formatDateToIndian(poForm.expectedDeliveryDate)}
-                  placeholder="dd/mm/yyyy"
-                  onFocus={() => setIsPoDateFocused(true)}
-                  onBlur={() => setIsPoDateFocused(false)}
-                  onChange={(e) => setPoForm({ ...poForm, expectedDeliveryDate: e.target.value })}
+                <DatePicker
+                  value={poForm.expectedDeliveryDate}
+                  onChange={(val) => setPoForm({ ...poForm, expectedDeliveryDate: val })}
                 />
               </div>
               <div className="form-group">

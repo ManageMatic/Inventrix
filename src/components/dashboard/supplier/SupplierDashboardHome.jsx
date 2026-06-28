@@ -9,6 +9,7 @@ import {
   Inbox
 } from "lucide-react";
 import Toast from "../../common/Toast";
+import DatePicker from "../../common/DatePicker";
 import "../../../styles/SupplierDashboardHome.css";
 import { API_URL } from "../../../config";
 
@@ -23,17 +24,6 @@ function SupplierDashboardHome({ token }) {
   const [responseType, setResponseType] = useState(""); // "accept" or "reject"
   const [responseMessage, setResponseMessage] = useState("");
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
-  const [isPoDateFocused, setIsPoDateFocused] = useState(false);
-
-  const formatDateToIndian = (dateVal) => {
-    if (!dateVal) return "";
-    const d = new Date(dateVal);
-    if (isNaN(d.getTime())) return "";
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
 
   const showToast = (message, type = "info") => {
     setToast({ message, type });
@@ -222,14 +212,10 @@ function SupplierDashboardHome({ token }) {
                 {responseType === "accept" && (
                   <div className="po-response-field-group">
                     <label>Expected Delivery Date</label>
-                     <input
-                       type={isPoDateFocused ? "date" : "text"}
+                     <DatePicker
+                       value={expectedDeliveryDate}
+                       onChange={(val) => setExpectedDeliveryDate(val)}
                        className="date-input"
-                       value={isPoDateFocused ? expectedDeliveryDate : formatDateToIndian(expectedDeliveryDate)}
-                       placeholder="dd/mm/yyyy"
-                       onFocus={() => setIsPoDateFocused(true)}
-                       onBlur={() => setIsPoDateFocused(false)}
-                       onChange={(e) => setExpectedDeliveryDate(e.target.value)}
                      />
                   </div>
                 )}
