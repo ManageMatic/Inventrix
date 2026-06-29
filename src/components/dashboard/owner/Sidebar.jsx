@@ -28,9 +28,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen, user, onLogout, activeTab, setAc
     <aside className={`sidebar ${!sidebarOpen ? "sidebar-closed" : ""}`}>
       <div className="sidebar-header">
         <div className="logo-icon">
-          <img src={logo} alt="Invintrix Logo" />
+          <img src={logo} alt="Inventrix Logo" />
         </div>
-        <h2 className="logo">Invintrix</h2>
+        <h2 className="logo">Inventrix</h2>
       </div>
 
       <nav className="nav">

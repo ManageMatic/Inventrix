@@ -30,7 +30,7 @@ function Contact() {
           </div>
           <div className="contact-card">
             <FaEnvelope className="contact-icon" />
-            <p>support@invintrix.com</p>
+            <p>support@inventrix.com</p>
           </div>
           <div className="contact-card">
             <FaMapMarkerAlt className="contact-icon" />
@@ -45,7 +45,7 @@ function Contact() {
           <div className="faq-item">
             <p className="faq-q">Q: Can I manage multiple stores?</p>
             <p className="faq-a">
-              Yes, Invintrix allows you to handle multiple store branches under
+              Yes, Inventrix allows you to handle multiple store branches under
               one account.
             </p>
           </div>

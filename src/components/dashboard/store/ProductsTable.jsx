@@ -288,7 +288,7 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
         <div className="modal-overlay" onClick={() => setShowQRModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()} style={{ width: 'auto', textAlign: 'center', padding: '30px' }}>
             <div className="modal-header" style={{ justifyContent: 'center', marginBottom: '20px', position: 'relative' }}>
-              <h2>QR Code - {selectedQRProduct.name}</h2>
+              <h2 style={{ padding: '0 30px', margin: 0 }}>QR Code - {selectedQRProduct.name}</h2>
               <button
                 style={{ position: 'absolute', right: '0', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
                 onClick={() => setShowQRModal(false)}

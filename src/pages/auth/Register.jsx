@@ -76,7 +76,7 @@ function Register() {
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Create Account</h2>
         <p className="auth-subtitle">
-          Join Invintrix and manage your store smarter 🚀
+          Join Inventrix and manage your store smarter 🚀
         </p>
 
         <input

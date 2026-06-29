@@ -55,11 +55,11 @@ const OwnerDashboard = () => {
     fetchNotifications();
   }, []);
 
-  // Fetch analytics whenever selectedStore changes
+  // Fetch analytics whenever selectedStore or stores list changes
   useEffect(() => {
     fetchAnalytics(selectedStore);
     fetchAdvancedAnalytics(selectedStore);
-  }, [selectedStore]);
+  }, [selectedStore, stores]);
 
   const fetchAdvancedAnalytics = async (storeId) => {
     try {

@@ -12,6 +12,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard, storeId }) => {
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerMobile, setCustomerMobile] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [checkoutState, setCheckoutState] = useState("idle"); // idle, loading, completed
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = "info") => {
@@ -61,6 +62,8 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard, storeId }) => {
         return;
       }
 
+      setCheckoutState("loading");
+
       const saleRes = await fetch(
         `${API_URL}/api/sales/create`,
         {
@@ -83,6 +86,7 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard, storeId }) => {
       const saleData = await saleRes.json();
 
       if (!saleData.success) {
+        setCheckoutState("idle");
         showToast(saleData.message || "Failed to create sale", "error");
         return;
       }
@@ -108,20 +112,24 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard, storeId }) => {
 
       if (invoiceData.success) {
         showToast("Invoice emailed successfully to the customer.", "success");
+        setCheckoutState("completed");
         if (refreshDashboard) {
           refreshDashboard();
         }
         setTimeout(() => {
           setCart([]);
           onClose();
+          setCheckoutState("idle");
         }, 1200);
       } else {
+        setCheckoutState("idle");
         showToast(
           invoiceData.message || "Failed to send invoice email.",
           "error",
         );
       }
     } catch (err) {
+      setCheckoutState("idle");
       console.error(err);
       showToast("Error completing checkout: " + err.message, "error");
     }
@@ -242,8 +250,14 @@ const CartModal = ({ cart, setCart, onClose, refreshDashboard, storeId }) => {
             <button className="cancel-btn1" onClick={onClose}>
               Cancel
             </button>
-            <button className="checkout-btn" onClick={handleCheckout}>
-              Generate Invoice
+            <button 
+              className="checkout-btn" 
+              onClick={handleCheckout}
+              disabled={checkoutState !== "idle"}
+            >
+              {checkoutState === "idle" && "Generate Invoice"}
+              {checkoutState === "loading" && "Generating..."}
+              {checkoutState === "completed" && "Completed!"}
             </button>
           </div>
         </div>

@@ -3,14 +3,14 @@ import { useState, useEffect } from "react";
 import { Store as StoreIcon, MapPin, Phone, Mail, User, Home } from "lucide-react";
 import { API_URL } from "../../config";
 
-const StoreDetails = ({ storeId }) => {
+const StoreDetails = ({ storeId, refreshSignal }) => {
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchStoreDetails();
-  }, [storeId]);
+  }, [storeId, refreshSignal]);
 
   const fetchStoreDetails = async () => {
     try {

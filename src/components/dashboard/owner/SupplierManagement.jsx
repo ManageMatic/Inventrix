@@ -308,7 +308,17 @@ function SupplierManagement({ storeId }) {
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label>Unit Price (Rs)</label>
-                  <input type="number" className="form-input" value={itemPrice} onChange={(e) => setItemPrice(e.target.value)} min={0} />
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={itemPrice}
+                    readOnly
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      color: "#94a3b8",
+                      cursor: "not-allowed"
+                    }}
+                  />
                 </div>
                 <button 
                   type="button" 

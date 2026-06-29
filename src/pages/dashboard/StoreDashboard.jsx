@@ -135,7 +135,10 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updateCa
         loading={loading}
         error={error}
         onBack={() => navigate("/OwnerDashboard")}
-        onUpdate={fetchStoreDetails}
+        onUpdate={() => {
+          fetchStoreDetails();
+          setRefreshKey((prev) => prev + 1);
+        }}
       />
 
       <StoreNav 
@@ -145,36 +148,36 @@ const StoreDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updateCa
         isRefreshing={isRefreshing}
       />
 
-      {activeTab === "overview" && <StoreOverview key={refreshKey} storeId={storeId} />}
+      {activeTab === "overview" && <StoreOverview key={`${refreshKey}-${dashboardRefresh}`} storeId={storeId} />}
 
       {/* ── Guard: only render when store is loaded (prevents store._id crash) ── */}
       {activeTab === "products" && store && (
-        <ProductsTable storeId={store._id} refreshSignal={dashboardRefresh} />
+        <ProductsTable storeId={store._id} refreshSignal={`${dashboardRefresh}-${refreshKey}`} />
       )}
 
       {activeTab === "sales" && (
         <SalesTable 
           storeId={storeId} 
-          refreshSignal={dashboardRefresh}
+          refreshSignal={`${dashboardRefresh}-${refreshKey}`}
           cart={cart}
           setCart={setCart}
         />
       )}
 
       {activeTab === "generateQR" && store && (
-        <GenerateQR storeId={store._id} />
+        <GenerateQR key={`${refreshKey}-${dashboardRefresh}`} storeId={store._id} />
       )}
 
       {activeTab === "insights" && store && (
-        <Insights storeId={store._id} />
+        <Insights key={`${refreshKey}-${dashboardRefresh}`} storeId={store._id} />
       )}
 
       {activeTab === "employees" && store && (
-        <Employees storeId={store._id} />
+        <Employees key={`${refreshKey}-${dashboardRefresh}`} storeId={store._id} />
       )}
 
       {activeTab === "settings" && store && (
-        <StoreDetails storeId={store._id} />
+        <StoreDetails storeId={store._id} refreshSignal={refreshKey} />
       )}
     </div>
   );

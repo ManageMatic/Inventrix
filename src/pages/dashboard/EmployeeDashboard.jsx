@@ -59,7 +59,7 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
 
   useEffect(() => {
     fetchEmployeeProfile();
-  }, []);
+  }, [dashboardRefresh]);
 
   const fetchEmployeeProfile = async () => {
     try {
