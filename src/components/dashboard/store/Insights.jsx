@@ -10,11 +10,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
-import { TrendingUp, Package, DollarSign, ShoppingCart, AlertTriangle } from "lucide-react";
+import { TrendingUp, Package, IndianRupee, ShoppingCart, AlertTriangle } from "lucide-react";
 import "../../../styles/Insights.css";
 import { API_URL } from "../../../config";
 
@@ -59,12 +56,24 @@ const Insights = ({ storeId }) => {
       );
       const productsData = await productsRes.json();
 
+      // Fetch advanced analytics for top products
+      const analyticsRes = await fetch(
+        `${API_URL}/api/sales/analytics/${storeId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const analyticsData = await analyticsRes.json();
+
       if (salesData.success && Array.isArray(salesData.data)) {
         processSalesData(salesData.data);
       }
 
+      let topProductsList = [];
+      if (analyticsData.success && analyticsData.data?.topProducts) {
+        topProductsList = analyticsData.data.topProducts;
+      }
+
       if (productsData.success && Array.isArray(productsData.data)) {
-        processProductData(productsData.data);
+        processProductData(productsData.data, topProductsList);
       }
     } catch (error) {
       console.error("Error fetching insights data:", error);
@@ -117,7 +126,7 @@ const Insights = ({ storeId }) => {
     });
   };
 
-  const processProductData = (products) => {
+  const processProductData = (products, topProductsList) => {
     if (products.length === 0) {
       setProductMetrics({
         topProducts: [],
@@ -127,11 +136,6 @@ const Insights = ({ storeId }) => {
       return;
     }
 
-    // Sort by sales count (if available) or quantity
-    const topProducts = [...products]
-      .sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0))
-      .slice(0, 5);
-
     // Get low stock items
     const lowStockItems = products
       .filter((p) => p.quantity < 5)
@@ -139,7 +143,7 @@ const Insights = ({ storeId }) => {
       .slice(0, 5);
 
     setProductMetrics({
-      topProducts,
+      topProducts: topProductsList,
       lowStockItems,
       totalProducts: products.length,
     });
@@ -183,7 +187,7 @@ const Insights = ({ storeId }) => {
       <div className="metrics-grid">
         <div className="metric-card">
           <div className="metric-icon revenue">
-            <DollarSign size={24} />
+            <IndianRupee size={24} />
           </div>
           <div className="metric-content">
             <h4>Total Revenue</h4>
@@ -294,14 +298,14 @@ const Insights = ({ storeId }) => {
                   <span className="rank">#{index + 1}</span>
                   <div className="product-info">
                     <h5>{product.name}</h5>
-                    {/*<p className="product-meta">SKU: {product.sku || 'N/A'}</p>*/}
+                    <p className="product-meta">{product.quantity || 0} sold</p>
                   </div>
-                  <span className="product-value">₹{(product.sellingPrice || 0).toLocaleString()}</span>
+                  <span className="product-value">₹{(product.revenue || 0).toLocaleString('en-IN')}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="no-data">No product data available</p>
+            <p className="no-data">No product sales data available</p>
           )}
         </div>
 

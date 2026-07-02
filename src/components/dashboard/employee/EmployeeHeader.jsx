@@ -1,10 +1,23 @@
 import { Menu, X, Bell, Calendar, MapPin, Store } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { API_URL } from "../../../config";
 
 function EmployeeHeader({ setSidebarOpen, sidebarOpen, user, notifications = [], setNotifications }) {
   const [date, setDate] = useState("");
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const notifRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setIsNotifOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const today = new Date();
@@ -82,7 +95,7 @@ function EmployeeHeader({ setSidebarOpen, sidebarOpen, user, notifications = [],
           </div>
         )}
 
-        <div className="notif-wrapper">
+        <div className="notif-wrapper" ref={notifRef}>
           <button
             className="notif-btn"
             title="Notifications"

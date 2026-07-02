@@ -11,8 +11,11 @@ if (!fs.existsSync(invoicesDir)) {
     fs.mkdirSync(invoicesDir, { recursive: true });
 }
 
+const FONT_REGULAR = "C:\\Windows\\Fonts\\calibri.ttf";
+const FONT_BOLD    = "C:\\Windows\\Fonts\\calibrib.ttf";
+
 const formatCurrency = (value) => {
-    return `Rs ${Number(value).toFixed(2)}`;
+    return `\u20B9 ${Number(value).toFixed(2)}`;
 };
 
 const sendInvoiceEmail = async (to, subject, text, html, attachmentPath, attachmentName) => {
@@ -82,6 +85,9 @@ exports.generateInvoice = async (req, res) => {
             const filePath = path.join(invoicesDir, fileName);
 
             const doc = new PDFDocument({ margin: 50 });
+            // Register Calibri fonts (support ₹ and full Unicode)
+            doc.registerFont("calibri",      FONT_REGULAR);
+            doc.registerFont("calibri-bold", FONT_BOLD);
             const stream = fs.createWriteStream(filePath);
             doc.pipe(stream);
 
@@ -89,7 +95,7 @@ exports.generateInvoice = async (req, res) => {
             doc.rect(0, 0, 595, 110).fill("#1e293b");
 
             // Store name
-            doc.fillColor("#ffffff").font("Helvetica-Bold").fontSize(22)
+            doc.fillColor("#ffffff").font("calibri-bold").fontSize(22)
                 .text(sale.store_id.name, 40, 22);
 
             // Format address string properly
@@ -99,17 +105,17 @@ exports.generateInvoice = async (req, res) => {
                 : (addrObj || "Surat, Gujarat");
 
             // Store details
-            doc.font("Helvetica").fontSize(9).fillColor("#cbd5e1")
+            doc.font("calibri").fontSize(9).fillColor("#cbd5e1")
                 .text(addressString, 40, 48)
                 .text(`Phone: ${sale.store_id.contact?.phone || "N/A"}  |  Email: ${sale.store_id.contact?.email || "N/A"}`, 40, 60);
             // INVOICE accent badge (top right)
-            doc.fillColor("#ffffff").font("Helvetica-Bold").fontSize(30)
+            doc.fillColor("#ffffff").font("calibri-bold").fontSize(30)
                 .text("INVOICE", 420, 26, { width: 130, align: "right" });
 
             // Invoice meta (below badge)
-            doc.font("Helvetica").fontSize(8).fillColor("#94a3b8")
+            doc.font("calibri").fontSize(8).fillColor("#94a3b8")
                 .text(`No: ${invoiceRecord.invoice_id}`, 420, 56, { width: 135, align: "right" })
-                .text(`Date: ${new Date(invoiceRecord.date).toLocaleDateString()}`, 420, 67, { width: 135, align: "right" })
+                .text(`Date: ${new Date(invoiceRecord.date).toLocaleDateString("en-IN")}`, 420, 67, { width: 135, align: "right" })
                 .text(`Sale: ${sale.sale_id}`, 420, 78, { width: 135, align: "right" });
 
             // ── BILL TO + INVOICE INFO CARDS ────────────────────────────
@@ -118,28 +124,28 @@ exports.generateInvoice = async (req, res) => {
             // Left card — Bill To
             doc.roundedRect(40, cardY, 240, 80, 4).fill("#f8fafc").stroke("#e2e8f0");
 
-            doc.fillColor("#4f46e5").font("Helvetica-Bold").fontSize(8)
+            doc.fillColor("#4f46e5").font("calibri-bold").fontSize(8)
                 .text("BILL TO", 55, cardY + 12);
 
-            doc.fillColor("#111827").font("Helvetica-Bold").fontSize(10)
+            doc.fillColor("#111827").font("calibri-bold").fontSize(10)
                 .text(customerEmail, 55, cardY + 26, { width: 210 });
 
-            doc.fillColor("#64748b").font("Helvetica").fontSize(9)
+            doc.fillColor("#64748b").font("calibri").fontSize(9)
                 .text(invoiceMobile ? `Mobile: ${invoiceMobile}` : "Mobile: N/A", 55, cardY + 42)
                 .text(`Payment: ${sale.paymentMethod?.toUpperCase() || "CASH"}`, 55, cardY + 56);
 
             // Right card — Invoice Details
             doc.roundedRect(315, cardY, 240, 80, 4).fill("#f8fafc").stroke("#e2e8f0");
 
-            doc.fillColor("#4f46e5").font("Helvetica-Bold").fontSize(8)
+            doc.fillColor("#4f46e5").font("calibri-bold").fontSize(8)
                 .text("INVOICE DETAILS", 330, cardY + 12);
 
-            doc.fillColor("#64748b").font("Helvetica").fontSize(9)
+            doc.fillColor("#64748b").font("calibri").fontSize(9)
                 .text("Invoice ID", 330, cardY + 28, { width: 80 })
                 .text("Date", 330, cardY + 42, { width: 80 })
                 .text("Sale ID", 330, cardY + 56, { width: 80 });
 
-            doc.fillColor("#111827").font("Helvetica-Bold").fontSize(9)
+            doc.fillColor("#111827").font("calibri-bold").fontSize(9)
                 .text(invoiceRecord.invoice_id, 330, cardY + 28, { width: 210, align: "right" })
                 .text(new Date(invoiceRecord.date).toLocaleDateString("en-IN"), 330, cardY + 42, { width: 210, align: "right" })
                 .text(sale.sale_id, 330, cardY + 56, { width: 210, align: "right" });
@@ -158,7 +164,7 @@ exports.generateInvoice = async (req, res) => {
             doc.rect(40, tableTop, 515, 24).fill("#1e293b");
 
             // Header labels
-            doc.fillColor("#ffffff").font("Helvetica-Bold").fontSize(9);
+            doc.fillColor("#ffffff").font("calibri-bold").fontSize(9);
             doc.text("#", 50, tableTop + 8, { width: 20, align: "center" });
             doc.text("Product", 75, tableTop + 8, { width: 200, align: "left" });
             doc.text("Qty", 310, tableTop + 8, { width: 50, align: "center" });
@@ -186,29 +192,29 @@ exports.generateInvoice = async (req, res) => {
                 }
 
                 // Serial number
-                doc.fillColor("#94a3b8").font("Helvetica").fontSize(8)
+                doc.fillColor("#94a3b8").font("calibri").fontSize(8)
                     .text((index + 1).toString(), 50, y + 2, { width: 20, align: "center" });
 
                 // Product name
-                doc.fillColor("#111827").font("Helvetica-Bold").fontSize(9)
+                doc.fillColor("#111827").font("calibri-bold").fontSize(9)
                     .text(productName, 75, y, { width: 200 });
 
                 // Description below name
                 if (description) {
-                    doc.fillColor("#64748b").font("Helvetica").fontSize(8)
+                    doc.fillColor("#64748b").font("calibri").fontSize(8)
                         .text(description, 75, y + 14, { width: 200 });
                 }
 
                 // Qty — centered
-                doc.fillColor("#111827").font("Helvetica").fontSize(9)
+                doc.fillColor("#111827").font("calibri").fontSize(9)
                     .text(qty.toString(), 310, y + 2, { width: 50, align: "center" });
 
                 // Price — right aligned
-                doc.fillColor("#475569").font("Helvetica").fontSize(9)
+                doc.fillColor("#475569").font("calibri").fontSize(9)
                     .text(formatCurrency(price), 375, y + 2, { width: 80, align: "right" });
 
                 // Total — right aligned bold
-                doc.fillColor("#111827").font("Helvetica-Bold").fontSize(9)
+                doc.fillColor("#111827").font("calibri-bold").fontSize(9)
                     .text(formatCurrency(subtotal), 460, y + 2, { width: 85, align: "right" });
 
                 // Row bottom border
@@ -236,12 +242,12 @@ exports.generateInvoice = async (req, res) => {
             // Helper function for each row
             const drawTotalRow = (label, value, yOffset, bold = false, color = "#1e293b") => {
                 doc.fillColor("#64748b")
-                    .font("Helvetica")
+                    .font("calibri")
                     .fontSize(9)
                     .text(label, 365, totalsY + yOffset, { width: 100, align: "left" });
 
                 doc.fillColor(color)
-                    .font(bold ? "Helvetica-Bold" : "Helvetica")
+                    .font(bold ? "calibri-bold" : "calibri")
                     .fontSize(bold ? 11 : 9)
                     .text(value, 365, totalsY + yOffset, { width: 185, align: "right" });
             };
@@ -266,7 +272,7 @@ exports.generateInvoice = async (req, res) => {
             // Grand total row (bold + accent color)
             drawTotalRow("TOTAL", formatCurrency(sale.totalAmount), 72, true, "#4f46e5");
 
-            doc.fillColor("#475569").fontSize(10).text("Thank you for your purchase!", 50, totalsY + 130);
+            doc.fillColor("#475569").font("calibri").fontSize(10).text("Thank you for your purchase!", 50, totalsY + 130);
 
             doc.end();
 

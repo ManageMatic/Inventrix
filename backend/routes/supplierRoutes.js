@@ -8,11 +8,10 @@ const {
     getSupplierDashboard, 
     getSupplierPOs, 
     updatePOStatus, 
-    getSuppliedProducts, 
-    supplyProduct,
     addCatalogProduct,
     getCatalogProducts,
-    getCatalogProductsForOwner
+    getCatalogProductsForOwner,
+    deleteCatalogProduct
 } = require('../controllers/supplierController');
 
 const { authenticateStoreOwner, authenticateSupplier } = require('../middleware/auth');
@@ -29,11 +28,10 @@ router.get('/products/catalog/:supplierId', authenticateStoreOwner, getCatalogPr
 router.get('/dashboard', authenticateSupplier, getSupplierDashboard);
 router.get('/pos', authenticateSupplier, getSupplierPOs);
 router.put('/po/:id', authenticateSupplier, logActivity('update', 'purchaseorder'), updatePOStatus);
-router.get('/my-products', authenticateSupplier, getSuppliedProducts);
-router.post('/products/supply', authenticateSupplier, supplyProduct);
 
 // Catalog management
 router.post('/products/catalog/add', authenticateSupplier, logActivity('create', 'supplierproduct'), addCatalogProduct);
 router.get('/products/catalog', authenticateSupplier, getCatalogProducts);
+router.delete('/products/catalog/:id', authenticateSupplier, logActivity('delete', 'supplierproduct'), deleteCatalogProduct);
 
 module.exports = router;

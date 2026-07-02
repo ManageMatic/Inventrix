@@ -8,6 +8,9 @@ import { API_URL, CLIENT_URL } from "../../../config";
 import "../../../styles/ProductsTable.css";
 
 const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
+  const userType = localStorage.getItem("userType");
+  const isOwner = userType === "store_owner";
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -113,7 +116,7 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
     let aValue = a[sortField];
     let bValue = b[sortField];
 
-    if (sortField === "sellingPrice" || sortField === "quantity") {
+    if (sortField === "sellingPrice" || sortField === "purchasePrice" || sortField === "quantity") {
       aValue = Number(aValue);
       bValue = Number(bValue);
     } else if (sortField === "product_id") {
@@ -188,8 +191,13 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
                 <th onClick={() => handleSort("category")} className="sortable-header">
                   Category {sortField === "category" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
                 </th>
+                {isOwner && (
+                  <th onClick={() => handleSort("purchasePrice")} className="sortable-header">
+                    Purchase Price {sortField === "purchasePrice" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                  </th>
+                )}
                 <th onClick={() => handleSort("sellingPrice")} className="sortable-header">
-                  Price {sortField === "sellingPrice" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
+                  {isOwner ? "Selling Price" : "Price"} {sortField === "sellingPrice" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
                 </th>
                 <th onClick={() => handleSort("quantity")} className="sortable-header">
                   Stock {sortField === "quantity" && (sortDirection === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
@@ -207,6 +215,9 @@ const ProductsTable = ({ storeId, refreshSignal, permissions = [] }) => {
                     <td>{p.name}</td>
                     {storeId === "All" && <td>{p.store?.name || "Unknown"}</td>}
                     <td>{p.category || "—"}</td>
+                    {isOwner && (
+                      <td><span className="price-highlight">₹{p.purchasePrice !== undefined ? p.purchasePrice.toFixed(2) : "0.00"}</span></td>
+                    )}
                     <td><span className="price-highlight">₹{p.sellingPrice.toFixed(2)}</span></td>
                     <td>
                       <div className="stock-info">

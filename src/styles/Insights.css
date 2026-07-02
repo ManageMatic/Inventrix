@@ -242,6 +242,10 @@
 }
 
 .product-info {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
     flex: 1;
     min-width: 0;
 }

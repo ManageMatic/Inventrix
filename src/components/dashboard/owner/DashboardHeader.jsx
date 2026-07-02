@@ -1,9 +1,11 @@
 import { Plus, Menu, X, Bell, Calendar } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { API_URL } from "../../../config";
 
 function DashboardHeader({ onOpenModal, setSidebarOpen, sidebarOpen, user, notifications = [], setNotifications, stores = [], selectedStore, setSelectedStore }) {
   const [date, setDate] = useState("");
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const notifRef = useRef(null);
 
   useEffect(() => {
     const today = new Date();
@@ -16,6 +18,18 @@ function DashboardHeader({ onOpenModal, setSidebarOpen, sidebarOpen, user, notif
     setDate(formatted);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setIsNotifOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleMarkAsRead = async (id) => {
@@ -24,7 +38,7 @@ function DashboardHeader({ onOpenModal, setSidebarOpen, sidebarOpen, user, notif
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
       try {
         const token = localStorage.getItem("token");
-        await fetch(`http://localhost:5000/api/notifications/${id}/read`, {
+        await fetch(`${API_URL}/api/notifications/${id}/read`, {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -40,7 +54,7 @@ function DashboardHeader({ onOpenModal, setSidebarOpen, sidebarOpen, user, notif
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
       try {
         const token = localStorage.getItem("token");
-        await fetch(`http://localhost:5000/api/notifications/read-all`, {
+        await fetch(`${API_URL}/api/notifications/read-all`, {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -87,7 +101,7 @@ function DashboardHeader({ onOpenModal, setSidebarOpen, sidebarOpen, user, notif
           </select>
         )}
 
-        <div className="notif-wrapper">
+        <div className="notif-wrapper" ref={notifRef}>
           <button 
             className="notif-btn" 
             title="Notifications"
@@ -105,7 +119,7 @@ function DashboardHeader({ onOpenModal, setSidebarOpen, sidebarOpen, user, notif
             <div className="notif-dropdown">
               <div className="notif-dropdown-header">
                 <h3>Notifications</h3>
-                <div style={{ display: "flex", gap: "10px" }}>
+                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                   {unreadCount > 0 && (
                     <button 
                       onClick={handleMarkAllAsRead}
@@ -114,6 +128,12 @@ function DashboardHeader({ onOpenModal, setSidebarOpen, sidebarOpen, user, notif
                       Mark all read
                     </button>
                   )}
+                  <button 
+                    onClick={() => setIsNotifOpen(false)}
+                    style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", display: "flex", alignItems: "center", padding: "4px" }}
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
               </div>
               <div className="notif-dropdown-body">

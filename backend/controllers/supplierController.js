@@ -292,54 +292,6 @@ exports.updatePOStatus = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to update purchase order', error: error.message });
     }
 };
-
-// Get Supplier Supplied Products (Supplier registers products they offer to stores)
-exports.getSuppliedProducts = async (req, res) => {
-    try {
-        const supplier_id = req.user._id;
-
-        // Fetch supplier and populate products they supply
-        const supplier = await Supplier.findById(supplier_id).populate('productsSupplied');
-        
-        // Find general products that are marked as supplied or fetch all products
-        const allProducts = await Product.find().populate('store', 'name');
-
-        res.status(200).json({
-            success: true,
-            data: {
-                supplied: supplier?.productsSupplied || [],
-                allAvailable: allProducts
-            }
-        });
-    } catch (error) {
-        console.error('GET SUPPLIED PRODUCTS ERROR:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch products', error: error.message });
-    }
-};
-
-// Add product to supply list
-exports.supplyProduct = async (req, res) => {
-    try {
-        const { product_id } = req.body;
-        const supplier_id = req.user._id;
-
-        const supplier = await Supplier.findById(supplier_id);
-        if (!supplier.productsSupplied.includes(product_id)) {
-            supplier.productsSupplied.push(product_id);
-            await supplier.save();
-        }
-
-        res.status(200).json({
-            success: true,
-            message: 'Product added to supply list successfully',
-            data: supplier.productsSupplied
-        });
-    } catch (error) {
-        console.error('SUPPLY PRODUCT ERROR:', error);
-        res.status(500).json({ success: false, message: 'Failed to add product to supply list', error: error.message });
-    }
-};
-
 // Add product to supplier catalog
 exports.addCatalogProduct = async (req, res) => {
     try {
@@ -398,3 +350,42 @@ exports.getCatalogProductsForOwner = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to fetch catalog products', error: error.message });
     }
 };
+
+// Delete product from supplier catalog
+exports.deleteCatalogProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const supplier_id = req.user._id;
+
+        const product = await SupplierProduct.findOne({ _id: id, supplier_id });
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found in your catalog' });
+        }
+
+        // Check if there are any active POs referencing this product
+        const PurchaseOrder = require('../models/PurchaseOrder');
+        const activePO = await PurchaseOrder.findOne({
+            'items.product_id': id,
+            status: { $in: ['pending', 'accepted', 'partially_accepted'] }
+        });
+
+        if (activePO) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot delete product because it is currently included in active purchase orders.'
+            });
+        }
+
+        await SupplierProduct.deleteOne({ _id: id });
+
+        res.status(200).json({
+            success: true,
+            message: 'Product removed from catalog successfully'
+        });
+    } catch (error) {
+        console.error('DELETE CATALOG PRODUCT ERROR:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete product', error: error.message });
+    }
+};
+

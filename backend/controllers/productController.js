@@ -40,7 +40,12 @@ exports.addProduct = async (req, res) => {
             reorderLevel
         } = req.body;
 
-        if (!name || !purchasePrice || !sellingPrice) {
+        let pPrice = purchasePrice;
+        if (req.userType === 'employee') {
+            pPrice = pPrice !== undefined && pPrice !== null ? pPrice : 0;
+        }
+
+        if (!name || pPrice === undefined || pPrice === null || !sellingPrice) {
             return res.status(400).json({
                 success: false,
                 message: "Name, purchase price and selling price are required"
@@ -66,7 +71,7 @@ exports.addProduct = async (req, res) => {
             store: storeId,
             name,
             category,
-            purchasePrice,
+            purchasePrice: pPrice,
             sellingPrice,
             quantity: quantity || 0,
             reorderLevel: reorderLevel || 0,
@@ -76,10 +81,15 @@ exports.addProduct = async (req, res) => {
 
         await product.save();
 
+        let returnedData = product.toObject();
+        if (req.userType === 'employee') {
+            delete returnedData.purchasePrice;
+        }
+
         res.status(201).json({
             success: true,
             message: "Product added successfully",
-            data: product
+            data: returnedData
         });
 
     } catch (error) {
@@ -118,7 +128,15 @@ exports.getProductsByStore = async (req, res) => {
             query = { store: storeId };
         }
 
-        const products = await Product.find(query).populate('store', 'name');
+        let products = await Product.find(query).populate('store', 'name');
+
+        if (req.userType === 'employee') {
+            products = products.map(p => {
+                const prodObj = p.toObject();
+                delete prodObj.purchasePrice;
+                return prodObj;
+            });
+        }
 
         return res.status(200).json({
             success: true,
@@ -141,7 +159,11 @@ exports.getProductsByStore = async (req, res) => {
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const updates = req.body;
+        const updates = { ...req.body };
+
+        if (req.userType === 'employee') {
+            delete updates.purchasePrice;
+        }
 
         const product = await Product.findByIdAndUpdate(id, updates, { new: true });
         if (!product) return res.status(404).json({ success: false, message: "Product not found" });
@@ -151,7 +173,12 @@ exports.updateProduct = async (req, res) => {
             notifyStoreOutOfStock(req.app, product.store, product.name);
         }
 
-        return res.status(200).json({ success: true, data: product });
+        let returnedData = product.toObject();
+        if (req.userType === 'employee') {
+            delete returnedData.purchasePrice;
+        }
+
+        return res.status(200).json({ success: true, data: returnedData });
     } catch (err) {
         console.error("updateProduct error:", err);
         return res.status(500).json({ success: false, message: "Server error" });
@@ -194,12 +221,15 @@ exports.getProductByQR = async (req, res) => {
             return res.status(404).json({ message: "Product not found" });
         }
 
+        const prodObj = product.toObject();
+        delete prodObj.purchasePrice;
+
         // ✅ DEBUG EMIT
         console.log("📡 Emitting to room:", storeId);
 
-        req.app.get("io").to(storeId).emit("product-scanned", product);
+        req.app.get("io").to(storeId).emit("product-scanned", prodObj);
 
-        res.json({ success: true, data: product });
+        res.json({ success: true, data: prodObj });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -1,4 +1,4 @@
-import { Store, Package, Users, TrendingUp } from "lucide-react";
+import { Store, Package, Users, TrendingUp, IndianRupee, ShoppingBag } from "lucide-react";
 
 function StatsGrid({ stores, stats }) {
   const displayStats = [
@@ -12,25 +12,31 @@ function StatsGrid({ stores, stats }) {
       icon: <Package size={32} />,
       value: stats?.products || 0,
       label: "Products",
-      color: "#10b981",
+      color: "#f59e0b",
     },
     {
       icon: <Users size={32} />,
       value: stats?.employees || 0,
       label: "Employees",
-      color: "#f59e0b",
+      color: "#0ea5e9",
     },
     {
-      icon: <TrendingUp size={32} />,
+      icon: <ShoppingBag size={32} />,
       value: stats?.sales || 0,
       label: "Total Sales",
-      color: "#8b5cf6",
+      color: "#a78bfa",
+    },
+    {
+      icon: <IndianRupee size={32} />,
+      value: stats?.revenue || "₹0",
+      label: "Revenue",
+      color: "#10b981",
     },
     {
       icon: <TrendingUp size={32} />,
-      value: stats?.revenue || "₹0",
-      label: "Revenue",
-      color: "#ef4444",
+      value: stats?.profit || "₹0",
+      label: "Net Profit",
+      color: "#c084fc",
     },
   ];
 

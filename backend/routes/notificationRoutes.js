@@ -5,17 +5,17 @@ const {
     markAllAsRead, 
     triggerTestNotification 
 } = require('../controllers/notificationController');
-const { authenticateStoreOwner } = require('../middleware/auth');
+const { authenticateStoreStaff } = require('../middleware/auth');
 
 const router = express.Router();
 
 // Get all notifications for the user
-router.get('/', authenticateStoreOwner, getNotifications);
+router.get('/', authenticateStoreStaff, getNotifications);
 
 // Mark all as read
-router.put('/read-all', authenticateStoreOwner, markAllAsRead);
+router.put('/read-all', authenticateStoreStaff, markAllAsRead);
 
 // Mark specific notification as read
-router.put('/:id/read', authenticateStoreOwner, markAsRead);
+router.put('/:id/read', authenticateStoreStaff, markAsRead);
 
 module.exports = router;

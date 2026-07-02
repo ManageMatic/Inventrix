@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Trash2 } from "lucide-react";
 import Toast from "../../common/Toast";
+import ConfirmDialog from "../../common/ConfirmDialog";
 import "../../../styles/SupplierCatalog.css";
 import { API_URL } from "../../../config";
 
@@ -9,6 +11,7 @@ function SupplierCatalog({ token }) {
   const [catalogForm, setCatalogForm] = useState({ name: "", category: "General", description: "", purchasePrice: "" });
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState({ show: false, productId: null });
 
   const showToast = (message, type = "info") => {
     setToast({ message, type });
@@ -53,6 +56,29 @@ function SupplierCatalog({ token }) {
     } catch (err) {
       console.error(err);
       showToast(err.response?.data?.message || "Failed to add catalog product", "error");
+    }
+  };
+
+  const handleDeleteCatalogProduct = (productId) => {
+    setConfirmDialog({ show: true, productId });
+  };
+
+  const handleConfirmDelete = async () => {
+    const productId = confirmDialog.productId;
+    setConfirmDialog({ show: false, productId: null });
+    if (!productId) return;
+
+    try {
+      const res = await axios.delete(`${API_URL}/api/suppliers/products/catalog/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        showToast("Product removed from catalog successfully!", "success");
+        fetchProducts();
+      }
+    } catch (err) {
+      console.error(err);
+      showToast(err.response?.data?.message || "Failed to remove product from catalog", "error");
     }
   };
 
@@ -143,12 +169,28 @@ function SupplierCatalog({ token }) {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255, 255, 255, 0.05)", paddingTop: "10px" }}>
                   <span style={{ fontSize: "1rem", fontWeight: "bold", color: "#10b981" }}>₹{product.purchasePrice}</span>
+                  <button 
+                    onClick={() => handleDeleteCatalogProduct(product._id)}
+                    className="catalog-delete-btn"
+                    title="Remove Product from Catalog"
+                  >
+                    <Trash2 size={15} /> Remove
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {confirmDialog.show && (
+        <ConfirmDialog
+          title="Remove Catalog Product"
+          message="Are you sure you want to remove this product from your catalog? This action cannot be undone."
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmDialog({ show: false, productId: null })}
+        />
+      )}
 
       {toast && (
         <Toast message={toast.message} type={toast.type} onClose={closeToast} />

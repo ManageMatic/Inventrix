@@ -163,3 +163,23 @@
     color: #64748b;
     margin-bottom: 2.5rem;
 }
+
+.catalog-delete-btn {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.catalog-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.12);
+}
+

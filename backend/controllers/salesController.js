@@ -31,6 +31,7 @@ exports.createSale = async (req, res) => {
 
         console.log("Cart data:", items); // 🔥 THIS LINE IS IMPORTANT
 
+        const productMap = {};
         for (let item of items) {
 
             if (!item._id) {
@@ -56,6 +57,9 @@ exports.createSale = async (req, res) => {
                 const { notifyStoreOutOfStock } = require("../utils/notificationHelper");
                 notifyStoreOutOfStock(req.app, store_id, product.name);
             }
+
+            // Save to map
+            productMap[item._id] = product;
         }
 
         // Handle customer
@@ -76,12 +80,16 @@ exports.createSale = async (req, res) => {
         }
 
         // Transform items to match Sale schema
-        const saleItems = items.map(item => ({
-            product_id: item._id,
-            quantity: item.qty,
-            price: item.sellingPrice,
-            subtotal: item.qty * item.sellingPrice
-        }));
+        const saleItems = items.map(item => {
+            const product = productMap[item._id];
+            return {
+                product_id: item._id,
+                quantity: item.qty,
+                price: item.sellingPrice,
+                purchasePrice: product ? (product.purchasePrice || 0) : (item.purchasePrice || 0),
+                subtotal: item.qty * item.sellingPrice
+            };
+        });
 
         const sale = new Sale({
             sale_id: "SALE-" + Date.now(),
@@ -392,7 +400,7 @@ exports.getAdvancedAnalytics = async (req, res) => {
             { $match: matchQuery },
             {
                 $group: {
-                    _id: { $hour: "$date" },
+                    _id: { $hour: { date: "$date", timezone: "Asia/Kolkata" } },
                     count: { $sum: 1 },
                     revenue: { $sum: "$totalAmount" }
                 }

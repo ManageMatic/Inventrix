@@ -6,6 +6,7 @@ import Toast from "../../common/Toast";
 import { API_URL } from "../../../config";
 
 const ProductModal = ({ storeId, product, onClose }) => {
+  const isOwner = localStorage.getItem("userType") === "store_owner";
   const [form, setForm] = useState({
     name: product?.name || "",
     category: product?.category || "",
@@ -34,13 +35,18 @@ const ProductModal = ({ storeId, product, onClose }) => {
 
       const method = product ? "PUT" : "POST";
 
+      const payload = { ...form };
+      if (!isOwner) {
+        delete payload.purchasePrice;
+      }
+
       const res = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -93,19 +99,21 @@ const ProductModal = ({ storeId, product, onClose }) => {
             </div>
           </div>
           <div className="form-row">
-            <div className="form-group">
-              <label>Purchase Price *</label>
-              <input
-                name="purchasePrice"
-                type="number"
-                value={form.purchasePrice}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            {isOwner && (
+              <div className="form-group">
+                <label>Purchase Price *</label>
+                <input
+                  name="purchasePrice"
+                  type="number"
+                  value={form.purchasePrice}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
 
             <div className="form-group">
-              <label>Selling Price *</label>
+              <label>{isOwner ? "Selling Price *" : "Price *"}</label>
               <input
                 name="sellingPrice"
                 type="number"

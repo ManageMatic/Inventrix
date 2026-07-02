@@ -34,6 +34,7 @@ const saleSchema = new mongoose.Schema({
     },
     quantity: Number,
     price: Number,
+    purchasePrice: Number,
     subtotal: Number
   }],
   subtotal: {

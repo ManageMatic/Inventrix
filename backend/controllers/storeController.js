@@ -184,10 +184,7 @@ exports.getAnalytics = async (req, res) => {
 
         const productsCount = await Product.countDocuments(productsQuery);
         const employeesCount = await Employee.countDocuments(otherQuery);
-        const sales = await Sale.find(otherQuery).select('totalAmount date');
-
-        const totalRevenue = sales.reduce((acc, sale) => acc + (sale.totalAmount || 0), 0);
-        const totalSalesCount = sales.length;
+        const sales = await Sale.find(otherQuery).select('totalAmount date items');
 
         const chartDataMap = {};
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -195,21 +192,43 @@ exports.getAnalytics = async (req, res) => {
         const d = new Date();
         for (let i = 5; i >= 0; i--) {
             const pastDate = new Date(d.getFullYear(), d.getMonth() - i, 1);
-            chartDataMap[monthNames[pastDate.getMonth()]] = { sales: 0, profit: 0 };
+            chartDataMap[monthNames[pastDate.getMonth()]] = { sales: 0, cost: 0, profit: 0 };
         }
 
+        let totalRevenue = 0;
+        let totalCost = 0;
+        let totalProfit = 0;
+
         sales.forEach(sale => {
+            const revenueVal = sale.totalAmount || 0;
+            totalRevenue += revenueVal;
+
+            let saleCost = 0;
+            if (sale.items && sale.items.length > 0) {
+                saleCost = sale.items.reduce((sum, item) => {
+                    const costPrice = item.purchasePrice !== undefined ? item.purchasePrice : (item.price * 0.6);
+                    return sum + (costPrice * (item.quantity || 0));
+                }, 0);
+            } else {
+                saleCost = revenueVal * 0.6;
+            }
+
+            totalCost += saleCost;
+            totalProfit += (revenueVal - saleCost);
+
             const saleDate = new Date(sale.date);
             const monthStr = monthNames[saleDate.getMonth()];
             if (chartDataMap[monthStr]) {
-                chartDataMap[monthStr].sales += sale.totalAmount;
-                chartDataMap[monthStr].profit += sale.totalAmount * 0.4;
+                chartDataMap[monthStr].sales += revenueVal;
+                chartDataMap[monthStr].cost += saleCost;
+                chartDataMap[monthStr].profit += (revenueVal - saleCost);
             }
         });
 
         const chartData = Object.keys(chartDataMap).map(month => ({
             month,
             sales: chartDataMap[month].sales,
+            cost: chartDataMap[month].cost,
             profit: chartDataMap[month].profit
         }));
 
@@ -219,7 +238,9 @@ exports.getAnalytics = async (req, res) => {
                 products: productsCount,
                 sales: sales.length,
                 employees: employeesCount,
-                revenue: "₹" + totalRevenue.toLocaleString('en-IN')
+                revenue: "₹" + totalRevenue.toLocaleString('en-IN'),
+                cost: "₹" + Math.round(totalCost).toLocaleString('en-IN'),
+                profit: "₹" + Math.round(totalProfit).toLocaleString('en-IN')
             },
             chartData
         });

@@ -53,7 +53,22 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
   }, [activeTab]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notifications, setNotifications] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const fetchNotifications = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) setNotifications(data.data);
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  };
+
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
@@ -91,6 +106,10 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
           socket.on("connect", joinRoom);
         }
 
+        // Join user room for personal notifications
+        socket.emit("join-user", data.user._id);
+        fetchNotifications();
+
       } else {
         localStorage.removeItem("token");
         navigate("/login");
@@ -119,6 +138,17 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
     socket.on("product-scanned", handleScan);
     return () => socket.off("product-scanned", handleScan);
   }, [setCart, setCartOpen]);
+
+  useEffect(() => {
+    const handleNewNotification = (notification) => {
+      setNotifications((prev) => [notification, ...prev]);
+      setRefreshKey((prev) => prev + 1);
+    };
+    socket.on("newNotification", handleNewNotification);
+    return () => {
+      socket.off("newNotification", handleNewNotification);
+    };
+  }, []);
 
 
   const handleLogout = () => {
@@ -161,14 +191,14 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
     
     switch (activeTab) {
       case "dashboard":
-        return <EmployeeDashboardHome employee={employee} />;
+        return <EmployeeDashboardHome employee={employee} refreshSignal={refreshKey} key={refreshKey} />;
       case "clock":
-        return <TimeClock employee={employee} onUpdate={fetchEmployeeProfile} />;
+        return <TimeClock employee={employee} onUpdate={fetchEmployeeProfile} key={refreshKey} />;
       case "inventory":
         // 🔒 RBAC: Employees can ONLY view and create products (No Edit/Delete)
         const inventoryPerms = permissions.filter(p => p.resource === "products")
           .map(p => ({ ...p, actions: p.actions.filter(a => a === "read" || a === "create") }));
-        return <ProductsTable storeId={employee?.store_id?._id || employee?.store_id} refreshSignal={dashboardRefresh} permissions={inventoryPerms} />;
+        return <ProductsTable storeId={employee?.store_id?._id || employee?.store_id} refreshSignal={`${dashboardRefresh}-${refreshKey}`} key={refreshKey} permissions={inventoryPerms} />;
       case "sales_history":
         // 🔒 RBAC: Employees can ONLY view their OWN sales history (No Edit/Delete)
         const salesPerms = permissions.filter(p => p.resource === "sales")
@@ -176,11 +206,12 @@ const EmployeeDashboard = ({ cart, setCart, setCartOpen, dashboardRefresh, updat
         return <SalesTable 
           storeId={employee?.store_id?._id || employee?.store_id} 
           employeeId={employee?.id} 
-          refreshSignal={dashboardRefresh} 
+          refreshSignal={`${dashboardRefresh}-${refreshKey}`} 
+          key={refreshKey}
           permissions={salesPerms} 
         />;
       case "profile":
-        return <EmployeeProfile employee={employee} onUpdate={fetchEmployeeProfile} />;
+        return <EmployeeProfile employee={employee} onUpdate={fetchEmployeeProfile} key={refreshKey} />;
       default:
         return <div className="employee-placeholder"><h2>Access Denied</h2></div>;
     }

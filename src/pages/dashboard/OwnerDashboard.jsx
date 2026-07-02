@@ -14,8 +14,11 @@ import OwnerSettings from "../../components/dashboard/owner/OwnerSettings";
 import SupplierManagement from "../../components/dashboard/owner/SupplierManagement";
 import "../../styles/BaseDashboard.css";
 import "../../styles/OwnerDashboard.css";
-import { API_URL } from "../../config";
+import { API_URL, SOCKET_URL } from "../../config";
 import { io } from "socket.io-client";
+
+// Create socket outside component so it is never re-created on re-renders
+const socket = io(SOCKET_URL);
 
 const OwnerDashboard = () => {
   const [user, setUser] = useState({ name: "", role: "Store Owner" });
@@ -30,8 +33,9 @@ const OwnerDashboard = () => {
   }, [activeTab]);
   const [selectedStore, setSelectedStore] = useState("All");
   const [notifications, setNotifications] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const [stats, setStats] = useState({ products: 0, sales: 0, employees: 0, revenue: "₹0" });
+  const [stats, setStats] = useState({ products: 0, sales: 0, employees: 0, revenue: "₹0", cost: "₹0", profit: "₹0" });
   const [chartData, setChartData] = useState([]);
   const [advancedAnalytics, setAdvancedAnalytics] = useState(null);
 
@@ -53,7 +57,7 @@ const OwnerDashboard = () => {
     fetchOwnerData();
     fetchStores();
     fetchNotifications();
-  }, []);
+  }, [refreshKey]);
 
   // Fetch analytics whenever selectedStore or stores list changes
   useEffect(() => {
@@ -73,35 +77,35 @@ const OwnerDashboard = () => {
     }
   };
 
+  // Join personal user room as soon as user._id is known
   useEffect(() => {
-    // Connect WebSocket
-    const socket = io(API_URL);
-
     if (user?._id) {
       socket.emit("join-user", user._id);
     }
+  }, [user?._id]);
 
-    // Listen for events
-    socket.on("storeCreated", (newStore) => {
-      setStores((prev) => [...prev, newStore]);
-    });
-
-    socket.on("storeUpdated", (updatedStore) => {
-      setStores((prev) => prev.map(s => s._id === updatedStore._id ? updatedStore : s));
-    });
-
-    socket.on("storeDeleted", (deletedStoreId) => {
-      setStores((prev) => prev.filter(s => s._id !== deletedStoreId));
-    });
-
-    socket.on("newNotification", (notification) => {
+  // Register store and notification socket listeners once on mount
+  useEffect(() => {
+    const handleStoreCreated = (newStore) => setStores((prev) => [...prev, newStore]);
+    const handleStoreUpdated = (updatedStore) => setStores((prev) => prev.map(s => s._id === updatedStore._id ? updatedStore : s));
+    const handleStoreDeleted = (deletedStoreId) => setStores((prev) => prev.filter(s => s._id !== deletedStoreId));
+    const handleNewNotification = (notification) => {
       setNotifications((prev) => [notification, ...prev]);
-    });
+      setRefreshKey((prev) => prev + 1);
+    };
+
+    socket.on("storeCreated", handleStoreCreated);
+    socket.on("storeUpdated", handleStoreUpdated);
+    socket.on("storeDeleted", handleStoreDeleted);
+    socket.on("newNotification", handleNewNotification);
 
     return () => {
-      socket.disconnect();
+      socket.off("storeCreated", handleStoreCreated);
+      socket.off("storeUpdated", handleStoreUpdated);
+      socket.off("storeDeleted", handleStoreDeleted);
+      socket.off("newNotification", handleNewNotification);
     };
-  }, [user?._id]);
+  }, []);
 
   const fetchOwnerData = async () => {
     try {
@@ -207,23 +211,23 @@ const OwnerDashboard = () => {
         )}
 
         {activeTab === "Products" && (
-          <ProductsTable storeId={selectedStore} />
+          <ProductsTable storeId={selectedStore} refreshSignal={refreshKey} key={refreshKey} />
         )}
 
         {activeTab === "Employees" && (
-          <Employees storeId={selectedStore} />
+          <Employees storeId={selectedStore} key={refreshKey} />
         )}
 
         {activeTab === "Suppliers" && (
-          <SupplierManagement storeId={selectedStore} />
+          <SupplierManagement storeId={selectedStore} key={refreshKey} />
         )}
 
         {activeTab === "Reports" && (
-          <Reports storeId={selectedStore} />
+          <Reports storeId={selectedStore} key={refreshKey} />
         )}
 
         {activeTab === "Generate QR" && (
-          <GenerateQR storeId={selectedStore} />
+          <GenerateQR storeId={selectedStore} key={refreshKey} />
         )}
 
         {activeTab === "Settings" && (

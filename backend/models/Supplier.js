@@ -23,10 +23,6 @@ const supplierSchema = new mongoose.Schema({
         unique: true,
         sparse: true // allows multiple null emails
     },
-    productsSupplied: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product'
-    }],
     password: {
         type: String,
         required: true,
