@@ -209,23 +209,32 @@ function SupplierDashboardHome({ token }) {
                 <h4 className={`po-response-header ${responseType === "accept" ? "accept" : "reject"}`}>
                   {responseType === "accept" ? "Accepting Purchase Order" : "Rejecting Purchase Order"}
                 </h4>
-                {responseType === "accept" && (
-                  <div className="po-response-field-group">
-                    <label>Expected Delivery Date</label>
-                     <DatePicker
-                       value={expectedDeliveryDate}
-                       onChange={(val) => setExpectedDeliveryDate(val)}
-                       className="date-input"
-                     />
+                
+                <div className={`po-response-row ${responseType === "accept" ? "side-by-side" : "single-field"}`}>
+                  {responseType === "accept" && (
+                    <div className="po-response-field-group date-field">
+                      <label>Expected Delivery Date</label>
+                      <DatePicker
+                        value={expectedDeliveryDate}
+                        onChange={(val) => setExpectedDeliveryDate(val)}
+                        className="date-input"
+                      />
+                    </div>
+                  )}
+                  <div className="po-response-field-group text-field">
+                    <label>
+                      {responseType === "accept" ? "Delivery Details or Notes" : "Reason for Rejecting"}
+                    </label>
+                    <textarea
+                      className="textarea-input"
+                      placeholder={responseType === "accept" ? "Add expected delivery details or notes..." : "Provide reason for rejecting..."}
+                      rows={2}
+                      value={responseMessage}
+                      onChange={(e) => setResponseMessage(e.target.value)}
+                    />
                   </div>
-                )}
-                <textarea
-                  className="textarea-input"
-                  placeholder={responseType === "accept" ? "Add expected delivery details or notes..." : "Provide reason for rejecting..."}
-                  rows={3}
-                  value={responseMessage}
-                  onChange={(e) => setResponseMessage(e.target.value)}
-                />
+                </div>
+
                 <div className="po-response-actions">
                   <button onClick={() => handlePOAction(po._id, responseType === "accept" ? "accepted" : "rejected")} className={responseType === "accept" ? "action-btn-accept" : "action-btn-reject"}>
                     Confirm {responseType === "accept" ? "Accept" : "Reject"}
