@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Plus, Edit, Trash2, Clock, Search } from "lucide-react";
+import { Plus, Edit, Trash2, Clock, Search, X } from "lucide-react";
 import Toast from "../../common/Toast";
 import ConfirmDialog from "../../common/ConfirmDialog";
 import "../../../styles/Employees.css";
@@ -243,24 +243,85 @@ const Employees = ({ storeId }) => {
       </div>
 
       {showModal && createPortal(
-        <div className="employee-modal-overlay">
-          <div className="employee-modal">
-            <h3>{editingId ? "Edit Employee" : "Add Employee"}</h3>
-            <form onSubmit={handleSubmit}>
-              <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleInputChange} required />
-              <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} required />
-              <input type="text" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleInputChange} required />
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>
+                {editingId ? "Edit Employee" : "Add Employee"}
+              </h2>
+              <button className="close-btn" onClick={() => setShowModal(false)}>
+                <X size={22} />
+              </button>
+            </div>
+            
+            <form className="form-container" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Full Name *</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="e.g. John Doe"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Email *</label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="e.g. john@example.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Phone Number *</label>
+                  <input
+                    type="text"
+                    name="phone"
+                    placeholder="e.g. +91 9876543210"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
+
               {!editingId && (
-                <input type="password" name="password" placeholder="Temporary Password" value={formData.password} onChange={handleInputChange} required />
+                <div className="form-group">
+                  <label>Temporary Password *</label>
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter temp password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
               )}
-              <select name="status" value={formData.status} onChange={handleInputChange}>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="suspended">Suspended</option>
-              </select>
-              <div className="modal-actions">
-                <button type="button" className="modal-btn cancel" onClick={() => setShowModal(false)}>Cancel</button>
-                <button type="submit" className="modal-btn save">Save</button>
+
+              <div className="form-group">
+                <label>Status</label>
+                <select name="status" value={formData.status} onChange={handleInputChange}>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="suspended">Suspended</option>
+                </select>
+              </div>
+
+              <div className="form-actions">
+                <button type="button" className="cancel-btn" onClick={() => setShowModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="submit-btn">
+                  Save
+                </button>
               </div>
             </form>
           </div>
