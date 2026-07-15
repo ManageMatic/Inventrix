@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Mail, Phone, Shield, Lock, Save, TrendingUp, DollarSign, ShoppingBag, Clock } from "lucide-react";
+import { User, Mail, Phone, Shield, Lock, Save, TrendingUp, DollarSign, ShoppingBag, Clock, IndianRupee } from "lucide-react";
 import { API_URL } from "../../../config";
 import Toast from "../../common/Toast";
 import "../../../styles/EmployeeProfile.css";
@@ -90,7 +90,7 @@ const EmployeeProfile = ({ employee, onUpdate }) => {
                     </div>
                 </div>
                 <div className="emp-stat-card">
-                    <div className="emp-stat-icon revenue"><DollarSign size={20} /></div>
+                    <div className="emp-stat-icon revenue"><IndianRupee size={20} /></div>
                     <div className="emp-stat-info">
                         <p>Total Revenue</p>
                         <h3>₹{employee?.performance?.totalRevenue?.toLocaleString('en-IN') || 0}</h3>

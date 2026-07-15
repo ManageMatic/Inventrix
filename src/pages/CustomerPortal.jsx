@@ -1,9 +1,8 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { 
   Mail, 
-  ShieldCheck, 
   Download, 
   Trash2, 
   ArrowLeft, 
@@ -25,7 +24,7 @@ import { API_URL } from "../config";
 
 function CustomerPortal() {
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState(new Array(6).fill(""));
   const [step, setStep] = useState(1); // 1 = Email Input, 2 = OTP input, 3 = Dashboard
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,6 +32,8 @@ function CustomerPortal() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStoreFilter, setSelectedStoreFilter] = useState("All");
   const [expandedInvoiceId, setExpandedInvoiceId] = useState(null);
+
+  const inputsRef = useRef([]);
 
   const showToast = (message, type = "info") => {
     setToast({ message, type });
@@ -51,8 +52,26 @@ function CustomerPortal() {
     }
   }, []);
 
+  const handleOtpChange = (value, index) => {
+    if (!/^[0-9]?$/.test(value)) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    if (value && index < 5) {
+      inputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputsRef.current[index - 1]?.focus();
+    }
+  };
+
   const handleSendOTP = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!email) return;
 
     setLoading(true);
@@ -63,7 +82,11 @@ function CustomerPortal() {
 
       if (res.data.success) {
         showToast("OTP sent to your email successfully!", "success");
+        setOtp(new Array(6).fill(""));
         setStep(2);
+        setTimeout(() => {
+          inputsRef.current[0]?.focus();
+        }, 100);
       } else {
         showToast(res.data.message || "Failed to send OTP", "error");
       }
@@ -75,35 +98,47 @@ function CustomerPortal() {
     }
   };
 
-  const handleVerifyOTP = async (e) => {
-    e.preventDefault();
-    if (!otp) return;
+  // 🔥 AUTO VERIFY OTP FOR CUSTOMER PORTAL
+  useEffect(() => {
+    const autoVerify = async () => {
+      const fullOtp = otp.join("");
 
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API_URL}/api/auth/verify-customer-otp`, {
-        email: email.trim(),
-        otp: otp.trim(),
-      });
+      if (fullOtp.length === 6) {
+        setLoading(true);
+        try {
+          const res = await axios.post(`${API_URL}/api/auth/verify-customer-otp`, {
+            email: email.trim(),
+            otp: fullOtp,
+          });
 
-      if (res.data.success) {
-        const token = res.data.token;
-        localStorage.setItem("customerToken", token);
-        localStorage.setItem("customerEmail", email.trim());
-        showToast("Access granted!", "success");
-        
-        setStep(3);
-        fetchHistory(token);
-      } else {
-        showToast(res.data.message || "Verification failed", "error");
+          if (res.data.success) {
+            const token = res.data.token;
+            localStorage.setItem("customerToken", token);
+            localStorage.setItem("customerEmail", email.trim());
+            showToast("Access granted!", "success");
+            
+            setStep(3);
+            fetchHistory(token);
+          } else {
+            showToast(res.data.message || "Verification failed", "error");
+            setOtp(new Array(6).fill(""));
+            inputsRef.current[0]?.focus();
+          }
+        } catch (err) {
+          console.error(err);
+          showToast(err.response?.data?.message || "Invalid or expired OTP", "error");
+          setOtp(new Array(6).fill(""));
+          inputsRef.current[0]?.focus();
+        } finally {
+          setLoading(false);
+        }
       }
-    } catch (err) {
-      console.error(err);
-      showToast(err.response?.data?.message || "Invalid or expired OTP", "error");
-    } finally {
-      setLoading(false);
+    };
+
+    if (Array.isArray(otp) && step === 2) {
+      autoVerify();
     }
-  };
+  }, [otp, email, step]);
 
   const fetchHistory = async (token) => {
     setLoading(true);
@@ -131,7 +166,7 @@ function CustomerPortal() {
     localStorage.removeItem("customerToken");
     localStorage.removeItem("customerEmail");
     setEmail("");
-    setOtp("");
+    setOtp(new Array(6).fill(""));
     setInvoices([]);
     setStep(1);
     setSearchQuery("");
@@ -241,32 +276,36 @@ function CustomerPortal() {
           <div className="customer-auth-card">
             <h3 className="auth-title">Enter Verification Code</h3>
             <p className="auth-desc">Enter the 6-digit OTP code sent to <strong>{email}</strong>.</p>
-            <form onSubmit={handleVerifyOTP}>
-              <div className="form-group">
-                <label>One-Time Password (OTP)</label>
-                <div className="form-input-icon-wrapper">
+            
+            <div className="otp-wrapper">
+              <div className="otp-container">
+                {otp.map((digit, i) => (
                   <input
+                    key={i}
+                    ref={(el) => (inputsRef.current[i] = el)}
                     type="text"
-                    maxLength={6}
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    placeholder="123456"
-                    className="form-input otp-input"
-                    required
+                    maxLength="1"
+                    value={digit}
+                    onChange={(e) => handleOtpChange(e.target.value, i)}
+                    onKeyDown={(e) => handleKeyDown(e, i)}
+                    disabled={loading}
                   />
-                  <ShieldCheck size={18} className="form-input-icon" />
-                </div>
+                ))}
               </div>
-              <button type="submit" className="primary-btn" disabled={loading}>
-                {loading ? <Loader2 className="spinner btn-spinner" size={16} /> : null}
-                Verify & Continue
-              </button>
-            </form>
-            <div className="flex-space-between-full">
-              <button onClick={() => setStep(1)} className="secondary-link btn-link-action">
+            </div>
+
+            {loading && (
+              <div className="flex-center-gap" style={{ margin: "1rem 0", color: "#60a5fa" }}>
+                <Loader2 className="spinner" size={18} />
+                <span>Verifying code...</span>
+              </div>
+            )}
+
+            <div className="flex-space-between-full" style={{ marginTop: "1.5rem" }}>
+              <button onClick={() => { setStep(1); setOtp(new Array(6).fill("")); }} className="secondary-link btn-link-action" disabled={loading}>
                 Change Email
               </button>
-              <button onClick={handleSendOTP} className="secondary-link btn-link-action">
+              <button onClick={handleSendOTP} className="secondary-link btn-link-action" disabled={loading}>
                 Resend OTP
               </button>
             </div>
@@ -325,7 +364,7 @@ function CustomerPortal() {
                 <h3 className="section-title">Spending Analytics</h3>
                 <div className="chart-container" style={{ width: "100%", height: 260, minWidth: 0 }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 15, bottom: 0 }}>
                       <defs>
                         <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#818cf8" stopOpacity={0.4} />
@@ -343,6 +382,7 @@ function CustomerPortal() {
                         stroke="#64748b" 
                         fontSize={11}
                         tickLine={false}
+                        width={75}
                         tickFormatter={(value) => `₹${value}`}
                       />
                       <Tooltip 
